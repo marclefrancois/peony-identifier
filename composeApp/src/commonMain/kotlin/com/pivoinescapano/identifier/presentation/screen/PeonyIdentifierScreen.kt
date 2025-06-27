@@ -12,8 +12,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.runtime.*
@@ -423,10 +421,10 @@ private fun PositionCard(
                     )
                 }
             }
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                contentDescription = "Select position",
-                tint = AppColors.PrimaryPurple,
+            Text(
+                text = "→",
+                style = AppTypography.LabelLarge,
+                color = AppColors.PrimaryPurple,
                 modifier = Modifier.size(20.dp)
             )
         }
