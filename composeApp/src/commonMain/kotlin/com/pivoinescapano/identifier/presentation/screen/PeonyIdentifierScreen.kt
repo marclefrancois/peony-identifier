@@ -5,7 +5,8 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.*
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -57,23 +58,41 @@ fun PeonyIdentifierScreen(
         stiffness = Spring.StiffnessMediumLow
     )
     
+    // Track if we're in the middle of a gesture-initiated animation
+    var isGestureNavigation by remember { mutableStateOf(false) }
+    
     // Slide animation for screen transitions
     val slideOffset by animateFloatAsState(
         targetValue = if (isInDetailsView) -1f else 0f,
         animationSpec = navigationAnimationSpec,
-        label = "screen_slide"
+        label = "screen_slide",
+        finishedListener = {
+            // Reset gesture navigation flag when animation completes
+            isGestureNavigation = false
+        }
     )
     
-    // Interactive swipe offset for gesture feedback
+    // Interactive swipe offset for gesture feedback - direct finger tracking
     var interactiveSwipeOffset by remember { mutableStateOf(0f) }
-    val interactiveOffset by animateFloatAsState(
-        targetValue = interactiveSwipeOffset,
+    var animatedInteractiveOffset by remember { mutableStateOf(0f) }
+    
+    // Smooth animation for interactive offset (used for cancel animation)
+    val smoothInteractiveOffset by animateFloatAsState(
+        targetValue = animatedInteractiveOffset,
         animationSpec = spring(
-            dampingRatio = Spring.DampingRatioNoBouncy,
-            stiffness = Spring.StiffnessHigh
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
         ),
-        label = "interactive_swipe"
+        label = "smooth_interactive_offset"
     )
+    
+    // Reset interactive offset when navigation state changes
+    LaunchedEffect(isInDetailsView) {
+        if (!isInDetailsView) {
+            interactiveSwipeOffset = 0f
+            animatedInteractiveOffset = 0f
+        }
+    }
     
     // Show overlay when scrolling position list
     LaunchedEffect(positionListState.isScrollInProgress) {
@@ -124,7 +143,18 @@ fun PeonyIdentifierScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer {
-                        translationX = (slideOffset + interactiveOffset) * size.width
+                        // Use direct offset during gesture, smooth offset when animating
+                        val currentOffset = if (interactiveSwipeOffset != 0f) {
+                            // During active gesture - use direct finger position
+                            interactiveSwipeOffset
+                        } else if (isGestureNavigation) {
+                            // During gesture-initiated navigation - animate from finger position to final
+                            smoothInteractiveOffset
+                        } else {
+                            // Normal navigation or idle state
+                            0f
+                        }
+                        translationX = slideOffset * size.width + currentOffset
                     }
             ) {
                 // List/Loading content (slides left when details shown)
@@ -148,8 +178,8 @@ fun PeonyIdentifierScreen(
                                 modifier = Modifier.align(Alignment.Center)
                             )
                         }
-                        uiState.selectedRang != null && uiState.selectedTrou == null -> {
-                            // Show positions list for selected row
+                        uiState.selectedRang != null -> {
+                            // Show positions list for selected row (even during details view for smooth animation)
                             PositionsListContent(
                                 uiState = uiState,
                                 onTrouSelected = viewModel::onTrouSelected,
@@ -199,31 +229,48 @@ fun PeonyIdentifierScreen(
                         .align(Alignment.CenterStart)
                         .pointerInput(Unit) {
                             var totalDragDistance = 0f
+                            val velocityTracker = VelocityTracker()
+                            
                             detectDragGestures(
-                                onDragStart = {
+                                onDragStart = { offset ->
                                     // Reset values when starting gesture
-                                    interactiveSwipeOffset = 0f
                                     totalDragDistance = 0f
+                                    interactiveSwipeOffset = 0f
+                                    animatedInteractiveOffset = 0f
+                                    velocityTracker.resetTracking()
                                 },
                                 onDragEnd = {
-                                    // Determine if swipe was sufficient to trigger navigation
-                                    val swipeThreshold = size.width * 0.25f // 25% of screen width
-                                    if (totalDragDistance > swipeThreshold) {
+                                    // Calculate final velocity
+                                    val velocity = velocityTracker.calculateVelocity()
+                                    val velocityThreshold = 800f // pixels per second for flick detection
+                                    val minDistance = size.width * 0.15f // Minimum 15% screen width
+                                    
+                                    // Trigger navigation only with rightward velocity AND minimum distance
+                                    if (velocity.x > velocityThreshold && totalDragDistance > minDistance) {
+                                        // Rightward flick detected - continue animation from current position
+                                        isGestureNavigation = true
+                                        animatedInteractiveOffset = interactiveSwipeOffset
+                                        // Reset the direct offset so smooth animation takes over
+                                        interactiveSwipeOffset = 0f
                                         viewModel.navigateBack()
+                                        // Now animate the smooth offset to 0 to complete the navigation
+                                        animatedInteractiveOffset = 0f
+                                    } else {
+                                        // No sufficient flick - animate back to original position
+                                        interactiveSwipeOffset = 0f
+                                        animatedInteractiveOffset = 0f
                                     }
-                                    // Reset interactive offset
-                                    interactiveSwipeOffset = 0f
-                                    totalDragDistance = 0f
                                 },
-                                onDrag = { _, dragAmount ->
-                                    // Only consider positive (rightward) drag
-                                    if (dragAmount.x > 0) {
-                                        totalDragDistance += dragAmount.x
-                                        // Update interactive offset for visual feedback
-                                        // Convert drag distance to normalized offset (0-1)
-                                        val normalizedOffset = (totalDragDistance / size.width).coerceIn(0f, 0.5f)
-                                        interactiveSwipeOffset = normalizedOffset
-                                    }
+                                onDrag = { change, dragAmount ->
+                                    // Track velocity for this pointer event
+                                    velocityTracker.addPosition(change.uptimeMillis, change.position)
+                                    
+                                    // Handle both rightward and leftward drag using dragAmount
+                                    totalDragDistance += dragAmount.x
+                                    
+                                    // Directly use pixel values - screen follows finger exactly
+                                    // Limit leftward movement to prevent going too far left
+                                    interactiveSwipeOffset = totalDragDistance.coerceAtLeast(-size.width * 0.2f)
                                 }
                             )
                         }
