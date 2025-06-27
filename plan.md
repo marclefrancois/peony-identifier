@@ -1,13 +1,29 @@
 # Peony Identifier App Plan
 
-## Overview
+## Project Status: ✅ Core MVP Complete
+
 A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with hierarchical selection and detailed peony information display.
 
-## Single Screen Layout
-- **Top Section**: Large peony details display (name, image, description, breeder, year, bloom time)
-- **Bottom Section**: Compact selection area with 4 cascading spinners (Field → Parcel → Row → Position)
-  - Thumb-friendly layout optimized for one-handed use
-  - Minimal vertical space to maximize peony detail area
+### Completed Features
+- ✅ Clean architecture with Repository/UseCase/ViewModel pattern
+- ✅ Koin dependency injection setup
+- ✅ Kotlin Multiplatform targeting Android and iOS
+- ✅ JSON data loading from resources (field data and peony database)
+- ✅ Null-safe JSON parsing with custom serializers
+- ✅ Complete force unwrapping elimination for safety
+- ✅ Cascading dropdown selection (Field → Parcel → Row → Position)
+- ✅ Fuzzy string matching for peony identification
+- ✅ Material3 UI with responsive layout
+- ✅ Error handling and loading states
+- ✅ Cross-platform compilation validation
+
+## Current App Layout
+- **Top Section**: Large peony details display area with exact matches and fuzzy suggestions
+- **Bottom Section**: Compact selection controls with 4 cascading dropdowns
+  - Field selection loads parcels
+  - Parcel selection loads rows  
+  - Row selection loads positions
+  - Position selection triggers peony lookup and display
 
 ## Data Structure
 
@@ -57,22 +73,42 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 4. Select position (trou) → shows peony variety name + fuzzy matches against peony database by cultivar
 5. Display matched peony details with image from URL in main display area
 
-## Technical Implementation
-- Compose dropdowns for cascading selection in bottom compact area
-- JSON assets loading from `data/` folder (move to composeResources)
-- URL image loading with async/caching for main display
-- Fuzzy string matching between field `variete` and database `cultivar`
-- Reactive UI updates based on selections
-- State management for spinner selections and peony details
-- Responsive layout with bottom selection area and expanded detail view
+## Architecture Implementation ✅ Complete
+- ✅ Clean Repository pattern with interfaces and implementations
+- ✅ Use cases for business logic (fuzzy matching, field selection)
+- ✅ ViewModel with reactive state management using StateFlow
+- ✅ Koin DI modules for all dependencies
+- ✅ Custom JSON serializers for robust parsing (handles mixed Boolean/String types)
+- ✅ Null-safe field handling with "Unknown" fallbacks
+- ✅ Material3 UI components with proper error states
+- ✅ Cross-platform resource loading via Compose Resources
 
-## Components to Build
-1. **Data Models**: FieldEntry, PeonyInfo classes matching JSON structure
-2. **JSON Parsing**: Utilities to load field arrays and peony database array
-3. **UI Components**: 
-   - Compact bottom selection area with cascading spinners (champ/parcelle/rang/trou)
-   - Large peony detail display with cultivar, image, description, originator, date, group
-   - Responsive layout manager
-4. **Fuzzy Matching**: String similarity algorithm matching `variete` to `cultivar`
-5. **State Management**: ViewModel or state handling for selections and peony details
-6. **Image Loading**: Async image loading from URLs with caching
+## Todo List for Version 1.0
+
+### High Priority (Core Functionality)
+- [ ] **Platform Testing**: Test app thoroughly on both Android and iOS devices
+  - Verify cascading dropdowns work correctly
+  - Test peony lookup and display
+  - Validate JSON loading and parsing
+  - Check UI layout on different screen sizes
+
+### Medium Priority (Polish & UX)
+- [ ] **Image Loading**: Add async image loading from peony URLs with caching
+  - Implement proper loading states for images
+  - Add fallback for broken/missing images
+  - Consider image caching strategy
+
+### Low Priority (Future Enhancements)
+- [ ] **Network Error Handling**: Improve error handling for connectivity issues
+- [ ] **Performance**: Optimize JSON loading with background threading
+- [ ] **Testing**: Add unit tests for fuzzy matching algorithm
+- [ ] **Testing**: Add integration tests for repository implementations
+
+## Current Technical Stack
+- **Language**: Kotlin 2.1.21
+- **UI**: Compose Multiplatform 1.8.1 with Material3
+- **Architecture**: Clean Architecture (Repository/UseCase/ViewModel)
+- **DI**: Koin
+- **Serialization**: kotlinx.serialization with custom serializers
+- **State Management**: StateFlow/Compose State
+- **Platforms**: Android (SDK 24-35), iOS (via Kotlin/Native)
