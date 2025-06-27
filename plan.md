@@ -30,7 +30,7 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - **Main Section**: Maximized peony details display area (75% of screen space)
   - Variety name card (no redundant position info) - always displayed when position selected
   - Exact match peony details with cultivar, originator, date, group, description
-  - **120dp peony images** displayed alongside details (Android: async loading, iOS: availability indicators)
+  - **120dp peony images** displayed alongside details with full async loading on both platforms
   - Fuzzy match suggestions when exact match not found
   - Proper scrolling for long descriptions
 
@@ -98,7 +98,7 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - ✅ **Compact Grid Layout**: 2x2 dropdown arrangement instead of vertical stack
 - ✅ **Redundancy Removal**: Eliminated duplicate field position info from variety card
 - ✅ **Modern Material3**: Surface design with proper color theming and typography hierarchy
-- ✅ **Platform-Specific Image Loading**: Coil 2.7.0 for Android with caching, iOS placeholders
+- ✅ **Cross-Platform Image Loading**: Coil 2.7.0 for Android, Kamel 0.9.5 for iOS with full async loading
 - ✅ **Complete Data Display**: Always show field entry information regardless of peony matches
 - ✅ **iOS Configuration**: Fixed bundle ID and framework search path issues
 - ✅ **Android Permissions**: Added INTERNET permission for image loading
@@ -114,13 +114,13 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
   - ✅ Portrait orientation locked on Android
 
 ### ✅ Completed Medium Priority Features  
-- ✅ **Image Loading**: Async image loading implemented with platform-specific approach
+- ✅ **Image Loading**: Full cross-platform async image loading implementation
   - ✅ Android: Coil 2.7.0 with proper caching and loading states
-  - ✅ iOS: Placeholder system showing image availability
+  - ✅ iOS: Kamel 0.9.5 with async loading, progress indicators, and error handling
   - ✅ INTERNET permission configured for network access
+  - ✅ Consistent UI experience across both platforms
 
 ## Future Enhancements (Version 1.1+)
-- [ ] **Enhanced iOS Image Loading**: Implement full async image loading for iOS platform
 - [ ] **Network Error Handling**: Improve error handling for connectivity issues  
 - [ ] **Performance**: Optimize JSON loading with background threading
 - [ ] **Testing**: Add unit tests for fuzzy matching algorithm
@@ -136,12 +136,12 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - **DI**: Koin 4.1.0
 - **Serialization**: kotlinx.serialization 1.8.0 with custom serializers
 - **State Management**: StateFlow/Compose State
-- **Image Loading**: Coil 2.7.0 (Android), expect/actual pattern (iOS)
+- **Image Loading**: Coil 2.7.0 (Android), Kamel 0.9.5 (iOS) with expect/actual pattern
 - **Platforms**: Android (SDK 24-35), iOS (via Kotlin/Native)
 - **Build System**: Gradle with Kotlin DSL, Xcode integration
 
 ## Deployment Status
 - ✅ **Android**: APK builds successfully, portrait locked, image loading functional
-- ✅ **iOS**: Framework builds cleanly, simulator tested, configuration warnings resolved
+- ✅ **iOS**: Framework builds cleanly, async image loading functional, configuration warnings resolved
 - ✅ **Cross-Platform**: All shared business logic and UI working across both platforms
 - ✅ **Production Ready**: No blocking issues, comprehensive feature set complete

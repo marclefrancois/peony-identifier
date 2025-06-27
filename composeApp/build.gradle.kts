@@ -49,6 +49,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.kamel.image)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
