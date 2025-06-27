@@ -169,27 +169,29 @@ private fun FieldEntryCard(entry: com.pivoinescapano.identifier.data.model.Field
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "Field Position",
+                text = "Variety: ${entry.variete ?: "Unknown"}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Field: ${entry.champ ?: "Unknown"}")
-            Text("Parcel: ${entry.parcelle ?: "Unknown"}")
-            Text("Row: ${entry.rang ?: "Unknown"}")
-            Text("Position: ${entry.trou ?: "Unknown"}")
-            Text(
-                text = "Variety: ${entry.variete ?: "Unknown"}",
-                fontWeight = FontWeight.Medium
-            )
-            entry.annee_plantation?.let {
-                Text("Planted: $it")
+            
+            // Only show additional info if available
+            val additionalInfo = buildList {
+                entry.annee_plantation?.let { add("Planted: $it") }
+                entry.taille?.let { add("Size: $it") }
             }
-            entry.taille?.let {
-                Text("Size: $it")
+            
+            if (additionalInfo.isNotEmpty()) {
+                additionalInfo.forEach { info ->
+                    Text(
+                        text = info,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
