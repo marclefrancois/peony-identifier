@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.model.PeonyInfo
+import com.pivoinescapano.identifier.platform.BackHandler
 import com.pivoinescapano.identifier.presentation.component.PeonyAsyncImage
 import com.pivoinescapano.identifier.presentation.state.PeonyIdentifierState
 import com.pivoinescapano.identifier.presentation.theme.*
@@ -53,6 +54,11 @@ fun PeonyIdentifierScreen(
     
     // Determine if we're in details view
     val isInDetailsView = uiState.showPeonyDetails
+    
+    // Handle Android physical back button
+    BackHandler(enabled = isInDetailsView) {
+        viewModel.navigateBack()
+    }
     
     Scaffold(
         topBar = {
