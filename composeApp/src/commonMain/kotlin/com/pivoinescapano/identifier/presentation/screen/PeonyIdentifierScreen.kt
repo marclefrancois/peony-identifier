@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pivoinescapano.identifier.data.model.PeonyInfo
+import com.pivoinescapano.identifier.presentation.component.PeonyAsyncImage
 import com.pivoinescapano.identifier.presentation.state.PeonyIdentifierState
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewModel
 import org.koin.compose.koinInject
@@ -233,18 +234,48 @@ private fun PeonyCard(
                 }
             }
             
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             
-            Text("Originator: ${peony.originator}")
-            Text("Date: ${peony.date}")
-            Text("Group: ${peony.group}")
+            // Image and info row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Peony image
+                PeonyAsyncImage(
+                    imageUrl = peony.image,
+                    contentDescription = "Image of ${peony.cultivar}",
+                    modifier = Modifier.size(120.dp)
+                )
+                
+                // Peony details
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "Originator: ${peony.originator}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = "Date: ${peony.date}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = "Group: ${peony.group}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
             
             if (peony.description.isNotBlank()) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "Description:",
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.titleSmall
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = peony.description.replace(Regex("<[^>]*>"), ""), // Strip HTML tags
                     style = MaterialTheme.typography.bodyMedium
