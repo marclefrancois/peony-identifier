@@ -2,6 +2,7 @@ package com.pivoinescapano.identifier.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pivoinescapano.identifier.data.cache.DataCacheManager
 import com.pivoinescapano.identifier.data.model.PeonyInfo
 import com.pivoinescapano.identifier.domain.usecase.FindPeonyUseCase
 import com.pivoinescapano.identifier.domain.usecase.GetFieldSelectionUseCase
@@ -13,7 +14,8 @@ import kotlinx.coroutines.launch
 
 class PeonyIdentifierViewModel(
     private val getFieldSelectionUseCase: GetFieldSelectionUseCase,
-    private val findPeonyUseCase: FindPeonyUseCase
+    private val findPeonyUseCase: FindPeonyUseCase,
+    private val dataCacheManager: DataCacheManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PeonyIdentifierState())
@@ -21,6 +23,21 @@ class PeonyIdentifierViewModel(
 
     init {
         loadInitialData()
+        preloadDataInBackground()
+    }
+    
+    /**
+     * Preload all JSON data in background for improved performance
+     */
+    private fun preloadDataInBackground() {
+        viewModelScope.launch {
+            try {
+                dataCacheManager.preloadAllData()
+            } catch (e: Exception) {
+                // Log error but don't show to user as this is background optimization
+                println("Background data preloading failed: ${e.message}")
+            }
+        }
     }
 
     private fun loadInitialData() {

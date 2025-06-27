@@ -1,33 +1,17 @@
 package com.pivoinescapano.identifier.data.repository.impl
 
+import com.pivoinescapano.identifier.data.cache.DataCacheManager
 import com.pivoinescapano.identifier.data.model.PeonyInfo
 import com.pivoinescapano.identifier.data.repository.PeonyRepository
-import kotlinx.serialization.json.Json
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import peonyidentifier.composeapp.generated.resources.Res
 import kotlin.math.max
 import kotlin.math.min
 
-@OptIn(ExperimentalResourceApi::class)
-class PeonyRepositoryImpl : PeonyRepository {
-    
-    private var cachedPeonies: List<PeonyInfo>? = null
-    
-    private val json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-    }
+class PeonyRepositoryImpl(
+    private val dataCacheManager: DataCacheManager
+) : PeonyRepository {
     
     private suspend fun loadPeonies(): List<PeonyInfo> {
-        if (cachedPeonies == null) {
-            try {
-                val jsonString = Res.readBytes("files/peony-database.json").decodeToString()
-                cachedPeonies = json.decodeFromString<List<PeonyInfo>>(jsonString)
-            } catch (e: Exception) {
-                throw RuntimeException("Failed to load peony database: ${e.message}", e)
-            }
-        }
-        return requireNotNull(cachedPeonies) { "Peony data failed to load" }
+        return dataCacheManager.loadPeonies()
     }
     
     override suspend fun getAllPeonies(): List<PeonyInfo> {

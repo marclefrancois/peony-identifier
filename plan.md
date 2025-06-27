@@ -103,6 +103,7 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - ✅ **iOS Configuration**: Fixed bundle ID and framework search path issues
 - ✅ **Android Permissions**: Added INTERNET permission for image loading
 - ✅ **Portrait Lock**: Android app locked to portrait orientation
+- ✅ **Background JSON Loading**: Optimized 5.1MB peony database loading with background threading and caching
 
 ## Version 1.0 Status: ✅ COMPLETE & DEPLOYED
 
@@ -120,9 +121,15 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
   - ✅ INTERNET permission configured for network access
   - ✅ Consistent UI experience across both platforms
 
+- ✅ **Performance Optimization**: Background JSON loading with thread-safe caching
+  - ✅ JsonDataLoader with Dispatchers.IO for file operations
+  - ✅ DataCacheManager with concurrent preloading of all datasets
+  - ✅ Thread-safe mutex-based caching to prevent race conditions
+  - ✅ Background parsing on Dispatchers.Default for CPU-intensive operations
+  - ✅ Optimized 5.1MB peony database loading without blocking UI thread
+
 ## Future Enhancements (Version 1.1+)
-- [ ] **Network Error Handling**: Improve error handling for connectivity issues  
-- [ ] **Performance**: Optimize JSON loading with background threading
+- [ ] **Network Error Handling**: Improve error handling for connectivity issues
 - [ ] **Testing**: Add unit tests for fuzzy matching algorithm
 - [ ] **Testing**: Add integration tests for repository implementations
 - [ ] **Accessibility**: Add content descriptions and proper focus handling

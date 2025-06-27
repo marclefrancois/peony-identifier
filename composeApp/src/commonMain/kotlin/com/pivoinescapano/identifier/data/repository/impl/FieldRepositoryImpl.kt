@@ -1,31 +1,15 @@
 package com.pivoinescapano.identifier.data.repository.impl
 
+import com.pivoinescapano.identifier.data.cache.DataCacheManager
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.repository.FieldRepository
-import kotlinx.serialization.json.Json
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import peonyidentifier.composeapp.generated.resources.Res
 
-@OptIn(ExperimentalResourceApi::class)
-class FieldRepositoryImpl : FieldRepository {
-    
-    private var cachedFieldEntries: List<FieldEntry>? = null
-    
-    private val json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-    }
+class FieldRepositoryImpl(
+    private val dataCacheManager: DataCacheManager
+) : FieldRepository {
     
     private suspend fun loadFieldEntries(): List<FieldEntry> {
-        if (cachedFieldEntries == null) {
-            try {
-                val jsonString = Res.readBytes("files/Champ1PP.json").decodeToString()
-                cachedFieldEntries = json.decodeFromString<List<FieldEntry>>(jsonString)
-            } catch (e: Exception) {
-                throw RuntimeException("Failed to load field data: ${e.message}", e)
-            }
-        }
-        return requireNotNull(cachedFieldEntries) { "Field data failed to load" }
+        return dataCacheManager.loadFieldEntries()
     }
     
     override suspend fun getFieldEntries(fieldNumber: String): List<FieldEntry> {
