@@ -33,13 +33,13 @@ class FieldRepositoryImpl : FieldRepository {
     }
     
     override suspend fun getDistinctChamps(): List<String> {
-        return loadFieldEntries().map { it.champ }.distinct().sorted()
+        return loadFieldEntries().mapNotNull { it.champ }.distinct().sorted()
     }
     
     override suspend fun getDistinctParcelles(champ: String): List<String> {
         return loadFieldEntries()
             .filter { it.champ == champ }
-            .map { it.parcelle }
+            .mapNotNull { it.parcelle }
             .distinct()
             .sorted()
     }

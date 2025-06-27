@@ -181,8 +181,8 @@ private fun FieldEntryCard(entry: com.pivoinescapano.identifier.data.model.Field
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Field: ${entry.champ}")
-            Text("Parcel: ${entry.parcelle}")
+            Text("Field: ${entry.champ ?: "Unknown"}")
+            Text("Parcel: ${entry.parcelle ?: "Unknown"}")
             Text("Row: ${entry.rang ?: "Unknown"}")
             Text("Position: ${entry.trou ?: "Unknown"}")
             Text(

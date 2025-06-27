@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FieldEntry(
-    val champ: String,
-    val parcelle: String,
+    val champ: String?,
+    val parcelle: String?,
     val rang: String?,
     val trou: String?,
     val variete: String?,
