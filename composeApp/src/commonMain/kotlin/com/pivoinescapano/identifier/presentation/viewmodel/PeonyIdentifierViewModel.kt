@@ -128,9 +128,13 @@ class PeonyIdentifierViewModel(
                     _uiState.value = _uiState.value.copy(currentFieldEntry = fieldEntry)
                     
                     // Try to find matching peony
-                    val peony = findPeonyUseCase.execute(fieldEntry.variete)
-                    val fuzzyMatches = if (peony == null) {
-                        findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variete, 0.6)
+                    val varieteName = fieldEntry.variete
+                    val peony = if (varieteName != null) {
+                        findPeonyUseCase.execute(varieteName)
+                    } else null
+                    
+                    val fuzzyMatches = if (peony == null && varieteName != null) {
+                        findPeonyUseCase.findWithFuzzyMatching(varieteName, 0.6)
                     } else {
                         emptyList()
                     }

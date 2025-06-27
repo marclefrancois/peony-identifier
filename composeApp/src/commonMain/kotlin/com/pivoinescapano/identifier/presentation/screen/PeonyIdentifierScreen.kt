@@ -29,7 +29,12 @@ fun PeonyIdentifierScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 16.dp,
+                bottom = 32.dp  // Extra bottom padding for system navigation
+            )
     ) {
         // Main content area for peony details
         Box(
@@ -181,7 +186,7 @@ private fun FieldEntryCard(entry: com.pivoinescapano.identifier.data.model.Field
             Text("Row: ${entry.rang}")
             Text("Position: ${entry.trou}")
             Text(
-                text = "Variety: ${entry.variete}",
+                text = "Variety: ${entry.variete ?: "Unknown"}",
                 fontWeight = FontWeight.Medium
             )
             entry.annee_plantation?.let {

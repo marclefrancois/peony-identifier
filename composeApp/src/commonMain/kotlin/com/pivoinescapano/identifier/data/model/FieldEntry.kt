@@ -8,7 +8,7 @@ data class FieldEntry(
     val parcelle: String,
     val rang: String,
     val trou: String,
-    val variete: String,
+    val variete: String?,
     val annee_plantation: String? = null,
     val taille: String? = null,
     val etiquette: String? = null,
