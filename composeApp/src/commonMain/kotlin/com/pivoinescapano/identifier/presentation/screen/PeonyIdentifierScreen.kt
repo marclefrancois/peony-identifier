@@ -1,8 +1,7 @@
 package com.pivoinescapano.identifier.presentation.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -49,6 +48,33 @@ fun PeonyIdentifierScreen(
     var currentVisiblePosition by remember { mutableStateOf("") }
     var swipeOffset by remember { mutableStateOf(0f) }
     
+    // Animation states
+    val isInDetailsView = uiState.showPeonyDetails
+    
+    // Navigation animation - smooth iOS-style transition
+    val navigationAnimationSpec = spring<Float>(
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = Spring.StiffnessMediumLow
+    )
+    
+    // Slide animation for screen transitions
+    val slideOffset by animateFloatAsState(
+        targetValue = if (isInDetailsView) -1f else 0f,
+        animationSpec = navigationAnimationSpec,
+        label = "screen_slide"
+    )
+    
+    // Interactive swipe offset for gesture feedback
+    var interactiveSwipeOffset by remember { mutableStateOf(0f) }
+    val interactiveOffset by animateFloatAsState(
+        targetValue = interactiveSwipeOffset,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessHigh
+        ),
+        label = "interactive_swipe"
+    )
+    
     // Show overlay when scrolling position list
     LaunchedEffect(positionListState.isScrollInProgress) {
         if (positionListState.isScrollInProgress) {
@@ -58,9 +84,6 @@ fun PeonyIdentifierScreen(
             showScrollOverlay = false
         }
     }
-    
-    // Determine if we're in details view
-    val isInDetailsView = uiState.showPeonyDetails
     
     // Handle Android physical back button
     BackHandler(enabled = isInDetailsView) {
@@ -96,50 +119,78 @@ fun PeonyIdentifierScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            when {
-                uiState.isLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+            // Main content with sliding animation
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        translationX = (slideOffset + interactiveOffset) * size.width
+                    }
+            ) {
+                // List/Loading content (slides left when details shown)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            translationX = 0f
+                        }
+                ) {
+                    when {
+                        uiState.isLoading -> {
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+                        uiState.error != null -> {
+                            ErrorContent(
+                                error = uiState.error ?: "Unknown error occurred",
+                                onDismiss = viewModel::clearError,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+                        uiState.selectedRang != null && uiState.selectedTrou == null -> {
+                            // Show positions list for selected row
+                            PositionsListContent(
+                                uiState = uiState,
+                                onTrouSelected = viewModel::onTrouSelected,
+                                listState = positionListState,
+                                onVisiblePositionChanged = { currentVisiblePosition = it }
+                            )
+                        }
+                        else -> {
+                            Text(
+                                text = "Select field, parcel, and row to view positions",
+                                style = AppTypography.BodyLarge,
+                                textAlign = TextAlign.Center,
+                                color = AppColors.OnSurfaceVariant,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .padding(AppSpacing.M)
+                            )
+                        }
+                    }
                 }
-                uiState.error != null -> {
-                    ErrorContent(
-                        error = uiState.error ?: "Unknown error occurred",
-                        onDismiss = viewModel::clearError,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                uiState.selectedRang != null && uiState.selectedTrou == null -> {
-                    // Show positions list for selected row
-                    PositionsListContent(
-                        uiState = uiState,
-                        onTrouSelected = viewModel::onTrouSelected,
-                        listState = positionListState,
-                        onVisiblePositionChanged = { currentVisiblePosition = it }
-                    )
-                }
-                uiState.showPeonyDetails -> {
-                    PeonyDetailsContent(
-                        peony = uiState.currentPeony,
-                        fuzzyMatches = uiState.fuzzyMatches,
-                        fieldEntry = uiState.currentFieldEntry,
-                        onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected
-                    )
-                }
-                else -> {
-                    Text(
-                        text = "Select field, parcel, and row to view positions",
-                        style = AppTypography.BodyLarge,
-                        textAlign = TextAlign.Center,
-                        color = AppColors.OnSurfaceVariant,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(AppSpacing.M)
-                    )
+                
+                // Details content (slides in from right when shown)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            translationX = size.width
+                        }
+                ) {
+                    if (uiState.showPeonyDetails) {
+                        PeonyDetailsContent(
+                            peony = uiState.currentPeony,
+                            fuzzyMatches = uiState.fuzzyMatches,
+                            fieldEntry = uiState.currentFieldEntry,
+                            onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected
+                        )
+                    }
                 }
             }
         
-            // Edge swipe area for iOS-style navigation
+            // Edge swipe area for iOS-style navigation with interactive feedback
             if (isInDetailsView) {
                 Box(
                     modifier = Modifier
@@ -147,12 +198,34 @@ fun PeonyIdentifierScreen(
                         .width(30.dp)
                         .align(Alignment.CenterStart)
                         .pointerInput(Unit) {
-                            detectDragGestures { _, dragAmount ->
-                                if (dragAmount.x > 20f) {
-                                    // Simple right swipe detected
-                                    viewModel.navigateBack()
+                            var totalDragDistance = 0f
+                            detectDragGestures(
+                                onDragStart = {
+                                    // Reset values when starting gesture
+                                    interactiveSwipeOffset = 0f
+                                    totalDragDistance = 0f
+                                },
+                                onDragEnd = {
+                                    // Determine if swipe was sufficient to trigger navigation
+                                    val swipeThreshold = size.width * 0.25f // 25% of screen width
+                                    if (totalDragDistance > swipeThreshold) {
+                                        viewModel.navigateBack()
+                                    }
+                                    // Reset interactive offset
+                                    interactiveSwipeOffset = 0f
+                                    totalDragDistance = 0f
+                                },
+                                onDrag = { _, dragAmount ->
+                                    // Only consider positive (rightward) drag
+                                    if (dragAmount.x > 0) {
+                                        totalDragDistance += dragAmount.x
+                                        // Update interactive offset for visual feedback
+                                        // Convert drag distance to normalized offset (0-1)
+                                        val normalizedOffset = (totalDragDistance / size.width).coerceIn(0f, 0.5f)
+                                        interactiveSwipeOffset = normalizedOffset
+                                    }
                                 }
-                            }
+                            )
                         }
                 )
             }
