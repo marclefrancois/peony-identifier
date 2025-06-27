@@ -25,4 +25,8 @@ class GetFieldSelectionUseCase(
     suspend fun getFieldEntry(champ: String, parcelle: String, rang: String, trou: String): FieldEntry? {
         return fieldRepository.getFieldEntry(champ, parcelle, rang, trou)
     }
+    
+    suspend fun getRowEntries(champ: String, parcelle: String, rang: String): List<FieldEntry> {
+        return fieldRepository.getRowEntries(champ, parcelle, rang)
+    }
 }

@@ -48,4 +48,10 @@ class FieldRepositoryImpl(
         return loadFieldEntries()
             .find { it.champ == champ && it.parcelle == parcelle && it.rang == rang && it.trou == trou }
     }
+    
+    override suspend fun getRowEntries(champ: String, parcelle: String, rang: String): List<FieldEntry> {
+        return loadFieldEntries()
+            .filter { it.champ == champ && it.parcelle == parcelle && it.rang == rang }
+            .sortedBy { it.trou?.toIntOrNull() ?: 0 }
+    }
 }

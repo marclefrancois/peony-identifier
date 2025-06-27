@@ -1,10 +1,17 @@
 package com.pivoinescapano.identifier.presentation.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.runtime.*
@@ -12,12 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.model.PeonyInfo
 import com.pivoinescapano.identifier.presentation.component.PeonyAsyncImage
 import com.pivoinescapano.identifier.presentation.state.PeonyIdentifierState
+import com.pivoinescapano.identifier.presentation.theme.*
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewModel
+import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,60 +37,110 @@ fun PeonyIdentifierScreen(
     viewModel: PeonyIdentifierViewModel = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val positionListState = rememberLazyListState()
+    var showScrollOverlay by remember { mutableStateOf(false) }
+    var currentVisiblePosition by remember { mutableStateOf("") }
     
-    Column(
+    // Show overlay when scrolling position list
+    LaunchedEffect(positionListState.isScrollInProgress) {
+        if (positionListState.isScrollInProgress) {
+            showScrollOverlay = true
+        } else {
+            delay(500) // Keep overlay visible for 500ms after scroll stops
+            showScrollOverlay = false
+        }
+    }
+    
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.systemBars)
-            .padding(horizontal = 16.dp)
     ) {
-        // Compact selection controls at top
-        SelectionControls(
-            uiState = uiState,
-            onChampSelected = viewModel::onChampSelected,
-            onParcelleSelected = viewModel::onParcelleSelected,
-            onRangSelected = viewModel::onRangSelected,
-            onTrouSelected = viewModel::onTrouSelected,
-            onReset = viewModel::reset,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        
-        // Main content area for peony details - takes most space
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(bottom = 8.dp)
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            when {
-                uiState.isLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+            // Main content area - positions list or peony details
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                when {
+                    uiState.isLoading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                    uiState.error != null -> {
+                        ErrorContent(
+                            error = uiState.error ?: "Unknown error occurred",
+                            onDismiss = viewModel::clearError,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                    uiState.selectedRang != null && uiState.selectedTrou == null -> {
+                        // Show positions list for selected row
+                        PositionsListContent(
+                            uiState = uiState,
+                            onTrouSelected = viewModel::onTrouSelected,
+                            listState = positionListState,
+                            onVisiblePositionChanged = { currentVisiblePosition = it }
+                        )
+                    }
+                    uiState.showPeonyDetails -> {
+                        PeonyDetailsContent(
+                            peony = uiState.currentPeony,
+                            fuzzyMatches = uiState.fuzzyMatches,
+                            fieldEntry = uiState.currentFieldEntry,
+                            onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected
+                        )
+                    }
+                    else -> {
+                        Text(
+                            text = "Select field, parcel, and row to view positions",
+                            style = AppTypography.BodyLarge,
+                            textAlign = TextAlign.Center,
+                            color = AppColors.OnSurfaceVariant,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(AppSpacing.M)
+                        )
+                    }
                 }
-                uiState.error != null -> {
-                    ErrorContent(
-                        error = uiState.error ?: "Unknown error occurred",
-                        onDismiss = viewModel::clearError,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                uiState.showPeonyDetails -> {
-                    PeonyDetailsContent(
-                        peony = uiState.currentPeony,
-                        fuzzyMatches = uiState.fuzzyMatches,
-                        fieldEntry = uiState.currentFieldEntry,
-                        onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected
-                    )
-                }
-                else -> {
-                    Text(
-                        text = "Select a field position to view peony details",
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
+            }
+            
+            // Bottom selection bar (Field, Parcel, Row only)
+            BottomSelectionBar(
+                uiState = uiState,
+                onChampSelected = viewModel::onChampSelected,
+                onParcelleSelected = viewModel::onParcelleSelected,
+                onRangSelected = viewModel::onRangSelected,
+                onReset = viewModel::reset
+            )
+        }
+        
+        // Scroll position overlay
+        AnimatedVisibility(
+            visible = showScrollOverlay && currentVisiblePosition.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            OverlayCard(
+                modifier = Modifier.size(AppSpacing.OverlayCardSize)
+            ) {
+                Text(
+                    text = "Position",
+                    style = AppTypography.LabelMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = currentVisiblePosition,
+                    style = AppTypography.HeadlineLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }
@@ -91,30 +152,28 @@ private fun ErrorContent(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.padding(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+    UniformCard(
+        modifier = modifier.padding(AppSpacing.M),
+        backgroundColor = AppColors.Error.copy(alpha = 0.1f),
+        contentColor = AppColors.Error
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Text(
+            text = "Error",
+            style = AppTypography.HeadlineSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Text(
+            text = error,
+            style = AppTypography.BodyMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Button(
+            onClick = onDismiss,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-            Text(
-                text = "Error",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onErrorContainer
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = error,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onErrorContainer,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = onDismiss) {
-                Text("Dismiss")
-            }
+            Text("Dismiss")
         }
     }
 }
@@ -123,12 +182,16 @@ private fun ErrorContent(
 private fun PeonyDetailsContent(
     peony: PeonyInfo?,
     fuzzyMatches: List<PeonyInfo>,
-    fieldEntry: com.pivoinescapano.identifier.data.model.FieldEntry?,
+    fieldEntry: FieldEntry?,
     onFuzzyMatchSelected: (PeonyInfo) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        contentPadding = PaddingValues(
+            horizontal = AppSpacing.M,
+            vertical = AppSpacing.M
+        ),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.S)
     ) {
         // Field entry info
         fieldEntry?.let { entry ->
@@ -149,8 +212,8 @@ private fun PeonyDetailsContent(
             item {
                 Text(
                     text = if (peony == null) "Possible matches:" else "Other similar varieties:",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    style = AppTypography.HeadlineSmall,
+                    color = AppColors.OnSurface
                 )
             }
             items(fuzzyMatches) { match ->
@@ -165,34 +228,29 @@ private fun PeonyDetailsContent(
 }
 
 @Composable
-private fun FieldEntryCard(entry: com.pivoinescapano.identifier.data.model.FieldEntry) {
-    Card(
+private fun FieldEntryCard(entry: FieldEntry) {
+    UniformCard(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Text(
-                text = "Variety: ${entry.variete ?: "Unknown"}",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            
-            // Only show additional info if available
-            val additionalInfo = buildList {
-                entry.annee_plantation?.let { add("Planted: $it") }
-                entry.taille?.let { add("Size: $it") }
-            }
-            
-            if (additionalInfo.isNotEmpty()) {
-                additionalInfo.forEach { info ->
-                    Text(
-                        text = info,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+        Text(
+            text = "Variety: ${entry.variete ?: "Unknown"}",
+            style = AppTypography.HeadlineSmall,
+            color = AppColors.OnSurface
+        )
+        
+        // Only show additional info if available
+        val additionalInfo = buildList {
+            entry.annee_plantation?.let { add("Planted: $it") }
+            entry.taille?.let { add("Size: $it") }
+        }
+        
+        if (additionalInfo.isNotEmpty()) {
+            additionalInfo.forEach { info ->
+                Text(
+                    text = info,
+                    style = AppTypography.BodyMedium,
+                    color = AppColors.OnSurfaceVariant
+                )
             }
         }
     }
@@ -204,184 +262,251 @@ private fun PeonyCard(
     isExactMatch: Boolean,
     onClick: (() -> Unit)? = null
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onClick ?: {},
-        colors = if (isExactMatch) {
-            CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-        } else {
-            CardDefaults.cardColors()
-        }
+    UniformCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .let { if (onClick != null) it.clickable { onClick() } else it },
+        backgroundColor = if (isExactMatch) AppColors.ExactMatch.copy(alpha = 0.1f) else AppColors.SurfaceContainer,
+        contentColor = AppColors.OnSurface
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Text(
-                    text = peony.cultivar,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
-                )
-                if (isExactMatch) {
-                    Badge {
-                        Text("Exact Match")
-                    }
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            // Image and info row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Peony image
-                PeonyAsyncImage(
-                    imageUrl = peony.image,
-                    contentDescription = "Image of ${peony.cultivar}",
-                    modifier = Modifier.size(120.dp)
-                )
-                
-                // Peony details
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+            Text(
+                text = peony.cultivar,
+                style = AppTypography.HeadlineSmall,
+                color = AppColors.OnSurface,
+                modifier = Modifier.weight(1f)
+            )
+            if (isExactMatch) {
+                Badge(
+                    containerColor = AppColors.ExactMatch,
+                    contentColor = AppColors.OnPrimary
                 ) {
                     Text(
-                        text = "Originator: ${peony.originator}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = "Date: ${peony.date}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = "Group: ${peony.group}",
-                        style = MaterialTheme.typography.bodyMedium
+                        text = "Exact Match",
+                        style = AppTypography.LabelSmall
                     )
                 }
             }
+        }
+        
+        // Image and info row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.S)
+        ) {
+            // Peony image
+            PeonyAsyncImage(
+                imageUrl = peony.image,
+                contentDescription = "Image of ${peony.cultivar}",
+                modifier = Modifier.size(120.dp)
+            )
             
-            if (peony.description.isNotBlank()) {
-                Spacer(modifier = Modifier.height(12.dp))
+            // Peony details
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(AppSpacing.XS)
+            ) {
                 Text(
-                    text = "Description:",
-                    fontWeight = FontWeight.Medium,
-                    style = MaterialTheme.typography.titleSmall
+                    text = "Originator: ${peony.originator}",
+                    style = AppTypography.BodyMedium,
+                    color = AppColors.OnSurfaceVariant
                 )
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = peony.description.replace(Regex("<[^>]*>"), ""), // Strip HTML tags
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "Date: ${peony.date}",
+                    style = AppTypography.BodyMedium,
+                    color = AppColors.OnSurfaceVariant
+                )
+                Text(
+                    text = "Group: ${peony.group}",
+                    style = AppTypography.BodyMedium,
+                    color = AppColors.OnSurfaceVariant
                 )
             }
+        }
+        
+        if (peony.description.isNotBlank()) {
+            Text(
+                text = "Description:",
+                style = AppTypography.LabelLarge,
+                color = AppColors.OnSurface
+            )
+            Text(
+                text = peony.description.replace(Regex("<[^>]*>"), ""), // Strip HTML tags
+                style = AppTypography.BodyMedium,
+                color = AppColors.OnSurfaceVariant
+            )
         }
     }
 }
 
+// New positions list content
+@Composable
+private fun PositionsListContent(
+    uiState: PeonyIdentifierState,
+    onTrouSelected: (String) -> Unit,
+    listState: LazyListState,
+    onVisiblePositionChanged: (String) -> Unit
+) {
+    val positions = uiState.availableTrous
+    val fieldEntries = uiState.currentRowEntries // We need to add this to state
+    
+    LaunchedEffect(listState.firstVisibleItemIndex, positions) {
+        if (positions.isNotEmpty() && listState.firstVisibleItemIndex < positions.size) {
+            onVisiblePositionChanged(positions[listState.firstVisibleItemIndex])
+        }
+    }
+    
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            horizontal = AppSpacing.M,
+            vertical = AppSpacing.M
+        ),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.S)
+    ) {
+        items(positions) { position ->
+            val entry = fieldEntries.find { it.trou == position }
+            PositionCard(
+                position = position,
+                entry = entry,
+                onClick = { onTrouSelected(position) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun PositionCard(
+    position: String,
+    entry: FieldEntry?,
+    onClick: () -> Unit
+) {
+    UniformCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        elevation = 2.dp,
+        backgroundColor = AppColors.SurfaceContainer
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Position $position",
+                    style = AppTypography.LabelLarge,
+                    color = AppColors.PrimaryPurple
+                )
+                entry?.variete?.let { variety ->
+                    Text(
+                        text = variety,
+                        style = AppTypography.BodyLarge,
+                        color = AppColors.OnSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                entry?.taille?.let { size ->
+                    Text(
+                        text = "Size: $size",
+                        style = AppTypography.BodySmall,
+                        color = AppColors.OnSurfaceVariant
+                    )
+                }
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Select position",
+                tint = AppColors.PrimaryPurple,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
+
+// Bottom selection bar for Field, Parcel, Row
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable 
-private fun SelectionControls(
+@Composable
+private fun BottomSelectionBar(
     uiState: PeonyIdentifierState,
     onChampSelected: (String) -> Unit,
     onParcelleSelected: (String) -> Unit,
     onRangSelected: (String) -> Unit,
-    onTrouSelected: (String) -> Unit,
-    onReset: () -> Unit,
-    modifier: Modifier = Modifier
+    onReset: () -> Unit
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = MaterialTheme.shapes.medium
+        modifier = Modifier
+            .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.navigationBars),
+        color = AppColors.SurfaceContainerHigh,
+        shadowElevation = 8.dp
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = AppSpacing.M,
+                    vertical = AppSpacing.M
+                ),
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.S),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Header row with title and reset
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // Field selector
+            CompactBottomDropdown(
+                label = "Field",
+                selectedValue = uiState.selectedChamp,
+                options = uiState.availableChamps,
+                onSelectionChanged = onChampSelected,
+                enabled = !uiState.isLoading,
+                modifier = Modifier.weight(1f)
+            )
+            
+            // Parcel selector
+            CompactBottomDropdown(
+                label = "Parcel",
+                selectedValue = uiState.selectedParcelle,
+                options = uiState.availableParcelles,
+                onSelectionChanged = onParcelleSelected,
+                enabled = !uiState.isLoading && uiState.selectedChamp != null,
+                modifier = Modifier.weight(1f)
+            )
+            
+            // Row selector
+            CompactBottomDropdown(
+                label = "Row",
+                selectedValue = uiState.selectedRang,
+                options = uiState.availableRangs,
+                onSelectionChanged = onRangSelected,
+                enabled = !uiState.isLoading && uiState.selectedParcelle != null,
+                modifier = Modifier.weight(1f)
+            )
+            
+            // Reset button
+            IconButton(
+                onClick = onReset,
+                modifier = Modifier.size(56.dp)
             ) {
                 Text(
-                    text = "Position",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "↻",
+                    style = AppTypography.HeadlineSmall,
+                    color = AppColors.PrimaryPurple
                 )
-                TextButton(
-                    onClick = onReset,
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = "Reset",
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-            }
-            
-            // Compact 2x2 grid of dropdowns
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    // Field and Parcel on first row
-                    CompactDropdownSelector(
-                        label = "Field",
-                        selectedValue = uiState.selectedChamp,
-                        options = uiState.availableChamps,
-                        onSelectionChanged = onChampSelected,
-                        enabled = !uiState.isLoading,
-                        modifier = Modifier.weight(1f)
-                    )
-                    CompactDropdownSelector(
-                        label = "Parcel",
-                        selectedValue = uiState.selectedParcelle,
-                        options = uiState.availableParcelles,
-                        onSelectionChanged = onParcelleSelected,
-                        enabled = !uiState.isLoading && uiState.selectedChamp != null,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    // Row and Position on second row
-                    CompactDropdownSelector(
-                        label = "Row",
-                        selectedValue = uiState.selectedRang,
-                        options = uiState.availableRangs,
-                        onSelectionChanged = onRangSelected,
-                        enabled = !uiState.isLoading && uiState.selectedParcelle != null,
-                        modifier = Modifier.weight(1f)
-                    )
-                    CompactDropdownSelector(
-                        label = "Position",
-                        selectedValue = uiState.selectedTrou,
-                        options = uiState.availableTrous,
-                        onSelectionChanged = onTrouSelected,
-                        enabled = !uiState.isLoading && uiState.selectedRang != null,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
             }
         }
     }
 }
 
+// Compact bottom dropdown for the bottom bar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CompactDropdownSelector(
+private fun CompactBottomDropdown(
     label: String,
     selectedValue: String?,
     options: List<String>,
@@ -403,13 +528,15 @@ private fun CompactDropdownSelector(
             label = { 
                 Text(
                     text = label,
-                    style = MaterialTheme.typography.labelSmall
+                    style = AppTypography.LabelSmall,
+                    color = if (enabled) AppColors.OnSurface else AppColors.OnSurfaceVariant.copy(alpha = 0.6f)
                 ) 
             },
             placeholder = { 
                 Text(
                     text = "--",
-                    style = MaterialTheme.typography.bodySmall
+                    style = AppTypography.BodySmall,
+                    color = AppColors.OnSurfaceVariant
                 ) 
             },
             trailingIcon = { 
@@ -418,12 +545,18 @@ private fun CompactDropdownSelector(
             enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
+                .height(56.dp)
                 .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = enabled),
             colors = OutlinedTextFieldDefaults.colors(
-                disabledBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                disabledLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                focusedBorderColor = AppColors.PrimaryPurple,
+                unfocusedBorderColor = AppColors.OnSurfaceVariant,
+                disabledBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.3f),
+                focusedLabelColor = AppColors.PrimaryPurple,
+                unfocusedLabelColor = AppColors.OnSurfaceVariant,
+                disabledLabelColor = AppColors.OnSurfaceVariant.copy(alpha = 0.3f)
             ),
-            shape = MaterialTheme.shapes.small
+            shape = RoundedCornerShape(AppSpacing.S),
+            textStyle = AppTypography.BodySmall
         )
         
         ExposedDropdownMenu(
@@ -435,7 +568,8 @@ private fun CompactDropdownSelector(
                     text = { 
                         Text(
                             text = option,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = AppTypography.BodyMedium,
+                            color = AppColors.OnSurface
                         ) 
                     },
                     onClick = {

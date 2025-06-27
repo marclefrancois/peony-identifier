@@ -118,12 +118,18 @@ class PeonyIdentifierViewModel(
                     selectedTrou = null,
                     availableTrous = emptyList(),
                     currentFieldEntry = null,
+                    currentRowEntries = emptyList(),
                     currentPeony = null,
                     showPeonyDetails = false
                 )
 
                 val trous = getFieldSelectionUseCase.getAvailableTrous(currentChamp, currentParcelle, rang)
-                _uiState.value = _uiState.value.copy(availableTrous = trous)
+                val rowEntries = getFieldSelectionUseCase.getRowEntries(currentChamp, currentParcelle, rang)
+                
+                _uiState.value = _uiState.value.copy(
+                    availableTrous = trous,
+                    currentRowEntries = rowEntries
+                )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(error = "Failed to load trous: ${e.message}")
             }
