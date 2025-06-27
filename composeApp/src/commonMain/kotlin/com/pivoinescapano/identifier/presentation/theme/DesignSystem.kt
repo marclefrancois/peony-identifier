@@ -74,6 +74,11 @@ object AppSpacing {
     val CardCornerRadius = 16.dp
 }
 
+// Animation Constants
+object AppAnimations {
+    const val SCROLL_OVERLAY_DELAY_MS = 500L
+}
+
 // Uniform Card Component
 @Composable
 fun UniformCard(

@@ -46,7 +46,7 @@ fun PeonyIdentifierScreen(
         if (positionListState.isScrollInProgress) {
             showScrollOverlay = true
         } else {
-            delay(500) // Keep overlay visible for 500ms after scroll stops
+            delay(AppAnimations.SCROLL_OVERLAY_DELAY_MS) // Keep overlay visible after scroll stops
             showScrollOverlay = false
         }
     }

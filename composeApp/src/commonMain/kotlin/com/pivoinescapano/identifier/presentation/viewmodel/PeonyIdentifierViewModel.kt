@@ -131,7 +131,10 @@ class PeonyIdentifierViewModel(
                     currentRowEntries = rowEntries
                 )
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = "Failed to load trous: ${e.message}")
+                _uiState.value = _uiState.value.copy(
+                    error = "Failed to load positions: ${e.message}",
+                    currentRowEntries = emptyList()
+                )
             }
         }
     }
