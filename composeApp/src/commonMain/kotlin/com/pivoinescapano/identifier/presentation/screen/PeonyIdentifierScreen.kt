@@ -561,7 +561,7 @@ private fun PositionCard(
                 Text(
                     text = "Position $position",
                     style = AppTypography.LabelLarge,
-                    color = AppColors.PrimaryPurple
+                    color = AppColors.PrimaryGreen
                 )
                 entry?.variete?.let { variety ->
                     Text(
@@ -583,7 +583,7 @@ private fun PositionCard(
             Text(
                 text = "→",
                 style = AppTypography.LabelLarge,
-                color = AppColors.PrimaryPurple,
+                color = AppColors.PrimaryGreen,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -632,7 +632,7 @@ private fun ValueOnlyDropdown(
                 .height(44.dp)
                 .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = enabled),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = AppColors.PrimaryPurple,
+                focusedBorderColor = AppColors.PrimaryGreen,
                 unfocusedBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.4f),
                 disabledBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.2f),
                 focusedTextColor = AppColors.OnSurface,
