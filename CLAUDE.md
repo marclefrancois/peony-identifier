@@ -25,6 +25,14 @@ This is a Kotlin Multiplatform Compose application targeting Android and iOS pla
   - `commonTest/` - Shared test code
 - `/iosApp/` - iOS app entry point with SwiftUI wrapper
 
+### App Architecture
+- **Repository/UseCase/ViewModel pattern**: Follow clean architecture principles
+  - Repositories for data access (JSON loading, peony database queries)
+  - Use cases for business logic (fuzzy matching, peony selection)
+  - ViewModels for UI state management
+- **Dependency Injection**: Always use Koin for DI - avoid `object:`-based singletons as they are hard to test
+- **Testability**: Structure code to support unit testing with proper dependency injection
+
 ### Key Patterns
 - **Expected/Actual declarations**: Platform-specific implementations use `expect/actual` pattern (see `Platform.kt`)
 - **Compose UI**: All UI is built with Compose Multiplatform using Material3
