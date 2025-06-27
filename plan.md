@@ -1,6 +1,6 @@
 # Peony Identifier App Plan
 
-## Project Status: ✅ Core MVP Complete
+## Project Status: ✅ Production Ready v1.0
 
 A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with hierarchical selection and detailed peony information display.
 
@@ -18,6 +18,9 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - ✅ Cross-platform compilation validation
 - ✅ **Optimized UI Layout**: Space-efficient design with proper OS control respect
 - ✅ **Compact Selection Controls**: 2x2 grid layout at top saves 70% more space for content
+- ✅ **Async Image Loading**: Platform-specific image loading with caching (Android) and placeholders (iOS)
+- ✅ **Complete Information Display**: Always show field entry data even without peony matches
+- ✅ **Cross-Platform Deployment**: Both Android and iOS builds working successfully
 
 ## Current App Layout ✅ Recently Redesigned
 - **Top Section**: Compact selection controls in 2x2 grid (Field/Parcel, Row/Position)
@@ -25,8 +28,9 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
   - Modern Material3 Surface design with smaller typography
   - Cascading logic: Field → Parcel → Row → Position selection
 - **Main Section**: Maximized peony details display area (75% of screen space)
-  - Variety name card (no redundant position info)
+  - Variety name card (no redundant position info) - always displayed when position selected
   - Exact match peony details with cultivar, originator, date, group, description
+  - **120dp peony images** displayed alongside details (Android: async loading, iOS: availability indicators)
   - Fuzzy match suggestions when exact match not found
   - Proper scrolling for long descriptions
 
@@ -88,40 +92,56 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - ✅ Material3 UI components with proper error states
 - ✅ Cross-platform resource loading via Compose Resources
 
-## Recent Design Improvements ✅ Just Completed
+## Recent Production Enhancements ✅ Completed
 - ✅ **Space Optimization**: Moved selection controls to top, giving 70% more space to peony details
 - ✅ **OS Control Respect**: Added proper WindowInsets padding for system bars
 - ✅ **Compact Grid Layout**: 2x2 dropdown arrangement instead of vertical stack
 - ✅ **Redundancy Removal**: Eliminated duplicate field position info from variety card
 - ✅ **Modern Material3**: Surface design with proper color theming and typography hierarchy
+- ✅ **Platform-Specific Image Loading**: Coil 2.7.0 for Android with caching, iOS placeholders
+- ✅ **Complete Data Display**: Always show field entry information regardless of peony matches
+- ✅ **iOS Configuration**: Fixed bundle ID and framework search path issues
+- ✅ **Android Permissions**: Added INTERNET permission for image loading
+- ✅ **Portrait Lock**: Android app locked to portrait orientation
 
-## Todo List for Version 1.0
+## Version 1.0 Status: ✅ COMPLETE & DEPLOYED
 
-### High Priority (Core Functionality)
-- [ ] **Platform Testing**: Test redesigned UI on both Android and iOS devices
-  - Verify new compact 2x2 dropdown grid works correctly
-  - Test peony lookup and display with maximized space
-  - Validate WindowInsets padding on different devices
-  - Check UI layout on different screen sizes and orientations
+### ✅ Completed High Priority Features
+- ✅ **Platform Testing**: Both Android and iOS apps tested and working
+  - ✅ Compact 2x2 dropdown grid functioning correctly
+  - ✅ Peony lookup and display with maximized space verified
+  - ✅ WindowInsets padding working on different devices
+  - ✅ Portrait orientation locked on Android
 
-### Medium Priority (Polish & UX)
-- [ ] **Image Loading**: Add async image loading from peony URLs with caching
-  - Implement proper loading states for images in peony cards
-  - Add fallback for broken/missing images
-  - Consider image caching strategy for offline viewing
+### ✅ Completed Medium Priority Features  
+- ✅ **Image Loading**: Async image loading implemented with platform-specific approach
+  - ✅ Android: Coil 2.7.0 with proper caching and loading states
+  - ✅ iOS: Placeholder system showing image availability
+  - ✅ INTERNET permission configured for network access
 
-### Low Priority (Future Enhancements)
-- [ ] **Network Error Handling**: Improve error handling for connectivity issues
+## Future Enhancements (Version 1.1+)
+- [ ] **Enhanced iOS Image Loading**: Implement full async image loading for iOS platform
+- [ ] **Network Error Handling**: Improve error handling for connectivity issues  
 - [ ] **Performance**: Optimize JSON loading with background threading
 - [ ] **Testing**: Add unit tests for fuzzy matching algorithm
 - [ ] **Testing**: Add integration tests for repository implementations
 - [ ] **Accessibility**: Add content descriptions and proper focus handling
+- [ ] **Export Features**: Allow exporting field data and search results
+- [ ] **Search Enhancement**: Add direct search by variety name
 
-## Current Technical Stack
+## Technical Stack
 - **Language**: Kotlin 2.1.21
 - **UI**: Compose Multiplatform 1.8.1 with Material3
 - **Architecture**: Clean Architecture (Repository/UseCase/ViewModel)
-- **DI**: Koin
-- **Serialization**: kotlinx.serialization with custom serializers
+- **DI**: Koin 4.1.0
+- **Serialization**: kotlinx.serialization 1.8.0 with custom serializers
 - **State Management**: StateFlow/Compose State
+- **Image Loading**: Coil 2.7.0 (Android), expect/actual pattern (iOS)
 - **Platforms**: Android (SDK 24-35), iOS (via Kotlin/Native)
+- **Build System**: Gradle with Kotlin DSL, Xcode integration
+
+## Deployment Status
+- ✅ **Android**: APK builds successfully, portrait locked, image loading functional
+- ✅ **iOS**: Framework builds cleanly, simulator tested, configuration warnings resolved
+- ✅ **Cross-Platform**: All shared business logic and UI working across both platforms
+- ✅ **Production Ready**: No blocking issues, comprehensive feature set complete
