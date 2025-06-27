@@ -47,7 +47,7 @@ class FieldRepositoryImpl : FieldRepository {
     override suspend fun getDistinctRangs(champ: String, parcelle: String): List<String> {
         return loadFieldEntries()
             .filter { it.champ == champ && it.parcelle == parcelle }
-            .map { it.rang }
+            .mapNotNull { it.rang }
             .distinct()
             .sortedBy { it.toIntOrNull() ?: 0 }
     }
@@ -55,7 +55,7 @@ class FieldRepositoryImpl : FieldRepository {
     override suspend fun getDistinctTrous(champ: String, parcelle: String, rang: String): List<String> {
         return loadFieldEntries()
             .filter { it.champ == champ && it.parcelle == parcelle && it.rang == rang }
-            .map { it.trou }
+            .mapNotNull { it.trou }
             .distinct()
             .sortedBy { it.toIntOrNull() ?: 0 }
     }
