@@ -29,18 +29,26 @@ fun PeonyIdentifierScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-                top = 16.dp,
-                bottom = 32.dp  // Extra bottom padding for system navigation
-            )
+            .windowInsetsPadding(WindowInsets.systemBars)
+            .padding(horizontal = 16.dp)
     ) {
-        // Main content area for peony details
+        // Compact selection controls at top
+        SelectionControls(
+            uiState = uiState,
+            onChampSelected = viewModel::onChampSelected,
+            onParcelleSelected = viewModel::onParcelleSelected,
+            onRangSelected = viewModel::onRangSelected,
+            onTrouSelected = viewModel::onTrouSelected,
+            onReset = viewModel::reset,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        
+        // Main content area for peony details - takes most space
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .padding(bottom = 8.dp)
         ) {
             when {
                 uiState.isLoading -> {
@@ -73,18 +81,6 @@ fun PeonyIdentifierScreen(
                 }
             }
         }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Bottom selection area with cascading spinners
-        SelectionControls(
-            uiState = uiState,
-            onChampSelected = viewModel::onChampSelected,
-            onParcelleSelected = viewModel::onParcelleSelected,
-            onRangSelected = viewModel::onRangSelected,
-            onTrouSelected = viewModel::onTrouSelected,
-            onReset = viewModel::reset
-        )
     }
 }
 
@@ -257,103 +253,144 @@ private fun PeonyCard(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
+@Composable 
 private fun SelectionControls(
     uiState: PeonyIdentifierState,
     onChampSelected: (String) -> Unit,
     onParcelleSelected: (String) -> Unit,
     onRangSelected: (String) -> Unit,
     onTrouSelected: (String) -> Unit,
-    onReset: () -> Unit
+    onReset: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth()
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = MaterialTheme.shapes.medium
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // Header row with title and reset
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Select Position",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    text = "Position",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                TextButton(onClick = onReset) {
-                    Text("Reset")
+                TextButton(
+                    onClick = onReset,
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = "Reset",
+                        style = MaterialTheme.typography.labelMedium
+                    )
                 }
             }
             
-            // Field (Champ) Dropdown
-            DropdownSelector(
-                label = "Field",
-                selectedValue = uiState.selectedChamp,
-                options = uiState.availableChamps,
-                onSelectionChanged = onChampSelected,
-                enabled = !uiState.isLoading
-            )
-            
-            // Parcel (Parcelle) Dropdown
-            DropdownSelector(
-                label = "Parcel",
-                selectedValue = uiState.selectedParcelle,
-                options = uiState.availableParcelles,
-                onSelectionChanged = onParcelleSelected,
-                enabled = !uiState.isLoading && uiState.selectedChamp != null
-            )
-            
-            // Row (Rang) Dropdown
-            DropdownSelector(
-                label = "Row",
-                selectedValue = uiState.selectedRang,
-                options = uiState.availableRangs,
-                onSelectionChanged = onRangSelected,
-                enabled = !uiState.isLoading && uiState.selectedParcelle != null
-            )
-            
-            // Position (Trou) Dropdown
-            DropdownSelector(
-                label = "Position",
-                selectedValue = uiState.selectedTrou,
-                options = uiState.availableTrous,
-                onSelectionChanged = onTrouSelected,
-                enabled = !uiState.isLoading && uiState.selectedRang != null
-            )
+            // Compact 2x2 grid of dropdowns
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Field and Parcel on first row
+                    CompactDropdownSelector(
+                        label = "Field",
+                        selectedValue = uiState.selectedChamp,
+                        options = uiState.availableChamps,
+                        onSelectionChanged = onChampSelected,
+                        enabled = !uiState.isLoading,
+                        modifier = Modifier.weight(1f)
+                    )
+                    CompactDropdownSelector(
+                        label = "Parcel",
+                        selectedValue = uiState.selectedParcelle,
+                        options = uiState.availableParcelles,
+                        onSelectionChanged = onParcelleSelected,
+                        enabled = !uiState.isLoading && uiState.selectedChamp != null,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Row and Position on second row
+                    CompactDropdownSelector(
+                        label = "Row",
+                        selectedValue = uiState.selectedRang,
+                        options = uiState.availableRangs,
+                        onSelectionChanged = onRangSelected,
+                        enabled = !uiState.isLoading && uiState.selectedParcelle != null,
+                        modifier = Modifier.weight(1f)
+                    )
+                    CompactDropdownSelector(
+                        label = "Position",
+                        selectedValue = uiState.selectedTrou,
+                        options = uiState.availableTrous,
+                        onSelectionChanged = onTrouSelected,
+                        enabled = !uiState.isLoading && uiState.selectedRang != null,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DropdownSelector(
+private fun CompactDropdownSelector(
     label: String,
     selectedValue: String?,
     options: List<String>,
     onSelectionChanged: (String) -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
+    modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
     
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded && enabled },
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         OutlinedTextField(
             value = selectedValue ?: "",
             onValueChange = {},
             readOnly = true,
-            label = { Text(label) },
-            placeholder = { Text("Select $label") },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            label = { 
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelSmall
+                ) 
+            },
+            placeholder = { 
+                Text(
+                    text = "--",
+                    style = MaterialTheme.typography.bodySmall
+                ) 
+            },
+            trailingIcon = { 
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) 
+            },
             enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = enabled)
+                .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = enabled),
+            colors = OutlinedTextFieldDefaults.colors(
+                disabledBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                disabledLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+            ),
+            shape = MaterialTheme.shapes.small
         )
         
         ExposedDropdownMenu(
@@ -362,7 +399,12 @@ private fun DropdownSelector(
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option) },
+                    text = { 
+                        Text(
+                            text = option,
+                            style = MaterialTheme.typography.bodyMedium
+                        ) 
+                    },
                     onClick = {
                         onSelectionChanged(option)
                         expanded = false
