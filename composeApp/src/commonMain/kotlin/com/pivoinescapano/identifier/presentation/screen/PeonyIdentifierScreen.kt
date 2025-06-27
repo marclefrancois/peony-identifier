@@ -3,7 +3,9 @@ package com.pivoinescapano.identifier.presentation.screen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -431,83 +433,10 @@ private fun PositionCard(
     }
 }
 
-// Bottom selection bar for Field, Parcel, Row
+// Value-only dropdown for the bottom bar (no internal labels)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun BottomSelectionBar(
-    uiState: PeonyIdentifierState,
-    onChampSelected: (String) -> Unit,
-    onParcelleSelected: (String) -> Unit,
-    onRangSelected: (String) -> Unit,
-    onReset: () -> Unit
-) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.navigationBars),
-        color = AppColors.SurfaceContainerHigh,
-        shadowElevation = 8.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = AppSpacing.M,
-                    vertical = AppSpacing.M
-                ),
-            horizontalArrangement = Arrangement.spacedBy(AppSpacing.S),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Field selector
-            CompactBottomDropdown(
-                label = "Field",
-                selectedValue = uiState.selectedChamp,
-                options = uiState.availableChamps,
-                onSelectionChanged = onChampSelected,
-                enabled = !uiState.isLoading,
-                modifier = Modifier.weight(1f)
-            )
-            
-            // Parcel selector
-            CompactBottomDropdown(
-                label = "Parcel",
-                selectedValue = uiState.selectedParcelle,
-                options = uiState.availableParcelles,
-                onSelectionChanged = onParcelleSelected,
-                enabled = !uiState.isLoading && uiState.selectedChamp != null,
-                modifier = Modifier.weight(1f)
-            )
-            
-            // Row selector
-            CompactBottomDropdown(
-                label = "Row",
-                selectedValue = uiState.selectedRang,
-                options = uiState.availableRangs,
-                onSelectionChanged = onRangSelected,
-                enabled = !uiState.isLoading && uiState.selectedParcelle != null,
-                modifier = Modifier.weight(1f)
-            )
-            
-            // Reset button
-            IconButton(
-                onClick = onReset,
-                modifier = Modifier.size(56.dp)
-            ) {
-                Text(
-                    text = "↻",
-                    style = AppTypography.HeadlineSmall,
-                    color = AppColors.PrimaryPurple
-                )
-            }
-        }
-    }
-}
-
-// Compact bottom dropdown for the bottom bar
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun CompactBottomDropdown(
-    label: String,
+private fun ValueOnlyDropdown(
     selectedValue: String?,
     options: List<String>,
     onSelectionChanged: (String) -> Unit,
@@ -522,41 +451,39 @@ private fun CompactBottomDropdown(
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = selectedValue ?: "",
+            value = selectedValue ?: "--",
             onValueChange = {},
             readOnly = true,
-            label = { 
-                Text(
-                    text = label,
-                    style = AppTypography.LabelSmall,
-                    color = if (enabled) AppColors.OnSurface else AppColors.OnSurfaceVariant.copy(alpha = 0.6f)
-                ) 
-            },
             placeholder = { 
                 Text(
                     text = "--",
-                    style = AppTypography.BodySmall,
-                    color = AppColors.OnSurfaceVariant
+                    style = AppTypography.BodyLarge,
+                    color = AppColors.OnSurfaceVariant.copy(alpha = 0.6f),
+                    textAlign = TextAlign.Center
                 ) 
             },
             trailingIcon = { 
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) 
+                ExposedDropdownMenuDefaults.TrailingIcon(
+                    expanded = expanded,
+                    modifier = Modifier.size(20.dp)
+                ) 
             },
             enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
+                .height(48.dp)
                 .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = enabled),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = AppColors.PrimaryPurple,
-                unfocusedBorderColor = AppColors.OnSurfaceVariant,
-                disabledBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.3f),
-                focusedLabelColor = AppColors.PrimaryPurple,
-                unfocusedLabelColor = AppColors.OnSurfaceVariant,
-                disabledLabelColor = AppColors.OnSurfaceVariant.copy(alpha = 0.3f)
+                unfocusedBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.5f),
+                disabledBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.2f),
+                focusedTextColor = AppColors.OnSurface,
+                unfocusedTextColor = AppColors.OnSurface,
+                disabledTextColor = AppColors.OnSurfaceVariant.copy(alpha = 0.5f)
             ),
             shape = RoundedCornerShape(AppSpacing.S),
-            textStyle = AppTypography.BodySmall
+            textStyle = AppTypography.BodyLarge.copy(textAlign = TextAlign.Center),
+            singleLine = true
         )
         
         ExposedDropdownMenu(
@@ -576,6 +503,92 @@ private fun CompactBottomDropdown(
                         onSelectionChanged(option)
                         expanded = false
                     }
+                )
+            }
+        }
+    }
+}
+
+// Bottom selection bar for Field, Parcel, Row with external labels
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun BottomSelectionBar(
+    uiState: PeonyIdentifierState,
+    onChampSelected: (String) -> Unit,
+    onParcelleSelected: (String) -> Unit,
+    onRangSelected: (String) -> Unit,
+    onReset: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.navigationBars)
+            .combinedClickable(
+                onLongClick = onReset,
+                onClick = {}
+            ),
+        color = AppColors.SurfaceContainerHigh,
+        shadowElevation = 8.dp
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(AppSpacing.M)
+        ) {
+            // External labels row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AppSpacing.S)
+            ) {
+                Text(
+                    text = "Field",
+                    style = AppTypography.LabelMedium,
+                    color = AppColors.OnSurface,
+                    modifier = Modifier.weight(0.4f)
+                )
+                Text(
+                    text = "Parcel",
+                    style = AppTypography.LabelMedium,
+                    color = AppColors.OnSurface,
+                    modifier = Modifier.weight(0.35f)
+                )
+                Text(
+                    text = "Row",
+                    style = AppTypography.LabelMedium,
+                    color = AppColors.OnSurface,
+                    modifier = Modifier.weight(0.25f)
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(AppSpacing.XS))
+            
+            // Dropdowns row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AppSpacing.S)
+            ) {
+                ValueOnlyDropdown(
+                    selectedValue = uiState.selectedChamp,
+                    options = uiState.availableChamps,
+                    onSelectionChanged = onChampSelected,
+                    enabled = !uiState.isLoading,
+                    modifier = Modifier.weight(0.4f)
+                )
+                
+                ValueOnlyDropdown(
+                    selectedValue = uiState.selectedParcelle,
+                    options = uiState.availableParcelles,
+                    onSelectionChanged = onParcelleSelected,
+                    enabled = !uiState.isLoading && uiState.selectedChamp != null,
+                    modifier = Modifier.weight(0.35f)
+                )
+                
+                ValueOnlyDropdown(
+                    selectedValue = uiState.selectedRang,
+                    options = uiState.availableRangs,
+                    onSelectionChanged = onRangSelected,
+                    enabled = !uiState.isLoading && uiState.selectedParcelle != null,
+                    modifier = Modifier.weight(0.25f)
                 )
             }
         }
