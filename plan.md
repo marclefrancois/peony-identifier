@@ -1,6 +1,6 @@
 # Peony Identifier App Plan
 
-## Project Status: ✅ Production Ready v1.0
+## Project Status: ✅ Production Ready v1.1
 
 A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with hierarchical selection and detailed peony information display.
 
@@ -21,8 +21,15 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - ✅ **Async Image Loading**: Platform-specific image loading with caching (Android) and placeholders (iOS)
 - ✅ **Complete Information Display**: Always show field entry data even without peony matches
 - ✅ **Cross-Platform Deployment**: Both Android and iOS builds working successfully
+- ✅ **Advanced Navigation System**: Fluid velocity-based swipe navigation with seamless animations
 
-## Current App Layout ✅ Recently Redesigned
+## Current App Layout ✅ Recently Redesigned with Advanced Navigation
+- **Navigation System**: Native iOS-style gesture navigation with fluid animations
+  - Velocity-based swipe detection (800px/s threshold + 15% screen distance)
+  - Direct 1:1 finger tracking during gestures with seamless animation continuation
+  - Bidirectional support: right swipe to navigate back, left swipe to cancel
+  - Material3 Scaffold with conditional top/bottom bars for smooth transitions
+  - Cross-platform BackHandler support (Android physical back + iOS swipe gestures)
 - **Top Section**: Compact selection controls in 2x2 grid (Field/Parcel, Row/Position)
   - Uses WindowInsets padding to respect system bars (status bar, navigation bar)  
   - Modern Material3 Surface design with smaller typography
@@ -104,6 +111,29 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - ✅ **Android Permissions**: Added INTERNET permission for image loading
 - ✅ **Portrait Lock**: Android app locked to portrait orientation
 - ✅ **Background JSON Loading**: Optimized 5.1MB peony database loading with background threading and caching
+- ✅ **Advanced Navigation Implementation**: Native iOS-style navigation with Material3 Scaffold integration
+  - ✅ Velocity-based gesture detection using VelocityTracker for natural flick recognition
+  - ✅ Direct finger tracking with 1:1 screen movement and seamless animation continuation
+  - ✅ Cross-platform BackHandler with expect/actual pattern for Android/iOS compatibility
+  - ✅ Dual animation system: real-time gesture feedback + smooth completion animations
+  - ✅ Content preservation during transitions to prevent empty screens during navigation
+
+## Version 1.1 Status: ✅ COMPLETE & DEPLOYED
+
+### ✅ New in Version 1.1: Advanced Navigation System
+- ✅ **Fluid Gesture Navigation**: Native iOS-style swipe navigation with velocity detection
+  - ✅ Smart gesture recognition: 800px/s velocity threshold + 15% screen distance minimum
+  - ✅ Direct finger tracking: Screen follows finger position with 1:1 movement ratio
+  - ✅ Bidirectional gestures: Right swipe to navigate back, left swipe to cancel
+  - ✅ Seamless animation continuation: Animations start from finger lift position, not beginning
+- ✅ **Enhanced UI Architecture**: Material3 Scaffold with conditional navigation elements
+  - ✅ Dynamic top bar: "Peony Finder" title in list, back button + position info in details
+  - ✅ Smart bottom bar: Hidden during details view for immersive experience
+  - ✅ Cross-platform compatibility: Android back button + iOS gesture support
+- ✅ **Animation System**: Sophisticated dual-layer animation architecture
+  - ✅ Real-time gesture feedback during drag with direct finger following
+  - ✅ Smooth spring animations for cancellations and completions
+  - ✅ Content preservation during transitions to eliminate empty screen flickers
 
 ## Version 1.0 Status: ✅ COMPLETE & DEPLOYED
 
@@ -128,13 +158,16 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
   - ✅ Background parsing on Dispatchers.Default for CPU-intensive operations
   - ✅ Optimized 5.1MB peony database loading without blocking UI thread
 
-## Future Enhancements (Version 1.1+)
+## Future Enhancements (Version 1.2+)
 - [ ] **Network Error Handling**: Improve error handling for connectivity issues
 - [ ] **Testing**: Add unit tests for fuzzy matching algorithm
 - [ ] **Testing**: Add integration tests for repository implementations
+- [ ] **Testing**: Add UI tests for gesture navigation system
 - [ ] **Accessibility**: Add content descriptions and proper focus handling
 - [ ] **Export Features**: Allow exporting field data and search results
 - [ ] **Search Enhancement**: Add direct search by variety name
+- [ ] **Navigation Enhancement**: Add haptic feedback for gesture navigation
+- [ ] **Animation Polish**: Add parallax effects and more sophisticated transitions
 
 ## Technical Stack
 - **Language**: Kotlin 2.1.21
@@ -148,7 +181,8 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - **Build System**: Gradle with Kotlin DSL, Xcode integration
 
 ## Deployment Status
-- ✅ **Android**: APK builds successfully, portrait locked, image loading functional
-- ✅ **iOS**: Framework builds cleanly, async image loading functional, configuration warnings resolved
+- ✅ **Android**: APK builds successfully, portrait locked, image loading functional, gesture navigation working
+- ✅ **iOS**: Framework builds cleanly, async image loading functional, native swipe gestures implemented
 - ✅ **Cross-Platform**: All shared business logic and UI working across both platforms
-- ✅ **Production Ready**: No blocking issues, comprehensive feature set complete
+- ✅ **Navigation**: Fluid velocity-based gesture system deployed and tested on both platforms
+- ✅ **Production Ready**: Advanced navigation system complete, no blocking issues, professional UX
