@@ -3,3 +3,4 @@
 /composeApp/build
 /.gradle
 /local.properties
+/.kotlin
