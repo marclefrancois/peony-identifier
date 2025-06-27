@@ -2,3 +2,4 @@
 /build
 /composeApp/build
 /.gradle
+/local.properties
