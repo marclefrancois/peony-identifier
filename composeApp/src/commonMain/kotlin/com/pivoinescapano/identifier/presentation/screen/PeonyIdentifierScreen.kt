@@ -455,32 +455,33 @@ private fun ValueOnlyDropdown(
             placeholder = { 
                 Text(
                     text = "--",
-                    style = AppTypography.BodyLarge,
+                    style = AppTypography.BodyMedium,
                     color = AppColors.OnSurfaceVariant.copy(alpha = 0.6f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) 
             },
             trailingIcon = { 
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(16.dp)
                 ) 
             },
             enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
+                .height(44.dp)
                 .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = enabled),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = AppColors.PrimaryPurple,
-                unfocusedBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.5f),
+                unfocusedBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.4f),
                 disabledBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.2f),
                 focusedTextColor = AppColors.OnSurface,
                 unfocusedTextColor = AppColors.OnSurface,
                 disabledTextColor = AppColors.OnSurfaceVariant.copy(alpha = 0.5f)
             ),
-            shape = RoundedCornerShape(AppSpacing.S),
-            textStyle = AppTypography.BodyLarge.copy(textAlign = TextAlign.Center),
+            shape = RoundedCornerShape(AppSpacing.XS),
+            textStyle = AppTypography.BodyMedium.copy(textAlign = TextAlign.Center),
             singleLine = true
         )
         
@@ -531,7 +532,7 @@ private fun BottomSelectionBar(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(AppSpacing.M)
+                .padding(horizontal = AppSpacing.M, vertical = AppSpacing.S)
         ) {
             // External labels row
             Row(
@@ -541,19 +542,22 @@ private fun BottomSelectionBar(
                 Text(
                     text = "Field",
                     style = AppTypography.LabelMedium,
-                    color = AppColors.OnSurface,
+                    color = AppColors.OnSurface.copy(alpha = 0.8f),
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.4f)
                 )
                 Text(
                     text = "Parcel",
                     style = AppTypography.LabelMedium,
-                    color = AppColors.OnSurface,
+                    color = AppColors.OnSurface.copy(alpha = 0.8f),
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.35f)
                 )
                 Text(
                     text = "Row",
                     style = AppTypography.LabelMedium,
-                    color = AppColors.OnSurface,
+                    color = AppColors.OnSurface.copy(alpha = 0.8f),
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.25f)
                 )
             }
