@@ -202,4 +202,14 @@ class PeonyIdentifierViewModel(
         _uiState.value = PeonyIdentifierState()
         loadInitialData()
     }
+
+    fun navigateBack() {
+        _uiState.value = _uiState.value.copy(
+            selectedTrou = null,
+            currentFieldEntry = null,
+            currentPeony = null,
+            fuzzyMatches = emptyList(),
+            showPeonyDetails = false
+        )
+    }
 }

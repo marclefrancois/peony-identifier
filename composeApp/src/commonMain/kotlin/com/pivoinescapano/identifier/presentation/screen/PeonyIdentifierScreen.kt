@@ -51,96 +51,104 @@ fun PeonyIdentifierScreen(
         }
     }
     
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.systemBars)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
+    // Determine if we're in details view
+    val isInDetailsView = uiState.showPeonyDetails
+    
+    Scaffold(
+        topBar = {
+            if (isInDetailsView) {
+                DetailsTopBar(
+                    fieldEntry = uiState.currentFieldEntry,
+                    onBackClick = viewModel::navigateBack
+                )
+            } else {
+                ListTopBar()
+            }
+        },
+        bottomBar = {
+            // Only show bottom bar when not in details view
+            if (!isInDetailsView) {
+                BottomSelectionBar(
+                    uiState = uiState,
+                    onChampSelected = viewModel::onChampSelected,
+                    onParcelleSelected = viewModel::onParcelleSelected,
+                    onRangSelected = viewModel::onRangSelected,
+                    onReset = viewModel::reset
+                )
+            }
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            // Main content area - positions list or peony details
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                when {
-                    uiState.isLoading -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                    uiState.error != null -> {
-                        ErrorContent(
-                            error = uiState.error ?: "Unknown error occurred",
-                            onDismiss = viewModel::clearError,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                    uiState.selectedRang != null && uiState.selectedTrou == null -> {
-                        // Show positions list for selected row
-                        PositionsListContent(
-                            uiState = uiState,
-                            onTrouSelected = viewModel::onTrouSelected,
-                            listState = positionListState,
-                            onVisiblePositionChanged = { currentVisiblePosition = it }
-                        )
-                    }
-                    uiState.showPeonyDetails -> {
-                        PeonyDetailsContent(
-                            peony = uiState.currentPeony,
-                            fuzzyMatches = uiState.fuzzyMatches,
-                            fieldEntry = uiState.currentFieldEntry,
-                            onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected
-                        )
-                    }
-                    else -> {
-                        Text(
-                            text = "Select field, parcel, and row to view positions",
-                            style = AppTypography.BodyLarge,
-                            textAlign = TextAlign.Center,
-                            color = AppColors.OnSurfaceVariant,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(AppSpacing.M)
-                        )
-                    }
+            when {
+                uiState.isLoading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                uiState.error != null -> {
+                    ErrorContent(
+                        error = uiState.error ?: "Unknown error occurred",
+                        onDismiss = viewModel::clearError,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                uiState.selectedRang != null && uiState.selectedTrou == null -> {
+                    // Show positions list for selected row
+                    PositionsListContent(
+                        uiState = uiState,
+                        onTrouSelected = viewModel::onTrouSelected,
+                        listState = positionListState,
+                        onVisiblePositionChanged = { currentVisiblePosition = it }
+                    )
+                }
+                uiState.showPeonyDetails -> {
+                    PeonyDetailsContent(
+                        peony = uiState.currentPeony,
+                        fuzzyMatches = uiState.fuzzyMatches,
+                        fieldEntry = uiState.currentFieldEntry,
+                        onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected
+                    )
+                }
+                else -> {
+                    Text(
+                        text = "Select field, parcel, and row to view positions",
+                        style = AppTypography.BodyLarge,
+                        textAlign = TextAlign.Center,
+                        color = AppColors.OnSurfaceVariant,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(AppSpacing.M)
+                    )
                 }
             }
-            
-            // Bottom selection bar (Field, Parcel, Row only)
-            BottomSelectionBar(
-                uiState = uiState,
-                onChampSelected = viewModel::onChampSelected,
-                onParcelleSelected = viewModel::onParcelleSelected,
-                onRangSelected = viewModel::onRangSelected,
-                onReset = viewModel::reset
-            )
-        }
         
-        // Scroll position overlay
-        AnimatedVisibility(
-            visible = showScrollOverlay && currentVisiblePosition.isNotEmpty(),
-            enter = fadeIn(),
-            exit = fadeOut(),
-            modifier = Modifier.align(Alignment.Center)
-        ) {
-            OverlayCard(
-                modifier = Modifier.size(AppSpacing.OverlayCardSize)
+            // Scroll position overlay
+            AnimatedVisibility(
+                visible = showScrollOverlay && currentVisiblePosition.isNotEmpty(),
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.align(Alignment.Center)
             ) {
-                Text(
-                    text = "Position",
-                    style = AppTypography.LabelMedium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Text(
-                    text = currentVisiblePosition,
-                    style = AppTypography.HeadlineLarge,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                OverlayCard(
+                    modifier = Modifier.size(AppSpacing.OverlayCardSize)
+                ) {
+                    Text(
+                        text = "Position",
+                        style = AppTypography.LabelMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        text = currentVisiblePosition,
+                        style = AppTypography.HeadlineLarge,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }
@@ -595,4 +603,64 @@ private fun BottomSelectionBar(
             }
         }
     }
+}
+
+// Top bar for list view
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ListTopBar() {
+    TopAppBar(
+        title = {
+            Text(
+                text = "Peony Finder",
+                style = AppTypography.HeadlineSmall,
+                color = AppColors.OnSurface
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = AppColors.SurfaceContainer,
+            titleContentColor = AppColors.OnSurface
+        )
+    )
+}
+
+// Top bar for details view with back button and field info
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DetailsTopBar(
+    fieldEntry: FieldEntry?,
+    onBackClick: () -> Unit
+) {
+    TopAppBar(
+        title = {
+            Column {
+                Text(
+                    text = "Position ${fieldEntry?.trou ?: ""}",
+                    style = AppTypography.HeadlineSmall,
+                    color = AppColors.OnSurface
+                )
+                fieldEntry?.let { entry ->
+                    Text(
+                        text = "Field ${entry.champ} • Parcel ${entry.parcelle} • Row ${entry.rang}",
+                        style = AppTypography.BodySmall,
+                        color = AppColors.OnSurfaceVariant
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Text(
+                    text = "←",
+                    style = AppTypography.HeadlineMedium,
+                    color = AppColors.OnSurface
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = AppColors.SurfaceContainer,
+            titleContentColor = AppColors.OnSurface,
+            navigationIconContentColor = AppColors.OnSurface
+        )
+    )
 }
