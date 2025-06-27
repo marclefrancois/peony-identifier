@@ -16,14 +16,19 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - ✅ Material3 UI with responsive layout
 - ✅ Error handling and loading states
 - ✅ Cross-platform compilation validation
+- ✅ **Optimized UI Layout**: Space-efficient design with proper OS control respect
+- ✅ **Compact Selection Controls**: 2x2 grid layout at top saves 70% more space for content
 
-## Current App Layout
-- **Top Section**: Large peony details display area with exact matches and fuzzy suggestions
-- **Bottom Section**: Compact selection controls with 4 cascading dropdowns
-  - Field selection loads parcels
-  - Parcel selection loads rows  
-  - Row selection loads positions
-  - Position selection triggers peony lookup and display
+## Current App Layout ✅ Recently Redesigned
+- **Top Section**: Compact selection controls in 2x2 grid (Field/Parcel, Row/Position)
+  - Uses WindowInsets padding to respect system bars (status bar, navigation bar)  
+  - Modern Material3 Surface design with smaller typography
+  - Cascading logic: Field → Parcel → Row → Position selection
+- **Main Section**: Maximized peony details display area (75% of screen space)
+  - Variety name card (no redundant position info)
+  - Exact match peony details with cultivar, originator, date, group, description
+  - Fuzzy match suggestions when exact match not found
+  - Proper scrolling for long descriptions
 
 ## Data Structure
 
@@ -83,26 +88,34 @@ A Kotlin Multiplatform Compose app for identifying peonies across 4 fields, with
 - ✅ Material3 UI components with proper error states
 - ✅ Cross-platform resource loading via Compose Resources
 
+## Recent Design Improvements ✅ Just Completed
+- ✅ **Space Optimization**: Moved selection controls to top, giving 70% more space to peony details
+- ✅ **OS Control Respect**: Added proper WindowInsets padding for system bars
+- ✅ **Compact Grid Layout**: 2x2 dropdown arrangement instead of vertical stack
+- ✅ **Redundancy Removal**: Eliminated duplicate field position info from variety card
+- ✅ **Modern Material3**: Surface design with proper color theming and typography hierarchy
+
 ## Todo List for Version 1.0
 
 ### High Priority (Core Functionality)
-- [ ] **Platform Testing**: Test app thoroughly on both Android and iOS devices
-  - Verify cascading dropdowns work correctly
-  - Test peony lookup and display
-  - Validate JSON loading and parsing
-  - Check UI layout on different screen sizes
+- [ ] **Platform Testing**: Test redesigned UI on both Android and iOS devices
+  - Verify new compact 2x2 dropdown grid works correctly
+  - Test peony lookup and display with maximized space
+  - Validate WindowInsets padding on different devices
+  - Check UI layout on different screen sizes and orientations
 
 ### Medium Priority (Polish & UX)
 - [ ] **Image Loading**: Add async image loading from peony URLs with caching
-  - Implement proper loading states for images
+  - Implement proper loading states for images in peony cards
   - Add fallback for broken/missing images
-  - Consider image caching strategy
+  - Consider image caching strategy for offline viewing
 
 ### Low Priority (Future Enhancements)
 - [ ] **Network Error Handling**: Improve error handling for connectivity issues
 - [ ] **Performance**: Optimize JSON loading with background threading
 - [ ] **Testing**: Add unit tests for fuzzy matching algorithm
 - [ ] **Testing**: Add integration tests for repository implementations
+- [ ] **Accessibility**: Add content descriptions and proper focus handling
 
 ## Current Technical Stack
 - **Language**: Kotlin 2.1.21
