@@ -142,7 +142,7 @@ class PeonyIdentifierViewModel(
                     _uiState.value = _uiState.value.copy(
                         currentPeony = peony,
                         fuzzyMatches = fuzzyMatches,
-                        showPeonyDetails = peony != null || fuzzyMatches.isNotEmpty(),
+                        showPeonyDetails = true, // Always show details when we have a field entry
                         isLoading = false
                     )
                 } else {
