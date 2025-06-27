@@ -45,7 +45,7 @@ fun PeonyIdentifierScreen(
                 }
                 uiState.error != null -> {
                     ErrorContent(
-                        error = uiState.error!!,
+                        error = uiState.error ?: "Unknown error occurred",
                         onDismiss = viewModel::clearError,
                         modifier = Modifier.align(Alignment.Center)
                     )

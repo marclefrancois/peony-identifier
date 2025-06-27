@@ -25,7 +25,7 @@ class FieldRepositoryImpl : FieldRepository {
                 throw RuntimeException("Failed to load field data: ${e.message}", e)
             }
         }
-        return cachedFieldEntries!!
+        return requireNotNull(cachedFieldEntries) { "Field data failed to load" }
     }
     
     override suspend fun getFieldEntries(fieldNumber: String): List<FieldEntry> {

@@ -27,7 +27,7 @@ class PeonyRepositoryImpl : PeonyRepository {
                 throw RuntimeException("Failed to load peony database: ${e.message}", e)
             }
         }
-        return cachedPeonies!!
+        return requireNotNull(cachedPeonies) { "Peony data failed to load" }
     }
     
     override suspend fun getAllPeonies(): List<PeonyInfo> {
