@@ -37,16 +37,33 @@ class DataCacheManager(
     }
     
     /**
-     * Load field entries with background threading and thread-safe caching
+     * Load field entries from all available field files with background threading and thread-safe caching
      */
     suspend fun loadFieldEntries(): List<FieldEntry> {
         return fieldMutex.withLock {
             cachedFieldEntries ?: run {
-                val fieldEntries = jsonDataLoader.loadAndParseJsonSerialization<List<FieldEntry>>(
-                    "files/Champ1PP.json"
+                val allFieldEntries = mutableListOf<FieldEntry>()
+                
+                // List of all available field files
+                val fieldFiles = listOf(
+                    "files/Champ1PP.json",
+                    "files/Champ1GP.json", 
+                    "files/Champ2PP.json"
                 )
-                cachedFieldEntries = fieldEntries
-                fieldEntries
+                
+                // Load and combine all field files
+                for (fieldFile in fieldFiles) {
+                    try {
+                        val entries = jsonDataLoader.loadAndParseJsonSerialization<List<FieldEntry>>(fieldFile)
+                        allFieldEntries.addAll(entries)
+                    } catch (e: Exception) {
+                        // Log error but continue with other files
+                        println("Warning: Could not load field file $fieldFile: ${e.message}")
+                    }
+                }
+                
+                cachedFieldEntries = allFieldEntries
+                allFieldEntries
             }
         }
     }
