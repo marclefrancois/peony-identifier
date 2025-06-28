@@ -116,8 +116,6 @@ class PeonyIdentifierViewModel(
         val currentChamp = _uiState.value.selectedChamp ?: return
         val currentParcelle = _uiState.value.selectedParcelle ?: return
         
-        println("SwipeDebug: onRangSelected called with rang=$rang")
-        
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value.copy(
@@ -129,8 +127,6 @@ class PeonyIdentifierViewModel(
                     currentPeony = null,
                     showPeonyDetails = false
                 )
-                
-                println("SwipeDebug: Updated state - selectedRang=${_uiState.value.selectedRang}")
 
                 val trous = getFieldSelectionUseCase.getAvailableTrous(currentChamp, currentParcelle, rang)
                 val rowEntries = getFieldSelectionUseCase.getRowEntries(currentChamp, currentParcelle, rang)
@@ -227,14 +223,9 @@ class PeonyIdentifierViewModel(
         val availableRangs = _uiState.value.availableRangs
         val currentIndex = availableRangs.indexOf(currentRang)
         
-        println("SwipeDebug: goToNextRow() - currentRang=$currentRang, currentIndex=$currentIndex, availableRangs=$availableRangs")
-        
         if (currentIndex >= 0 && currentIndex < availableRangs.size - 1) {
             val nextRang = availableRangs[currentIndex + 1]
-            println("SwipeDebug: Moving to next row: $nextRang")
             onRangSelected(nextRang)
-        } else {
-            println("SwipeDebug: Cannot go to next row - at boundary or invalid index")
         }
     }
     
@@ -243,14 +234,9 @@ class PeonyIdentifierViewModel(
         val availableRangs = _uiState.value.availableRangs
         val currentIndex = availableRangs.indexOf(currentRang)
         
-        println("SwipeDebug: goToPreviousRow() - currentRang=$currentRang, currentIndex=$currentIndex, availableRangs=$availableRangs")
-        
         if (currentIndex > 0) {
             val previousRang = availableRangs[currentIndex - 1]
-            println("SwipeDebug: Moving to previous row: $previousRang")
             onRangSelected(previousRang)
-        } else {
-            println("SwipeDebug: Cannot go to previous row - at boundary or invalid index")
         }
     }
     
@@ -258,17 +244,13 @@ class PeonyIdentifierViewModel(
         val currentRang = _uiState.value.selectedRang ?: return false
         val availableRangs = _uiState.value.availableRangs
         val currentIndex = availableRangs.indexOf(currentRang)
-        val canGo = currentIndex >= 0 && currentIndex < availableRangs.size - 1
-        println("SwipeDebug: canGoToNextRow() - currentRang=$currentRang, currentIndex=$currentIndex, availableRangs=$availableRangs, canGo=$canGo")
-        return canGo
+        return currentIndex >= 0 && currentIndex < availableRangs.size - 1
     }
     
     fun canGoToPreviousRow(): Boolean {
         val currentRang = _uiState.value.selectedRang ?: return false
         val availableRangs = _uiState.value.availableRangs
         val currentIndex = availableRangs.indexOf(currentRang)
-        val canGo = currentIndex > 0
-        println("SwipeDebug: canGoToPreviousRow() - currentRang=$currentRang, currentIndex=$currentIndex, availableRangs=$availableRangs, canGo=$canGo")
-        return canGo
+        return currentIndex > 0
     }
 }

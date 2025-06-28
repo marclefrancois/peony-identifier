@@ -6,7 +6,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -21,7 +20,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.size
 import androidx.compose.ui.text.font.FontWeight
@@ -101,7 +99,7 @@ fun PeonyIdentifierScreen(
         bottomBar = {
             // Only show bottom bar when not in details view
             if (!isInDetailsView) {
-                SwipeableRowSelectionBar(
+                SimpleRowSelectionBar(
                     uiState = uiState,
                     onPreviousRow = viewModel::goToPreviousRow,
                     onNextRow = viewModel::goToNextRow,
@@ -585,10 +583,10 @@ private fun ValueOnlyDropdown(
     }
 }
 
-// v1.4 Swipeable Row Selection Bar with Page Control
+// v1.4 Simple Row Selection Bar with Arrow Navigation
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun SwipeableRowSelectionBar(
+private fun SimpleRowSelectionBar(
     uiState: PeonyIdentifierState,
     onPreviousRow: () -> Unit,
     onNextRow: () -> Unit,
@@ -611,15 +609,8 @@ private fun SwipeableRowSelectionBar(
             val canGoToPrevious = currentIndex > 0
             val canGoToNext = currentIndex >= 0 && currentIndex < availableRangs.size - 1
             
-            println("SwipeDebug: UI State - selectedRang=$selectedRang, currentIndex=$currentIndex, availableRangs=$availableRangs")
-            println("SwipeDebug: UI State - canGoToPrevious=$canGoToPrevious, canGoToNext=$canGoToNext")
             
-            // Track state changes
-            LaunchedEffect(selectedRang, currentIndex) {
-                println("SwipeDebug: State changed! selectedRang=$selectedRang, currentIndex=$currentIndex")
-            }
-            
-            SwipeableRowControl(
+            SimpleRowControl(
                 currentRow = selectedRang,
                 availableRows = availableRangs,
                 onPreviousRow = onPreviousRow,
@@ -646,9 +637,9 @@ private fun SwipeableRowSelectionBar(
     }
 }
 
-// v1.4 Swipeable Row Control with Page Indicators
+// v1.4 Simple Row Control with Arrow Navigation
 @Composable
-private fun SwipeableRowControl(
+private fun SimpleRowControl(
     currentRow: String,
     availableRows: List<String>,
     onPreviousRow: () -> Unit,
@@ -659,52 +650,6 @@ private fun SwipeableRowControl(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Row number display with swipe area
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .pointerInput(Unit) {
-                    var totalDrag = 0f
-                    detectHorizontalDragGestures(
-                        onDragStart = {
-                            totalDrag = 0f
-                            println("SwipeDebug: Drag started")
-                        },
-                        onDragEnd = {
-                            // Very sensitive thresholds for better responsiveness
-                            // Right swipe (positive) = go to previous/lower row  
-                            // Left swipe (negative) = go to next/higher row
-                            
-                            // Compute everything fresh from current state
-                            val currentIndex = availableRows.indexOf(currentRow)
-                            val totalRows = availableRows.size
-                            val currentCanGoToPrevious = currentIndex > 0
-                            val currentCanGoToNext = currentIndex >= 0 && currentIndex < totalRows - 1
-                            
-                            println("SwipeDebug: totalDrag=$totalDrag, currentRow=$currentRow")
-                            println("SwipeDebug: availableRows=$availableRows, currentIndex=$currentIndex")
-                            println("SwipeDebug: canGoToPrevious=$currentCanGoToPrevious, canGoToNext=$currentCanGoToNext")
-                            when {
-                                totalDrag > 15 && currentCanGoToPrevious -> {
-                                    println("SwipeDebug: Right swipe detected, going to previous row")
-                                    onPreviousRow()
-                                }
-                                totalDrag < -15 && currentCanGoToNext -> {
-                                    println("SwipeDebug: Left swipe detected, going to next row") 
-                                    onNextRow()
-                                }
-                                else -> {
-                                    println("SwipeDebug: No action - totalDrag=$totalDrag not sufficient or direction blocked")
-                                }
-                            }
-                        }
-                    ) { _, dragAmount ->
-                        // Accumulate drag distance for more reliable detection
-                        totalDrag += dragAmount
-                    }
-                },
-            contentAlignment = Alignment.Center
-        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(AppSpacing.M)
@@ -738,7 +683,6 @@ private fun SwipeableRowControl(
                     )
                     
                     // Page indicators
-                    val currentIndex = availableRows.indexOf(currentRow)
                     val totalRows = availableRows.size
                     if (totalRows > 1) {
                         Row(
@@ -786,7 +730,6 @@ private fun SwipeableRowControl(
                     )
                 }
             }
-        }
     }
 }
 
