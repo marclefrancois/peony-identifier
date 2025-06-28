@@ -3,8 +3,10 @@ package com.pivoinescapano.identifier.presentation.screen
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -19,7 +21,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.size
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -97,9 +101,12 @@ fun PeonyIdentifierScreen(
         bottomBar = {
             // Only show bottom bar when not in details view
             if (!isInDetailsView) {
-                BottomSelectionBar(
+                SwipeableRowSelectionBar(
                     uiState = uiState,
-                    onRangSelected = viewModel::onRangSelected,
+                    onPreviousRow = viewModel::goToPreviousRow,
+                    onNextRow = viewModel::goToNextRow,
+                    canGoToPrevious = viewModel.canGoToPreviousRow(),
+                    canGoToNext = viewModel.canGoToNextRow(),
                     onReset = viewModel::reset
                 )
             }
@@ -580,12 +587,15 @@ private fun ValueOnlyDropdown(
     }
 }
 
-// v1.3 Enhanced Bottom Bar - Row Selection Only with Large Typography
+// v1.4 Swipeable Row Selection Bar with Page Control
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun BottomSelectionBar(
+private fun SwipeableRowSelectionBar(
     uiState: PeonyIdentifierState,
-    onRangSelected: (String) -> Unit,
+    onPreviousRow: () -> Unit,
+    onNextRow: () -> Unit,
+    canGoToPrevious: Boolean,
+    canGoToNext: Boolean,
     onReset: () -> Unit
 ) {
     EnhancedBottomNavigationBar(
@@ -596,93 +606,146 @@ private fun BottomSelectionBar(
                 onClick = {}
             )
     ) {
-        // Row Selection Label
-        Text(
-            text = "Row:",
-            style = AppTypography.BottomBarLarge,
-            color = AppColors.OnSurface
-        )
+        val selectedRang = uiState.selectedRang
+        val availableRangs = uiState.availableRangs
+        val isEnabled = !uiState.isLoading && uiState.selectedParcelle != null && availableRangs.isNotEmpty()
         
-        // Enhanced Row Dropdown with larger typography
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = AppSpacing.M)
-        ) {
-            LargeRowDropdown(
-                selectedValue = uiState.selectedRang,
-                options = uiState.availableRangs,
-                onSelectionChanged = onRangSelected,
-                enabled = !uiState.isLoading && uiState.selectedParcelle != null
+        if (isEnabled && selectedRang != null) {
+            SwipeableRowControl(
+                currentRow = selectedRang,
+                totalRows = availableRangs.size,
+                currentIndex = availableRangs.indexOf(selectedRang),
+                onPreviousRow = onPreviousRow,
+                onNextRow = onNextRow,
+                canGoToPrevious = canGoToPrevious,
+                canGoToNext = canGoToNext
             )
+        } else {
+            // Show placeholder when no row is selected
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (uiState.selectedParcelle == null) {
+                        "Select field and parcel first"
+                    } else {
+                        "Loading rows..."
+                    },
+                    style = AppTypography.BottomBarLarge,
+                    color = AppColors.OnSurfaceVariant.copy(alpha = 0.7f)
+                )
+            }
         }
     }
 }
 
-// v1.3 Large Row Dropdown with Enhanced Typography
-@OptIn(ExperimentalMaterial3Api::class)
+// v1.4 Swipeable Row Control with Page Indicators
 @Composable
-private fun LargeRowDropdown(
-    selectedValue: String?,
-    options: List<String>,
-    onSelectionChanged: (String) -> Unit,
-    enabled: Boolean = true,
+private fun SwipeableRowControl(
+    currentRow: String,
+    totalRows: Int,
+    currentIndex: Int,
+    onPreviousRow: () -> Unit,
+    onNextRow: () -> Unit,
+    canGoToPrevious: Boolean,
+    canGoToNext: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it && enabled },
-        modifier = modifier
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
-            value = selectedValue ?: "",
-            onValueChange = { },
-            readOnly = true,
-            enabled = enabled,
-            placeholder = { 
-                Text(
-                    text = if (enabled) "Select Row" else "Select field first", 
-                    style = AppTypography.BottomBarLarge,
-                    color = if (enabled) AppColors.OnSurfaceVariant else AppColors.OnSurfaceVariant.copy(alpha = 0.5f)
-                ) 
-            },
-            trailingIcon = { 
-                ExposedDropdownMenuDefaults.TrailingIcon(
-                    expanded = expanded
-                ) 
-            },
+        // Row number display with swipe area
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
-            textStyle = AppTypography.BottomBarLarge,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = AppColors.PrimaryGreen,
-                focusedLabelColor = AppColors.PrimaryGreen,
-                disabledBorderColor = AppColors.OutlineVariant.copy(alpha = 0.5f),
-                disabledTextColor = AppColors.OnSurfaceVariant.copy(alpha = 0.5f)
-            ),
-            singleLine = true
-        )
-        
-        if (enabled) {
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                options.forEach { option ->
-                    DropdownMenuItem(
-                        text = { 
-                            Text(
-                                text = option,
-                                style = AppTypography.BottomBarLarge
-                            ) 
-                        },
-                        onClick = {
-                            onSelectionChanged(option)
-                            expanded = false
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures(
+                        onDragEnd = {
+                            // This will be triggered when the drag ends
                         }
+                    ) { _, dragAmount ->
+                        // Detect swipe direction and trigger navigation
+                        when {
+                            dragAmount > 50 && canGoToPrevious -> onPreviousRow()
+                            dragAmount < -50 && canGoToNext -> onNextRow()
+                        }
+                    }
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AppSpacing.M)
+            ) {
+                // Previous arrow
+                IconButton(
+                    onClick = onPreviousRow,
+                    enabled = canGoToPrevious
+                ) {
+                    Text(
+                        text = "‹",
+                        style = AppTypography.HeadlineLarge,
+                        color = if (canGoToPrevious) AppColors.PrimaryGreen else AppColors.OnSurfaceVariant.copy(alpha = 0.3f)
+                    )
+                }
+                
+                // Current row display
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Row $currentRow",
+                        style = AppTypography.BottomBarLarge,
+                        color = AppColors.OnSurface
+                    )
+                    
+                    // Page indicators
+                    if (totalRows > 1) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.padding(top = 4.dp)
+                        ) {
+                            repeat(minOf(totalRows, 10)) { index -> // Limit to 10 dots
+                                val isActive = index == currentIndex
+                                Box(
+                                    modifier = Modifier
+                                        .size(if (isActive) 8.dp else 6.dp)
+                                        .clip(RoundedCornerShape(50))
+                                        .background(
+                                            if (isActive) 
+                                                AppColors.PrimaryGreen 
+                                            else 
+                                                AppColors.OnSurfaceVariant.copy(alpha = 0.3f)
+                                        )
+                                )
+                            }
+                            
+                            // Show "..." if there are more than 10 rows
+                            if (totalRows > 10) {
+                                Text(
+                                    text = "...",
+                                    style = AppTypography.BodySmall,
+                                    color = AppColors.OnSurfaceVariant,
+                                    modifier = Modifier.padding(horizontal = 2.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+                
+                // Next arrow
+                IconButton(
+                    onClick = onNextRow,
+                    enabled = canGoToNext
+                ) {
+                    Text(
+                        text = "›",
+                        style = AppTypography.HeadlineLarge,
+                        color = if (canGoToNext) AppColors.PrimaryGreen else AppColors.OnSurfaceVariant.copy(alpha = 0.3f)
                     )
                 }
             }

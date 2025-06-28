@@ -101,6 +101,11 @@ class PeonyIdentifierViewModel(
 
                 val rangs = getFieldSelectionUseCase.getAvailableRangs(currentChamp, parcelle)
                 _uiState.value = _uiState.value.copy(availableRangs = rangs)
+                
+                // Auto-select row 1 if available
+                if (rangs.contains("1")) {
+                    onRangSelected("1")
+                }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(error = "Failed to load rangs: ${e.message}")
             }
@@ -211,5 +216,41 @@ class PeonyIdentifierViewModel(
             fuzzyMatches = emptyList(),
             showPeonyDetails = false
         )
+    }
+    
+    fun goToNextRow() {
+        val currentRang = _uiState.value.selectedRang ?: return
+        val availableRangs = _uiState.value.availableRangs
+        val currentIndex = availableRangs.indexOf(currentRang)
+        
+        if (currentIndex >= 0 && currentIndex < availableRangs.size - 1) {
+            val nextRang = availableRangs[currentIndex + 1]
+            onRangSelected(nextRang)
+        }
+    }
+    
+    fun goToPreviousRow() {
+        val currentRang = _uiState.value.selectedRang ?: return
+        val availableRangs = _uiState.value.availableRangs
+        val currentIndex = availableRangs.indexOf(currentRang)
+        
+        if (currentIndex > 0) {
+            val previousRang = availableRangs[currentIndex - 1]
+            onRangSelected(previousRang)
+        }
+    }
+    
+    fun canGoToNextRow(): Boolean {
+        val currentRang = _uiState.value.selectedRang ?: return false
+        val availableRangs = _uiState.value.availableRangs
+        val currentIndex = availableRangs.indexOf(currentRang)
+        return currentIndex >= 0 && currentIndex < availableRangs.size - 1
+    }
+    
+    fun canGoToPreviousRow(): Boolean {
+        val currentRang = _uiState.value.selectedRang ?: return false
+        val availableRangs = _uiState.value.availableRangs
+        val currentIndex = availableRangs.indexOf(currentRang)
+        return currentIndex > 0
     }
 }
