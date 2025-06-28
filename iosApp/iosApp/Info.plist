@@ -12,8 +12,6 @@
 		<string>SplashLogo</string>
 		<key>UIImageRespectsSafeAreaInsets</key>
 		<true/>
-		<key>UILaunchScreenMininumTime</key>
-		<real>1</real>
 	</dict>
 </dict>
 </plist>
