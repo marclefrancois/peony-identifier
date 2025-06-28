@@ -668,10 +668,12 @@ private fun SwipeableRowControl(
                             totalDrag = 0f
                         },
                         onDragEnd = {
-                            // More sensitive thresholds for better responsiveness
+                            // Very sensitive thresholds for better responsiveness
+                            // Right swipe (positive) = go to previous/lower row  
+                            // Left swipe (negative) = go to next/higher row
                             when {
-                                totalDrag > 30 && canGoToPrevious -> onPreviousRow()
-                                totalDrag < -30 && canGoToNext -> onNextRow()
+                                totalDrag > 15 && canGoToPrevious -> onPreviousRow()
+                                totalDrag < -15 && canGoToNext -> onNextRow()
                             }
                         }
                     ) { _, dragAmount ->
