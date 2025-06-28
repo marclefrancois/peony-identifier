@@ -2,13 +2,9 @@ package com.pivoinescapano.identifier.presentation.theme
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -153,6 +149,28 @@ object AppTypography {
         lineHeight = 14.sp,
         letterSpacing = 1.5.sp
     )
+    
+    // v1.3 Enhanced Bottom Bar Typography - 30% larger than BodyMedium
+    val BottomBarLarge = TextStyle(
+        fontSize = 20.sp,      // 30% larger than BodyMedium (14sp)
+        fontWeight = FontWeight.Medium,
+        lineHeight = 28.sp,
+        letterSpacing = 0.15.sp
+    )
+    
+    // v1.3 Field Selection Screen Typography
+    val FieldSelectionTitle = TextStyle(
+        fontSize = 22.sp,
+        fontWeight = FontWeight.SemiBold,
+        lineHeight = 30.sp,
+        letterSpacing = 0.sp
+    )
+    val FieldSelectionDropdown = TextStyle(
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Medium,
+        lineHeight = 26.sp,
+        letterSpacing = 0.1.sp
+    )
 }
 
 // Enhanced Spacing System - Golden Ratio Based
@@ -181,6 +199,12 @@ object AppSpacing {
     val BottomSelectorHeight = 48.dp // Bottom navigation height
     val ButtonHeight = 40.dp         // Standard button height
     val CompactButtonHeight = 32.dp  // Compact button height
+    
+    // v1.3 Enhanced Bottom Bar Sizing
+    val LargeBottomBarHeight = 64.dp // Enhanced bottom bar height (33% larger)
+    val FieldSelectionPadding = 24.dp // Generous padding for field selection screen
+    val FieldSelectionDropdownHeight = 64.dp // Large dropdown height for field selection
+    val ContinueButtonHeight = 52.dp // Prominent continue button
     
     // Visual elements
     val OverlayCardSize = 120.dp     // Scroll position overlay
@@ -377,4 +401,115 @@ enum class MatchStatus {
     FuzzyMatch,
     NoMatch,
     Loading
+}
+
+// v1.3 Enhanced Field Selection Card
+@Composable
+fun FieldSelectionCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String? = null,
+    selected: Boolean = false,
+    onClick: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (selected) 4.dp else 2.dp,
+            hoveredElevation = if (selected) 6.dp else 4.dp,
+            pressedElevation = if (selected) 8.dp else 6.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = if (selected) AppColors.PrimaryContainer else AppColors.SurfaceContainer,
+            contentColor = if (selected) AppColors.OnPrimaryContainer else AppColors.OnSurface
+        ),
+        shape = RoundedCornerShape(AppSpacing.RadiusL),
+        border = if (selected) {
+            BorderStroke(2.dp, AppColors.PrimaryGreen)
+        } else {
+            BorderStroke(1.dp, AppColors.OutlineVariant)
+        }
+    ) {
+        Column(
+            modifier = Modifier.padding(AppSpacing.FieldSelectionPadding),
+            verticalArrangement = Arrangement.spacedBy(AppSpacing.M)
+        ) {
+            Text(
+                text = title,
+                style = AppTypography.FieldSelectionTitle,
+                color = if (selected) AppColors.OnPrimaryContainer else AppColors.OnSurface
+            )
+            
+            subtitle?.let {
+                Text(
+                    text = it,
+                    style = AppTypography.BodyMedium,
+                    color = if (selected) AppColors.OnPrimaryContainer.copy(alpha = 0.7f) else AppColors.OnSurfaceVariant
+                )
+            }
+            
+            content()
+        }
+    }
+}
+
+// v1.3 Enhanced Bottom Navigation Bar for Row Selection
+@Composable
+fun EnhancedBottomNavigationBar(
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = AppColors.SurfaceContainer,
+        shadowElevation = 8.dp,
+        tonalElevation = 3.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .height(AppSpacing.LargeBottomBarHeight)
+                .padding(horizontal = AppSpacing.EdgePadding),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            content = content
+        )
+    }
+}
+
+// v1.3 Continue Button Component
+@Composable
+fun ContinueButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier,
+    text: String = "Continue"
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(AppSpacing.ContinueButtonHeight),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = AppColors.PrimaryGreen,
+            contentColor = AppColors.OnPrimary,
+            disabledContainerColor = AppColors.OutlineVariant,
+            disabledContentColor = AppColors.OnSurfaceVariant
+        ),
+        shape = RoundedCornerShape(AppSpacing.RadiusL),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 2.dp,
+            pressedElevation = 6.dp,
+            disabledElevation = 0.dp
+        )
+    ) {
+        Text(
+            text = text,
+            style = AppTypography.LabelLarge.copy(fontSize = 16.sp),
+            fontWeight = FontWeight.SemiBold
+        )
+    }
 }

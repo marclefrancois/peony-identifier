@@ -17,6 +17,7 @@ kotlinx-serialization = "1.8.0"
 koin = "4.1.0"
 coil = "2.7.0"
 kamel = "0.9.5"
+androidx-splashscreen = "1.0.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -35,6 +36,7 @@ koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamel" }
+androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splashscreen" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

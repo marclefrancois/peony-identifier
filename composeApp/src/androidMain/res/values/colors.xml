@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- v1.3 Splash Screen Colors -->
+    <color name="splash_background">#FFFFFF</color>
+    
+    <!-- Botanical theme colors matching design system -->
+    <color name="primary_green">#2E7D32</color>
+    <color name="primary_light">#66BB6A</color>
+    <color name="primary_dark">#1B5E20</color>
+</resources>

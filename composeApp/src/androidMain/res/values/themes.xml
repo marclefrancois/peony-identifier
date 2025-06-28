@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- v1.3 Splash Screen Theme -->
+    <style name="Theme.PeonyIdentifier.SplashScreen" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background to white to match the splash image -->
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        
+        <!-- Set the splash screen logo -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        
+        <!-- Set the duration for the splash screen -->
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        
+        <!-- Set the theme to switch to after splash -->
+        <item name="postSplashScreenTheme">@style/Theme.PeonyIdentifier</item>
+    </style>
+    
+    <!-- Main app theme -->
+    <style name="Theme.PeonyIdentifier" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Customize the theme if needed -->
+    </style>
+</resources>

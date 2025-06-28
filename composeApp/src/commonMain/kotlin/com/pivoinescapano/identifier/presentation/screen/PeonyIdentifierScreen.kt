@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.runtime.*
@@ -41,6 +43,9 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PeonyIdentifierScreen(
+    selectedChamp: String? = null,
+    selectedParcelle: String? = null,
+    onNavigateBack: (() -> Unit)? = null,
     viewModel: PeonyIdentifierViewModel = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -48,6 +53,18 @@ fun PeonyIdentifierScreen(
     var showScrollOverlay by remember { mutableStateOf(false) }
     var currentVisiblePosition by remember { mutableStateOf("") }
     var swipeOffset by remember { mutableStateOf(0f) }
+    
+    // v1.3 Initialize with field/parcel selection from navigation
+    LaunchedEffect(selectedChamp, selectedParcelle) {
+        if (selectedChamp != null && selectedParcelle != null) {
+            if (uiState.selectedChamp != selectedChamp) {
+                viewModel.onChampSelected(selectedChamp)
+            }
+            if (uiState.selectedParcelle != selectedParcelle) {
+                viewModel.onParcelleSelected(selectedParcelle)
+            }
+        }
+    }
     
     // Animation states
     val isInDetailsView = uiState.showPeonyDetails
@@ -117,7 +134,11 @@ fun PeonyIdentifierScreen(
                     onBackClick = viewModel::navigateBack
                 )
             } else {
-                ListTopBar()
+                ListTopBar(
+                    selectedChamp = selectedChamp,
+                    selectedParcelle = selectedParcelle,
+                    onNavigateBack = onNavigateBack
+                )
             }
         },
         bottomBar = {
@@ -125,8 +146,6 @@ fun PeonyIdentifierScreen(
             if (!isInDetailsView) {
                 BottomSelectionBar(
                     uiState = uiState,
-                    onChampSelected = viewModel::onChampSelected,
-                    onParcelleSelected = viewModel::onParcelleSelected,
                     onRangSelected = viewModel::onRangSelected,
                     onReset = viewModel::reset
                 )
@@ -667,110 +686,162 @@ private fun ValueOnlyDropdown(
     }
 }
 
-// Bottom selection bar for Field, Parcel, Row with external labels
+// v1.3 Enhanced Bottom Bar - Row Selection Only with Large Typography
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BottomSelectionBar(
     uiState: PeonyIdentifierState,
-    onChampSelected: (String) -> Unit,
-    onParcelleSelected: (String) -> Unit,
     onRangSelected: (String) -> Unit,
     onReset: () -> Unit
 ) {
-    Surface(
+    EnhancedBottomNavigationBar(
         modifier = Modifier
-            .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
             .combinedClickable(
                 onLongClick = onReset,
                 onClick = {}
-            ),
-        color = AppColors.SurfaceContainerHigh,
-        shadowElevation = 8.dp
+            )
     ) {
-        Column(
+        // Row Selection Label
+        Text(
+            text = "Row:",
+            style = AppTypography.BottomBarLarge,
+            color = AppColors.OnSurface
+        )
+        
+        // Enhanced Row Dropdown with larger typography
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = AppSpacing.M, vertical = AppSpacing.S)
+                .padding(start = AppSpacing.M)
         ) {
-            // External labels row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(AppSpacing.S)
+            LargeRowDropdown(
+                selectedValue = uiState.selectedRang,
+                options = uiState.availableRangs,
+                onSelectionChanged = onRangSelected,
+                enabled = !uiState.isLoading && uiState.selectedParcelle != null
+            )
+        }
+    }
+}
+
+// v1.3 Large Row Dropdown with Enhanced Typography
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LargeRowDropdown(
+    selectedValue: String?,
+    options: List<String>,
+    onSelectionChanged: (String) -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it && enabled },
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = selectedValue ?: "",
+            onValueChange = { },
+            readOnly = true,
+            enabled = enabled,
+            placeholder = { 
+                Text(
+                    text = if (enabled) "Select Row" else "Select field first", 
+                    style = AppTypography.BottomBarLarge,
+                    color = if (enabled) AppColors.OnSurfaceVariant else AppColors.OnSurfaceVariant.copy(alpha = 0.5f)
+                ) 
+            },
+            trailingIcon = { 
+                ExposedDropdownMenuDefaults.TrailingIcon(
+                    expanded = expanded
+                ) 
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+            textStyle = AppTypography.BottomBarLarge,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = AppColors.PrimaryGreen,
+                focusedLabelColor = AppColors.PrimaryGreen,
+                disabledBorderColor = AppColors.OutlineVariant.copy(alpha = 0.5f),
+                disabledTextColor = AppColors.OnSurfaceVariant.copy(alpha = 0.5f)
+            ),
+            singleLine = true
+        )
+        
+        if (enabled) {
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
             ) {
-                Text(
-                    text = "Field",
-                    style = AppTypography.LabelMedium,
-                    color = AppColors.OnSurface.copy(alpha = 0.8f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.4f)
-                )
-                Text(
-                    text = "Parcel",
-                    style = AppTypography.LabelMedium,
-                    color = AppColors.OnSurface.copy(alpha = 0.8f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.35f)
-                )
-                Text(
-                    text = "Row",
-                    style = AppTypography.LabelMedium,
-                    color = AppColors.OnSurface.copy(alpha = 0.8f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.25f)
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(AppSpacing.XS))
-            
-            // Dropdowns row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(AppSpacing.S)
-            ) {
-                ValueOnlyDropdown(
-                    selectedValue = uiState.selectedChamp,
-                    options = uiState.availableChamps,
-                    onSelectionChanged = onChampSelected,
-                    enabled = !uiState.isLoading,
-                    modifier = Modifier.weight(0.4f)
-                )
-                
-                ValueOnlyDropdown(
-                    selectedValue = uiState.selectedParcelle,
-                    options = uiState.availableParcelles,
-                    onSelectionChanged = onParcelleSelected,
-                    enabled = !uiState.isLoading && uiState.selectedChamp != null,
-                    modifier = Modifier.weight(0.35f)
-                )
-                
-                ValueOnlyDropdown(
-                    selectedValue = uiState.selectedRang,
-                    options = uiState.availableRangs,
-                    onSelectionChanged = onRangSelected,
-                    enabled = !uiState.isLoading && uiState.selectedParcelle != null,
-                    modifier = Modifier.weight(0.25f)
-                )
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = { 
+                            Text(
+                                text = option,
+                                style = AppTypography.BottomBarLarge
+                            ) 
+                        },
+                        onClick = {
+                            onSelectionChanged(option)
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }
 }
 
-// Top bar for list view
+// v1.3 Enhanced Top bar for list view with field info and back navigation
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ListTopBar() {
+private fun ListTopBar(
+    selectedChamp: String? = null,
+    selectedParcelle: String? = null,
+    onNavigateBack: (() -> Unit)? = null
+) {
     TopAppBar(
         title = {
-            Text(
-                text = "Peony Finder",
-                style = AppTypography.HeadlineSmall,
-                color = AppColors.OnSurface
-            )
+            if (selectedChamp != null && selectedParcelle != null) {
+                Column {
+                    Text(
+                        text = "Position Selection",
+                        style = AppTypography.HeadlineSmall,
+                        color = AppColors.OnSurface
+                    )
+                    Text(
+                        text = "Field $selectedChamp, Parcel $selectedParcelle",
+                        style = AppTypography.BodyMedium,
+                        color = AppColors.OnSurfaceVariant
+                    )
+                }
+            } else {
+                Text(
+                    text = "Peony Finder",
+                    style = AppTypography.HeadlineSmall,
+                    color = AppColors.OnSurface
+                )
+            }
+        },
+        navigationIcon = {
+            if (onNavigateBack != null) {
+                IconButton(onClick = onNavigateBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back to field selection",
+                        tint = AppColors.OnSurface
+                    )
+                }
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = AppColors.SurfaceContainer,
-            titleContentColor = AppColors.OnSurface
+            titleContentColor = AppColors.OnSurface,
+            navigationIconContentColor = AppColors.OnSurface
         )
     )
 }

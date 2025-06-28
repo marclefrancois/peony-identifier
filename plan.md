@@ -1,8 +1,8 @@
 # Peony Identifier App Plan
 
-## Project Status: ✅ Production Ready v1.2.1
+## Project Status: ✅ Production Ready v1.3.0
 
-A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with hierarchical selection and detailed peony information display featuring comprehensive field coverage.
+A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility.
 
 ### Completed Features
 - ✅ Clean architecture with Repository/UseCase/ViewModel pattern
@@ -132,6 +132,32 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
   - ✅ Cross-platform BackHandler with expect/actual pattern for Android/iOS compatibility
   - ✅ Dual animation system: real-time gesture feedback + smooth completion animations
   - ✅ Content preservation during transitions to prevent empty screens during navigation
+
+## Version 1.3.0 Status: ✅ COMPLETE & DEPLOYED
+
+### ✅ New in Version 1.3.0: Enhanced UX Based on User Testing
+- ✅ **Professional App Branding**: Complete app icon and splash screen implementation
+  - ✅ Android: Custom app icons in all resolutions (48dp-192dp) with FleurAppIcon.png
+  - ✅ iOS: Complete AppIcon.appiconset with all required sizes (29pt-1024pt)
+  - ✅ Android Splash: Modern SplashScreen API with branded SplashPivoinesCapano.png
+  - ✅ iOS Splash: UILaunchScreen configuration with assets and background color
+  - ✅ Cross-platform branding consistency with white backgrounds and peony imagery
+- ✅ **Improved Navigation Architecture**: Separate field selection from position browsing
+  - ✅ FieldSelectionScreen: Dedicated screen for field/parcel selection with large dropdowns
+  - ✅ Enhanced navigation flow: Field Selection → Position Selection with smooth animations
+  - ✅ Back navigation support with proper state management and animated transitions
+  - ✅ Top bar context: Shows selected field/parcel info with back button in position screen
+- ✅ **Enhanced Typography & Accessibility**: 30% larger bottom bar typography
+  - ✅ New BottomBarLarge typography token: 20sp (increased from 14sp BodyMedium)
+  - ✅ Enhanced bottom bar: Row selection only with improved touch targets (64dp height)
+  - ✅ Large dropdown components with better readability and accessibility
+  - ✅ Field selection dropdowns with prominent 18sp typography and 64dp height
+- ✅ **Design System v1.3 Enhancements**: New components and improved spacing
+  - ✅ FieldSelectionCard: Large, prominent cards for field/parcel selection
+  - ✅ EnhancedBottomNavigationBar: Professional bottom bar with proper elevation
+  - ✅ ContinueButton: Primary action button with golden ratio spacing
+  - ✅ LargeRowDropdown: Enhanced dropdown with 30% larger typography
+  - ✅ Updated spacing tokens for larger UI elements and improved accessibility
 
 ## Version 1.2.1 Status: ✅ COMPLETE & DEPLOYED
 

@@ -4,5 +4,18 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	
+	<!-- v1.3 Launch Screen Configuration -->
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIImageName</key>
+		<string>SplashLogo</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+		<key>UILaunchScreenMininumTime</key>
+		<real>1.0</real>
+		<key>UIColorName</key>
+		<string>LaunchScreenBackground</string>
+	</dict>
 </dict>
 </plist>
