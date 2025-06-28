@@ -223,9 +223,14 @@ class PeonyIdentifierViewModel(
         val availableRangs = _uiState.value.availableRangs
         val currentIndex = availableRangs.indexOf(currentRang)
         
+        println("SwipeDebug: goToNextRow() - currentRang=$currentRang, currentIndex=$currentIndex, availableRangs=$availableRangs")
+        
         if (currentIndex >= 0 && currentIndex < availableRangs.size - 1) {
             val nextRang = availableRangs[currentIndex + 1]
+            println("SwipeDebug: Moving to next row: $nextRang")
             onRangSelected(nextRang)
+        } else {
+            println("SwipeDebug: Cannot go to next row - at boundary or invalid index")
         }
     }
     
@@ -234,9 +239,14 @@ class PeonyIdentifierViewModel(
         val availableRangs = _uiState.value.availableRangs
         val currentIndex = availableRangs.indexOf(currentRang)
         
+        println("SwipeDebug: goToPreviousRow() - currentRang=$currentRang, currentIndex=$currentIndex, availableRangs=$availableRangs")
+        
         if (currentIndex > 0) {
             val previousRang = availableRangs[currentIndex - 1]
+            println("SwipeDebug: Moving to previous row: $previousRang")
             onRangSelected(previousRang)
+        } else {
+            println("SwipeDebug: Cannot go to previous row - at boundary or invalid index")
         }
     }
     
@@ -244,13 +254,17 @@ class PeonyIdentifierViewModel(
         val currentRang = _uiState.value.selectedRang ?: return false
         val availableRangs = _uiState.value.availableRangs
         val currentIndex = availableRangs.indexOf(currentRang)
-        return currentIndex >= 0 && currentIndex < availableRangs.size - 1
+        val canGo = currentIndex >= 0 && currentIndex < availableRangs.size - 1
+        println("SwipeDebug: canGoToNextRow() - currentRang=$currentRang, currentIndex=$currentIndex, availableRangs=$availableRangs, canGo=$canGo")
+        return canGo
     }
     
     fun canGoToPreviousRow(): Boolean {
         val currentRang = _uiState.value.selectedRang ?: return false
         val availableRangs = _uiState.value.availableRangs
         val currentIndex = availableRangs.indexOf(currentRang)
-        return currentIndex > 0
+        val canGo = currentIndex > 0
+        println("SwipeDebug: canGoToPreviousRow() - currentRang=$currentRang, currentIndex=$currentIndex, availableRangs=$availableRangs, canGo=$canGo")
+        return canGo
     }
 }

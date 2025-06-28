@@ -105,8 +105,6 @@ fun PeonyIdentifierScreen(
                     uiState = uiState,
                     onPreviousRow = viewModel::goToPreviousRow,
                     onNextRow = viewModel::goToNextRow,
-                    canGoToPrevious = viewModel.canGoToPreviousRow(),
-                    canGoToNext = viewModel.canGoToNextRow(),
                     onReset = viewModel::reset
                 )
             }
@@ -594,8 +592,6 @@ private fun SwipeableRowSelectionBar(
     uiState: PeonyIdentifierState,
     onPreviousRow: () -> Unit,
     onNextRow: () -> Unit,
-    canGoToPrevious: Boolean,
-    canGoToNext: Boolean,
     onReset: () -> Unit
 ) {
     EnhancedBottomNavigationBar(
@@ -611,10 +607,17 @@ private fun SwipeableRowSelectionBar(
         val isEnabled = !uiState.isLoading && uiState.selectedParcelle != null && availableRangs.isNotEmpty()
         
         if (isEnabled && selectedRang != null) {
+            val currentIndex = availableRangs.indexOf(selectedRang)
+            val canGoToPrevious = currentIndex > 0
+            val canGoToNext = currentIndex >= 0 && currentIndex < availableRangs.size - 1
+            
+            println("SwipeDebug: UI State - selectedRang=$selectedRang, currentIndex=$currentIndex, availableRangs=$availableRangs")
+            println("SwipeDebug: UI State - canGoToPrevious=$canGoToPrevious, canGoToNext=$canGoToNext")
+            
             SwipeableRowControl(
                 currentRow = selectedRang,
                 totalRows = availableRangs.size,
-                currentIndex = availableRangs.indexOf(selectedRang),
+                currentIndex = currentIndex,
                 onPreviousRow = onPreviousRow,
                 onNextRow = onNextRow,
                 canGoToPrevious = canGoToPrevious,
@@ -666,19 +669,31 @@ private fun SwipeableRowControl(
                     detectHorizontalDragGestures(
                         onDragStart = {
                             totalDrag = 0f
+                            println("SwipeDebug: Drag started")
                         },
                         onDragEnd = {
                             // Very sensitive thresholds for better responsiveness
                             // Right swipe (positive) = go to previous/lower row  
                             // Left swipe (negative) = go to next/higher row
+                            println("SwipeDebug: totalDrag=$totalDrag, canGoToPrevious=$canGoToPrevious, canGoToNext=$canGoToNext")
                             when {
-                                totalDrag > 15 && canGoToPrevious -> onPreviousRow()
-                                totalDrag < -15 && canGoToNext -> onNextRow()
+                                totalDrag > 15 && canGoToPrevious -> {
+                                    println("SwipeDebug: Right swipe detected, going to previous row")
+                                    onPreviousRow()
+                                }
+                                totalDrag < -15 && canGoToNext -> {
+                                    println("SwipeDebug: Left swipe detected, going to next row") 
+                                    onNextRow()
+                                }
+                                else -> {
+                                    println("SwipeDebug: No action - totalDrag=$totalDrag not sufficient or direction blocked")
+                                }
                             }
                         }
                     ) { _, dragAmount ->
                         // Accumulate drag distance for more reliable detection
                         totalDrag += dragAmount
+                        println("SwipeDebug: Dragging - dragAmount=$dragAmount, totalDrag=$totalDrag")
                     }
                 },
             contentAlignment = Alignment.Center
