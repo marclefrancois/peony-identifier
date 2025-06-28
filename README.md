@@ -1,17 +1,17 @@
 # Peony Identifier
 
-> **Version 1.2** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with advanced design system and native iOS-style navigation.
+> **Version 1.3** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with enhanced design system and intuitive navigation.
 
 ## 🌿 Project Overview
 
-The Peony Identifier is a production-ready cross-platform application that enables identification of peony varieties across 4 different fields using hierarchical field selection and fuzzy string matching. Built with Compose Multiplatform, it features a comprehensive design system, fluid gesture navigation, and optimized performance for both Android and iOS platforms.
+The Peony Identifier is a production-ready cross-platform application that enables identification of peony varieties across multiple fields using hierarchical field selection and fuzzy string matching. Built with Compose Multiplatform, it features a comprehensive design system, intuitive screen transitions, and optimized performance for both Android and iOS platforms.
 
 ## 🚀 Key Features
 
 - **Hierarchical Field Selection**: Cascading dropdowns (Field → Parcel → Row → Position)
 - **Fuzzy String Matching**: Intelligent peony variety identification with exact/approximate matches
-- **Advanced Navigation**: Native iOS-style swipe gestures with velocity-based detection
-- **Enhanced Design System v1.2**: Botanical theming with golden ratio-based spacing
+- **Intuitive Navigation**: Smooth screen transitions with AnimatedContent and arrow-based row navigation
+- **Enhanced Design System v1.3**: Botanical theming with golden ratio-based spacing and larger typography
 - **Cross-Platform Images**: Async loading with Coil (Android) and Kamel (iOS)
 - **Offline-First**: JSON-based data loading with background threading and caching
 - **Accessibility**: WCAG AA compliant design with proper contrast ratios
@@ -136,9 +136,9 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ### iOS
 - **Kamel** async image loading
-- **Native swipe gestures** with velocity tracking
+- **System back navigation** support
 - **UIKit integration** via expect/actual pattern
-- **iOS-style navigation** animations
+- **Smooth screen transition** animations
 
 ## 🧪 Testing Strategy
 
@@ -199,7 +199,7 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ### Development Tips
 - Use `./gradlew --no-daemon` for memory-constrained builds
-- Test gesture navigation on physical iOS devices
+- Test navigation flow on physical iOS devices
 - Monitor JSON loading performance with profiler
 - Validate design system changes across both platforms
 
@@ -228,4 +228,4 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ---
 
-**Current Status**: ✅ Production Ready v1.2 with Enhanced Design System
+**Current Status**: ✅ Production Ready v1.3 with Enhanced UX and Professional Branding

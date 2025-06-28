@@ -21,7 +21,7 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ **Async Image Loading**: Platform-specific image loading with caching (Android) and placeholders (iOS)
 - ✅ **Complete Information Display**: Always show field entry data even without peony matches
 - ✅ **Cross-Platform Deployment**: Both Android and iOS builds working successfully
-- ✅ **Advanced Navigation System**: Fluid velocity-based swipe navigation with seamless animations
+- ✅ **Intuitive Navigation System**: Smooth screen transitions with AnimatedContent
 - ✅ **Enhanced Design System v1.2**: Complete visual refinement with botanical theming
   - ✅ Botanical color palette: Rich green primary colors replacing purple theme
   - ✅ Enhanced typography: 10-level hierarchy with improved readability and line heights
@@ -35,13 +35,12 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
   - ✅ Performance optimization: Thread-safe caching maintains background loading efficiency
   - ✅ Developer tools: CSV-to-JSON conversion utility for future field data additions
 
-## Current App Layout ✅ Recently Redesigned with Advanced Navigation
-- **Navigation System**: Native iOS-style gesture navigation with fluid animations
-  - Velocity-based swipe detection (800px/s threshold + 15% screen distance)
-  - Direct 1:1 finger tracking during gestures with seamless animation continuation
-  - Bidirectional support: right swipe to navigate back, left swipe to cancel
+## Current App Layout ✅ Recently Redesigned with Enhanced Navigation
+- **Navigation System**: Clean screen-based navigation with smooth transitions
+  - AnimatedContent-based screen transitions with horizontal slide animations
+  - Dedicated field selection and position browsing screens
   - Material3 Scaffold with conditional top/bottom bars for smooth transitions
-  - Cross-platform BackHandler support (Android physical back + iOS swipe gestures)
+  - Cross-platform BackHandler support (Android physical back + iOS system navigation)
 - **Top Section**: Compact selection controls in 2x2 grid (Field/Parcel, Row/Position)
   - Uses WindowInsets padding to respect system bars (status bar, navigation bar)  
   - Modern Material3 Surface design with smaller typography
@@ -126,11 +125,11 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ **Android Permissions**: Added INTERNET permission for image loading
 - ✅ **Portrait Lock**: Android app locked to portrait orientation
 - ✅ **Background JSON Loading**: Optimized 5.1MB peony database loading with background threading and caching
-- ✅ **Advanced Navigation Implementation**: Native iOS-style navigation with Material3 Scaffold integration
-  - ✅ Velocity-based gesture detection using VelocityTracker for natural flick recognition
-  - ✅ Direct finger tracking with 1:1 screen movement and seamless animation continuation
+- ✅ **Enhanced Navigation Implementation**: Clean screen-based navigation with Material3 Scaffold integration
+  - ✅ AnimatedContent transitions with smooth horizontal slide animations
+  - ✅ Separate field selection and position browsing screens for better UX
   - ✅ Cross-platform BackHandler with expect/actual pattern for Android/iOS compatibility
-  - ✅ Dual animation system: real-time gesture feedback + smooth completion animations
+  - ✅ Consistent 300ms animation timing for all screen transitions
   - ✅ Content preservation during transitions to prevent empty screens during navigation
 
 ## Version 1.3.0 Status: ✅ COMPLETE & DEPLOYED 🎉
@@ -213,19 +212,19 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 
 ## Version 1.1 Status: ✅ COMPLETE & DEPLOYED
 
-### ✅ New in Version 1.1: Advanced Navigation System
-- ✅ **Fluid Gesture Navigation**: Native iOS-style swipe navigation with velocity detection
-  - ✅ Smart gesture recognition: 800px/s velocity threshold + 15% screen distance minimum
-  - ✅ Direct finger tracking: Screen follows finger position with 1:1 movement ratio
-  - ✅ Bidirectional gestures: Right swipe to navigate back, left swipe to cancel
-  - ✅ Seamless animation continuation: Animations start from finger lift position, not beginning
+### ✅ New in Version 1.1: Enhanced Navigation System
+- ✅ **Clean Screen Navigation**: Intuitive screen-based navigation with smooth transitions
+  - ✅ AnimatedContent-based transitions with horizontal slide animations
+  - ✅ Dedicated screens for field selection and position browsing
+  - ✅ Arrow-based row navigation for precise position selection
+  - ✅ Consistent 300ms animation timing across all transitions
 - ✅ **Enhanced UI Architecture**: Material3 Scaffold with conditional navigation elements
   - ✅ Dynamic top bar: "Peony Finder" title in list, back button + position info in details
-  - ✅ Smart bottom bar: Hidden during details view for immersive experience
-  - ✅ Cross-platform compatibility: Android back button + iOS gesture support
-- ✅ **Animation System**: Sophisticated dual-layer animation architecture
-  - ✅ Real-time gesture feedback during drag with direct finger following
-  - ✅ Smooth spring animations for cancellations and completions
+  - ✅ Smart bottom bar: Row navigation with clear directional arrows
+  - ✅ Cross-platform compatibility: Android back button + iOS system navigation
+- ✅ **Animation System**: Smooth and consistent transition architecture
+  - ✅ Horizontal slide transitions for screen changes
+  - ✅ Fade animations for content state changes
   - ✅ Content preservation during transitions to eliminate empty screen flickers
 
 ## Version 1.0 Status: ✅ COMPLETE & DEPLOYED
@@ -281,7 +280,7 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ **Android**: APK builds successfully, portrait locked, image loading functional, gesture navigation working
 - ✅ **iOS**: Framework builds cleanly, async image loading functional, native swipe gestures implemented
 - ✅ **Cross-Platform**: All shared business logic and UI working across both platforms
-- ✅ **Navigation**: Fluid velocity-based gesture system deployed and tested on both platforms
+- ✅ **Navigation**: Clean screen-based transition system deployed and tested on both platforms
 - ✅ **Design System v1.2**: Botanical theme deployed, enhanced typography and spacing active
 - ✅ **Field Data v1.2.1**: Comprehensive multi-field coverage with 5,461+ additional entries
 - ✅ **App Branding v1.3.0**: Professional icons and splash screens deployed on both platforms
