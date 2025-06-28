@@ -1,12 +1,10 @@
 package com.pivoinescapano.identifier.presentation.screen
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.*
-import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -21,9 +19,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,7 +35,7 @@ import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewM
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun PeonyIdentifierScreen(
     selectedChamp: String? = null,
@@ -52,7 +47,6 @@ fun PeonyIdentifierScreen(
     val positionListState = rememberLazyListState()
     var showScrollOverlay by remember { mutableStateOf(false) }
     var currentVisiblePosition by remember { mutableStateOf("") }
-    var swipeOffset by remember { mutableStateOf(0f) }
     
     // v1.3 Initialize with field/parcel selection from navigation
     LaunchedEffect(selectedChamp, selectedParcelle) {
@@ -68,48 +62,7 @@ fun PeonyIdentifierScreen(
     
     // Animation states
     val isInDetailsView = uiState.showPeonyDetails
-    
-    // Navigation animation - smooth iOS-style transition
-    val navigationAnimationSpec = spring<Float>(
-        dampingRatio = Spring.DampingRatioNoBouncy,
-        stiffness = Spring.StiffnessMediumLow
-    )
-    
-    // Track if we're in the middle of a gesture-initiated animation
-    var isGestureNavigation by remember { mutableStateOf(false) }
-    
-    // Slide animation for screen transitions
-    val slideOffset by animateFloatAsState(
-        targetValue = if (isInDetailsView) -1f else 0f,
-        animationSpec = navigationAnimationSpec,
-        label = "screen_slide",
-        finishedListener = {
-            // Reset gesture navigation flag when animation completes
-            isGestureNavigation = false
-        }
-    )
-    
-    // Interactive swipe offset for gesture feedback - direct finger tracking
-    var interactiveSwipeOffset by remember { mutableStateOf(0f) }
-    var animatedInteractiveOffset by remember { mutableStateOf(0f) }
-    
-    // Smooth animation for interactive offset (used for cancel animation)
-    val smoothInteractiveOffset by animateFloatAsState(
-        targetValue = animatedInteractiveOffset,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium
-        ),
-        label = "smooth_interactive_offset"
-    )
-    
-    // Reset interactive offset when navigation state changes
-    LaunchedEffect(isInDetailsView) {
-        if (!isInDetailsView) {
-            interactiveSwipeOffset = 0f
-            animatedInteractiveOffset = 0f
-        }
-    }
+    val density = LocalDensity.current
     
     // Show overlay when scrolling position list
     LaunchedEffect(positionListState.isScrollInProgress) {
@@ -157,48 +110,62 @@ fun PeonyIdentifierScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Main content with sliding animation
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        // Use direct offset during gesture, smooth offset when animating
-                        val currentOffset = if (interactiveSwipeOffset != 0f) {
-                            // During active gesture - use direct finger position
-                            interactiveSwipeOffset
-                        } else if (isGestureNavigation) {
-                            // During gesture-initiated navigation - animate from finger position to final
-                            smoothInteractiveOffset
-                        } else {
-                            // Normal navigation or idle state
-                            0f
-                        }
-                        translationX = slideOffset * size.width + currentOffset
+            // Animated content transitions using same approach as App.kt
+            AnimatedContent(
+                targetState = isInDetailsView,
+                transitionSpec = {
+                    if (targetState) {
+                        // Going to details: slide in from right, slide out to left
+                        slideInHorizontally(
+                            animationSpec = tween(300),
+                            initialOffsetX = { with(density) { 300.dp.roundToPx() } }
+                        ) togetherWith slideOutHorizontally(
+                            animationSpec = tween(300),
+                            targetOffsetX = { with(density) { (-300).dp.roundToPx() } }
+                        )
+                    } else {
+                        // Going back to list: slide in from left, slide out to right
+                        slideInHorizontally(
+                            animationSpec = tween(300),
+                            initialOffsetX = { with(density) { (-300).dp.roundToPx() } }
+                        ) togetherWith slideOutHorizontally(
+                            animationSpec = tween(300),
+                            targetOffsetX = { with(density) { 300.dp.roundToPx() } }
+                        )
                     }
-            ) {
-                // List/Loading content (slides left when details shown)
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            translationX = 0f
-                        }
-                ) {
+                }
+            ) { showingDetails ->
+                if (showingDetails) {
+                    // Details view
+                    PeonyDetailsContent(
+                        peony = uiState.currentPeony,
+                        fuzzyMatches = uiState.fuzzyMatches,
+                        fieldEntry = uiState.currentFieldEntry,
+                        onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected
+                    )
+                } else {
+                    // List view
                     when {
                         uiState.isLoading -> {
-                            CircularProgressIndicator(
-                                modifier = Modifier.align(Alignment.Center)
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
                         uiState.error != null -> {
-                            ErrorContent(
-                                error = uiState.error ?: "Unknown error occurred",
-                                onDismiss = viewModel::clearError,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                ErrorContent(
+                                    error = uiState.error ?: "Unknown error occurred",
+                                    onDismiss = viewModel::clearError
+                                )
+                            }
                         }
                         uiState.selectedRang != null -> {
-                            // Show positions list for selected row (even during details view for smooth animation)
                             PositionsListContent(
                                 uiState = uiState,
                                 onTrouSelected = viewModel::onTrouSelected,
@@ -207,93 +174,21 @@ fun PeonyIdentifierScreen(
                             )
                         }
                         else -> {
-                            Text(
-                                text = "Select field, parcel, and row to view positions",
-                                style = AppTypography.BodyLarge,
-                                textAlign = TextAlign.Center,
-                                color = AppColors.OnSurfaceVariant,
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .padding(AppSpacing.M)
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Select field, parcel, and row to view positions",
+                                    style = AppTypography.BodyLarge,
+                                    textAlign = TextAlign.Center,
+                                    color = AppColors.OnSurfaceVariant,
+                                    modifier = Modifier.padding(AppSpacing.M)
+                                )
+                            }
                         }
                     }
                 }
-                
-                // Details content (slides in from right when shown)
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            translationX = size.width
-                        }
-                ) {
-                    if (uiState.showPeonyDetails) {
-                        PeonyDetailsContent(
-                            peony = uiState.currentPeony,
-                            fuzzyMatches = uiState.fuzzyMatches,
-                            fieldEntry = uiState.currentFieldEntry,
-                            onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected
-                        )
-                    }
-                }
-            }
-        
-            // Edge swipe area for iOS-style navigation with interactive feedback
-            if (isInDetailsView) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(30.dp)
-                        .align(Alignment.CenterStart)
-                        .pointerInput(Unit) {
-                            var totalDragDistance = 0f
-                            val velocityTracker = VelocityTracker()
-                            
-                            detectDragGestures(
-                                onDragStart = { offset ->
-                                    // Reset values when starting gesture
-                                    totalDragDistance = 0f
-                                    interactiveSwipeOffset = 0f
-                                    animatedInteractiveOffset = 0f
-                                    velocityTracker.resetTracking()
-                                },
-                                onDragEnd = {
-                                    // Calculate final velocity
-                                    val velocity = velocityTracker.calculateVelocity()
-                                    val velocityThreshold = 800f // pixels per second for flick detection
-                                    val minDistance = size.width * 0.15f // Minimum 15% screen width
-                                    
-                                    // Trigger navigation only with rightward velocity AND minimum distance
-                                    if (velocity.x > velocityThreshold && totalDragDistance > minDistance) {
-                                        // Rightward flick detected - continue animation from current position
-                                        isGestureNavigation = true
-                                        animatedInteractiveOffset = interactiveSwipeOffset
-                                        // Reset the direct offset so smooth animation takes over
-                                        interactiveSwipeOffset = 0f
-                                        viewModel.navigateBack()
-                                        // Now animate the smooth offset to 0 to complete the navigation
-                                        animatedInteractiveOffset = 0f
-                                    } else {
-                                        // No sufficient flick - animate back to original position
-                                        interactiveSwipeOffset = 0f
-                                        animatedInteractiveOffset = 0f
-                                    }
-                                },
-                                onDrag = { change, dragAmount ->
-                                    // Track velocity for this pointer event
-                                    velocityTracker.addPosition(change.uptimeMillis, change.position)
-                                    
-                                    // Handle both rightward and leftward drag using dragAmount
-                                    totalDragDistance += dragAmount.x
-                                    
-                                    // Directly use pixel values - screen follows finger exactly
-                                    // Limit leftward movement to prevent going too far left
-                                    interactiveSwipeOffset = totalDragDistance.coerceAtLeast(-size.width * 0.2f)
-                                }
-                            )
-                        }
-                )
             }
 
             // Scroll position overlay
@@ -327,11 +222,10 @@ fun PeonyIdentifierScreen(
 @Composable
 private fun ErrorContent(
     error: String,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    onDismiss: () -> Unit
 ) {
     UniformCard(
-        modifier = modifier.padding(AppSpacing.M),
+        modifier = Modifier.padding(AppSpacing.M),
         backgroundColor = AppColors.Error.copy(alpha = 0.1f),
         contentColor = AppColors.Error
     ) {
