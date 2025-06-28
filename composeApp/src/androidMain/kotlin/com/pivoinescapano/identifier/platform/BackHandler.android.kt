@@ -1,7 +1,7 @@
 package com.pivoinescapano.identifier.platform
 
-import androidx.activity.compose.BackHandler as AndroidBackHandler
 import androidx.compose.runtime.Composable
+import androidx.activity.compose.BackHandler as AndroidBackHandler
 
 /**
  * Android implementation of BackHandler using AndroidX Activity Compose
@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 @Composable
 actual fun BackHandler(
     enabled: Boolean,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     AndroidBackHandler(enabled = enabled, onBack = onBack)
 }

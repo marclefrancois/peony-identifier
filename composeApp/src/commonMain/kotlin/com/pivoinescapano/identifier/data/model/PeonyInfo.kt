@@ -8,11 +8,14 @@ import kotlinx.serialization.json.*
 @OptIn(ExperimentalSerializationApi::class)
 object ImageFieldSerializer : KSerializer<String?> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ImageField", PrimitiveKind.STRING)
-    
-    override fun serialize(encoder: Encoder, value: String?) {
+
+    override fun serialize(
+        encoder: Encoder,
+        value: String?,
+    ) {
         encoder.encodeString(value ?: "")
     }
-    
+
     override fun deserialize(decoder: Decoder): String? {
         return when (val element = (decoder as JsonDecoder).decodeJsonElement()) {
             is JsonPrimitive -> {
@@ -39,5 +42,5 @@ data class PeonyInfo(
     val description: String,
     @Serializable(with = ImageFieldSerializer::class)
     val image: String?,
-    val url: String
+    val url: String,
 )

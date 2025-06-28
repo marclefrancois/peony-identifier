@@ -17,23 +17,23 @@ actual fun PeonyAsyncImage(
     imageUrl: String?,
     contentDescription: String,
     modifier: Modifier,
-    contentScale: ContentScale
+    contentScale: ContentScale,
 ) {
     if (imageUrl.isNullOrBlank()) {
         // Placeholder for missing images
         Card(
             modifier = modifier,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = "No Image",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -42,7 +42,7 @@ actual fun PeonyAsyncImage(
             model = imageUrl,
             contentDescription = contentDescription,
             modifier = modifier.clip(RoundedCornerShape(8.dp)),
-            contentScale = contentScale
+            contentScale = contentScale,
         )
     }
 }

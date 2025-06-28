@@ -12,5 +12,5 @@ data class FieldEntry(
     val annee_plantation: String? = null,
     val taille: String? = null,
     val etiquette: String? = null,
-    val vente: String? = null
+    val vente: String? = null,
 )

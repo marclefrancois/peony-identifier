@@ -1,0 +1,23 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+ktlint_standard_function-naming = disabled
+ktlint_function-naming = disabled
+ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_comment-wrapping = disabled
+
+# Platform-specific files may need different naming conventions
+[src/iosMain/**/*.kt]
+ktlint_standard_function-naming = disabled
+
+[src/androidMain/**/*.kt]
+ktlint_standard_function-naming = disabled

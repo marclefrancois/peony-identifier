@@ -12,25 +12,26 @@ import peonyidentifier.composeapp.generated.resources.Res
  */
 @OptIn(ExperimentalResourceApi::class)
 class JsonDataLoader {
-    
-    val json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-    }
-    
+    val json =
+        Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
+
     /**
      * Load and parse JSON data on a background thread
      * @param filePath Path to the JSON file in resources
      * @return Parsed JSON string on IO dispatcher
      */
-    suspend fun loadJsonString(filePath: String): String = withContext(Dispatchers.IO) {
-        try {
-            Res.readBytes(filePath).decodeToString()
-        } catch (e: Exception) {
-            throw RuntimeException("Failed to load JSON file: $filePath - ${e.message}", e)
+    suspend fun loadJsonString(filePath: String): String =
+        withContext(Dispatchers.IO) {
+            try {
+                Res.readBytes(filePath).decodeToString()
+            } catch (e: Exception) {
+                throw RuntimeException("Failed to load JSON file: $filePath - ${e.message}", e)
+            }
         }
-    }
-    
+
     /**
      * Parse JSON string to typed object on a background thread
      * @param jsonString JSON content to parse
@@ -39,15 +40,16 @@ class JsonDataLoader {
      */
     suspend fun <T> parseJson(
         jsonString: String,
-        deserializer: (String) -> T
-    ): T = withContext(Dispatchers.Default) {
-        try {
-            deserializer(jsonString)
-        } catch (e: Exception) {
-            throw RuntimeException("Failed to parse JSON data: ${e.message}", e)
+        deserializer: (String) -> T,
+    ): T =
+        withContext(Dispatchers.Default) {
+            try {
+                deserializer(jsonString)
+            } catch (e: Exception) {
+                throw RuntimeException("Failed to parse JSON data: ${e.message}", e)
+            }
         }
-    }
-    
+
     /**
      * Combined load and parse operation optimized for background execution
      * @param filePath Path to the JSON file in resources
@@ -56,12 +58,12 @@ class JsonDataLoader {
      */
     suspend fun <T> loadAndParseJson(
         filePath: String,
-        deserializer: (String) -> T
+        deserializer: (String) -> T,
     ): T {
         val jsonString = loadJsonString(filePath)
         return parseJson(jsonString, deserializer)
     }
-    
+
     /**
      * Load and parse JSON using kotlinx.serialization with background threading
      * @param filePath Path to the JSON file in resources

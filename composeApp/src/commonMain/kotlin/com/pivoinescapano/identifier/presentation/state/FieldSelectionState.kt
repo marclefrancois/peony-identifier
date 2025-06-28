@@ -7,5 +7,5 @@ data class FieldSelectionState(
     val selectedChamp: String? = null,
     val selectedParcelle: String? = null,
     val canContinue: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 )

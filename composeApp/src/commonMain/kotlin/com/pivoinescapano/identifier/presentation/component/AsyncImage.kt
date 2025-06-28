@@ -9,5 +9,5 @@ expect fun PeonyAsyncImage(
     imageUrl: String?,
     contentDescription: String,
     modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Crop
+    contentScale: ContentScale = ContentScale.Crop,
 )

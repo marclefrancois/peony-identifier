@@ -21,11 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.size
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.size
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.model.PeonyInfo
@@ -43,13 +42,13 @@ fun PeonyIdentifierScreen(
     selectedChamp: String? = null,
     selectedParcelle: String? = null,
     onNavigateBack: (() -> Unit)? = null,
-    viewModel: PeonyIdentifierViewModel = koinInject()
+    viewModel: PeonyIdentifierViewModel = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val positionListState = rememberLazyListState()
     var showScrollOverlay by remember { mutableStateOf(false) }
     var currentVisiblePosition by remember { mutableStateOf("") }
-    
+
     // v1.3 Initialize with field/parcel selection from navigation
     LaunchedEffect(selectedChamp, selectedParcelle) {
         if (selectedChamp != null && selectedParcelle != null) {
@@ -61,11 +60,11 @@ fun PeonyIdentifierScreen(
             }
         }
     }
-    
+
     // Animation states
     val isInDetailsView = uiState.showPeonyDetails
     val density = LocalDensity.current
-    
+
     // Show overlay when scrolling position list
     LaunchedEffect(positionListState.isScrollInProgress) {
         if (positionListState.isScrollInProgress) {
@@ -75,24 +74,24 @@ fun PeonyIdentifierScreen(
             showScrollOverlay = false
         }
     }
-    
+
     // Handle Android physical back button
     BackHandler(enabled = isInDetailsView) {
         viewModel.navigateBack()
     }
-    
+
     Scaffold(
         topBar = {
             if (isInDetailsView) {
                 DetailsTopBar(
                     fieldEntry = uiState.currentFieldEntry,
-                    onBackClick = viewModel::navigateBack
+                    onBackClick = viewModel::navigateBack,
                 )
             } else {
                 ListTopBar(
                     selectedChamp = selectedChamp,
                     selectedParcelle = selectedParcelle,
-                    onNavigateBack = onNavigateBack
+                    onNavigateBack = onNavigateBack,
                 )
             }
         },
@@ -103,15 +102,16 @@ fun PeonyIdentifierScreen(
                     uiState = uiState,
                     onPreviousRow = viewModel::goToPreviousRow,
                     onNextRow = viewModel::goToNextRow,
-                    onReset = viewModel::reset
+                    onReset = viewModel::reset,
                 )
             }
-        }
+        },
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             // Animated content transitions using same approach as App.kt
             AnimatedContent(
@@ -121,22 +121,24 @@ fun PeonyIdentifierScreen(
                         // Going to details: slide in from right, slide out to left
                         slideInHorizontally(
                             animationSpec = tween(300),
-                            initialOffsetX = { with(density) { 300.dp.roundToPx() } }
-                        ) togetherWith slideOutHorizontally(
-                            animationSpec = tween(300),
-                            targetOffsetX = { with(density) { (-300).dp.roundToPx() } }
-                        )
+                            initialOffsetX = { with(density) { 300.dp.roundToPx() } },
+                        ) togetherWith
+                            slideOutHorizontally(
+                                animationSpec = tween(300),
+                                targetOffsetX = { with(density) { (-300).dp.roundToPx() } },
+                            )
                     } else {
                         // Going back to list: slide in from left, slide out to right
                         slideInHorizontally(
                             animationSpec = tween(300),
-                            initialOffsetX = { with(density) { (-300).dp.roundToPx() } }
-                        ) togetherWith slideOutHorizontally(
-                            animationSpec = tween(300),
-                            targetOffsetX = { with(density) { 300.dp.roundToPx() } }
-                        )
+                            initialOffsetX = { with(density) { (-300).dp.roundToPx() } },
+                        ) togetherWith
+                            slideOutHorizontally(
+                                animationSpec = tween(300),
+                                targetOffsetX = { with(density) { 300.dp.roundToPx() } },
+                            )
                     }
-                }
+                },
             ) { showingDetails ->
                 if (showingDetails) {
                     // Details view
@@ -144,7 +146,7 @@ fun PeonyIdentifierScreen(
                         peony = uiState.currentPeony,
                         fuzzyMatches = uiState.fuzzyMatches,
                         fieldEntry = uiState.currentFieldEntry,
-                        onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected
+                        onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected,
                     )
                 } else {
                     // List view
@@ -152,7 +154,7 @@ fun PeonyIdentifierScreen(
                         uiState.isLoading -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator()
                             }
@@ -160,11 +162,11 @@ fun PeonyIdentifierScreen(
                         uiState.error != null -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 ErrorContent(
                                     error = uiState.error ?: "Unknown error occurred",
-                                    onDismiss = viewModel::clearError
+                                    onDismiss = viewModel::clearError,
                                 )
                             }
                         }
@@ -173,20 +175,20 @@ fun PeonyIdentifierScreen(
                                 uiState = uiState,
                                 onTrouSelected = viewModel::onTrouSelected,
                                 listState = positionListState,
-                                onVisiblePositionChanged = { currentVisiblePosition = it }
+                                onVisiblePositionChanged = { currentVisiblePosition = it },
                             )
                         }
                         else -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 Text(
                                     text = "Select field, parcel, and row to view positions",
                                     style = AppTypography.BodyLarge,
                                     textAlign = TextAlign.Center,
                                     color = AppColors.OnSurfaceVariant,
-                                    modifier = Modifier.padding(AppSpacing.M)
+                                    modifier = Modifier.padding(AppSpacing.M),
                                 )
                             }
                         }
@@ -199,22 +201,22 @@ fun PeonyIdentifierScreen(
                 visible = showScrollOverlay && currentVisiblePosition.isNotEmpty(),
                 enter = fadeIn(),
                 exit = fadeOut(),
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
             ) {
                 OverlayCard(
-                    modifier = Modifier.size(AppSpacing.OverlayCardSize)
+                    modifier = Modifier.size(AppSpacing.OverlayCardSize),
                 ) {
                     Text(
                         text = "Position",
                         style = AppTypography.LabelMedium,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                     Text(
                         text = currentVisiblePosition,
                         style = AppTypography.HeadlineLarge,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -225,28 +227,28 @@ fun PeonyIdentifierScreen(
 @Composable
 private fun ErrorContent(
     error: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     UniformCard(
         modifier = Modifier.padding(AppSpacing.M),
         backgroundColor = AppColors.Error.copy(alpha = 0.1f),
-        contentColor = AppColors.Error
+        contentColor = AppColors.Error,
     ) {
         Text(
             text = "Error",
             style = AppTypography.HeadlineSmall,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         Text(
             text = error,
             style = AppTypography.BodyMedium,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         Button(
             onClick = onDismiss,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         ) {
             Text("Dismiss")
         }
@@ -258,15 +260,16 @@ private fun PeonyDetailsContent(
     peony: PeonyInfo?,
     fuzzyMatches: List<PeonyInfo>,
     fieldEntry: FieldEntry?,
-    onFuzzyMatchSelected: (PeonyInfo) -> Unit
+    onFuzzyMatchSelected: (PeonyInfo) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            horizontal = AppSpacing.M,
-            vertical = AppSpacing.M
-        ),
-        verticalArrangement = Arrangement.spacedBy(AppSpacing.S)
+        contentPadding =
+            PaddingValues(
+                horizontal = AppSpacing.M,
+                vertical = AppSpacing.M,
+            ),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.S),
     ) {
         // Field entry info
         fieldEntry?.let { entry ->
@@ -274,28 +277,28 @@ private fun PeonyDetailsContent(
                 FieldEntryCard(entry)
             }
         }
-        
+
         // Exact peony match
         peony?.let { p ->
             item {
                 PeonyCard(p, isExactMatch = true)
             }
         }
-        
+
         // Fuzzy matches
         if (fuzzyMatches.isNotEmpty()) {
             item {
                 Text(
                     text = if (peony == null) "Possible matches:" else "Other similar varieties:",
                     style = AppTypography.HeadlineSmall,
-                    color = AppColors.OnSurface
+                    color = AppColors.OnSurface,
                 )
             }
             items(fuzzyMatches) { match ->
                 PeonyCard(
                     peony = match,
                     isExactMatch = false,
-                    onClick = { onFuzzyMatchSelected(match) }
+                    onClick = { onFuzzyMatchSelected(match) },
                 )
             }
         }
@@ -305,26 +308,27 @@ private fun PeonyDetailsContent(
 @Composable
 private fun FieldEntryCard(entry: FieldEntry) {
     UniformCard(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
             text = "Variety: ${entry.variete ?: "Unknown"}",
             style = AppTypography.HeadlineSmall,
-            color = AppColors.OnSurface
+            color = AppColors.OnSurface,
         )
-        
+
         // Only show additional info if available
-        val additionalInfo = buildList {
-            entry.annee_plantation?.let { add("Planted: $it") }
-            entry.taille?.let { add("Size: $it") }
-        }
-        
+        val additionalInfo =
+            buildList {
+                entry.annee_plantation?.let { add("Planted: $it") }
+                entry.taille?.let { add("Size: $it") }
+            }
+
         if (additionalInfo.isNotEmpty()) {
             additionalInfo.forEach { info ->
                 Text(
                     text = info,
                     style = AppTypography.BodyMedium,
-                    color = AppColors.OnSurfaceVariant
+                    color = AppColors.OnSurfaceVariant,
                 )
             }
         }
@@ -335,84 +339,85 @@ private fun FieldEntryCard(entry: FieldEntry) {
 private fun PeonyCard(
     peony: PeonyInfo,
     isExactMatch: Boolean,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
 ) {
     UniformCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .let { if (onClick != null) it.clickable { onClick() } else it },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .let { if (onClick != null) it.clickable { onClick() } else it },
         backgroundColor = if (isExactMatch) AppColors.ExactMatch.copy(alpha = 0.1f) else AppColors.SurfaceContainer,
-        contentColor = AppColors.OnSurface
+        contentColor = AppColors.OnSurface,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.Top,
         ) {
             Text(
                 text = peony.cultivar,
                 style = AppTypography.HeadlineSmall,
                 color = AppColors.OnSurface,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             if (isExactMatch) {
                 Badge(
                     containerColor = AppColors.ExactMatch,
-                    contentColor = AppColors.OnPrimary
+                    contentColor = AppColors.OnPrimary,
                 ) {
                     Text(
                         text = "Exact Match",
-                        style = AppTypography.LabelSmall
+                        style = AppTypography.LabelSmall,
                     )
                 }
             }
         }
-        
+
         // Image and info row
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppSpacing.S)
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.S),
         ) {
             // Peony image
             PeonyAsyncImage(
                 imageUrl = peony.image,
                 contentDescription = "Image of ${peony.cultivar}",
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(120.dp),
             )
-            
+
             // Peony details
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(AppSpacing.XS)
+                verticalArrangement = Arrangement.spacedBy(AppSpacing.XS),
             ) {
                 Text(
                     text = "Originator: ${peony.originator}",
                     style = AppTypography.BodyMedium,
-                    color = AppColors.OnSurfaceVariant
+                    color = AppColors.OnSurfaceVariant,
                 )
                 Text(
                     text = "Date: ${peony.date}",
                     style = AppTypography.BodyMedium,
-                    color = AppColors.OnSurfaceVariant
+                    color = AppColors.OnSurfaceVariant,
                 )
                 Text(
                     text = "Group: ${peony.group}",
                     style = AppTypography.BodyMedium,
-                    color = AppColors.OnSurfaceVariant
+                    color = AppColors.OnSurfaceVariant,
                 )
             }
         }
-        
+
         if (peony.description.isNotBlank()) {
             Text(
                 text = "Description:",
                 style = AppTypography.LabelLarge,
-                color = AppColors.OnSurface
+                color = AppColors.OnSurface,
             )
             Text(
-                text = peony.description.replace(Regex("<[^>]*>"), ""), // Strip HTML tags
+                text = peony.description.replace(Regex("<[^>]*>"), ""),
                 style = AppTypography.BodyMedium,
-                color = AppColors.OnSurfaceVariant
+                color = AppColors.OnSurfaceVariant,
             )
         }
     }
@@ -424,32 +429,33 @@ private fun PositionsListContent(
     uiState: PeonyIdentifierState,
     onTrouSelected: (String) -> Unit,
     listState: LazyListState,
-    onVisiblePositionChanged: (String) -> Unit
+    onVisiblePositionChanged: (String) -> Unit,
 ) {
     val positions = uiState.availableTrous
     val fieldEntries = uiState.currentRowEntries // We need to add this to state
-    
+
     LaunchedEffect(listState.firstVisibleItemIndex, positions) {
         if (positions.isNotEmpty() && listState.firstVisibleItemIndex < positions.size) {
             onVisiblePositionChanged(positions[listState.firstVisibleItemIndex])
         }
     }
-    
+
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            horizontal = AppSpacing.M,
-            vertical = AppSpacing.M
-        ),
-        verticalArrangement = Arrangement.spacedBy(AppSpacing.S)
+        contentPadding =
+            PaddingValues(
+                horizontal = AppSpacing.M,
+                vertical = AppSpacing.M,
+            ),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.S),
     ) {
         items(positions) { position ->
             val entry = fieldEntries.find { it.trou == position }
             PositionCard(
                 position = position,
                 entry = entry,
-                onClick = { onTrouSelected(position) }
+                onClick = { onTrouSelected(position) },
             )
         }
     }
@@ -459,25 +465,26 @@ private fun PositionsListContent(
 private fun PositionCard(
     position: String,
     entry: FieldEntry?,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     UniformCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable { onClick() },
         elevation = 2.dp,
-        backgroundColor = AppColors.SurfaceContainer
+        backgroundColor = AppColors.SurfaceContainer,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "Position $position",
                     style = AppTypography.LabelLarge,
-                    color = AppColors.PrimaryGreen
+                    color = AppColors.PrimaryGreen,
                 )
                 entry?.variete?.let { variety ->
                     Text(
@@ -485,14 +492,14 @@ private fun PositionCard(
                         style = AppTypography.BodyLarge,
                         color = AppColors.OnSurface,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
                 entry?.taille?.let { size ->
                     Text(
                         text = "Size: $size",
                         style = AppTypography.BodySmall,
-                        color = AppColors.OnSurfaceVariant
+                        color = AppColors.OnSurfaceVariant,
                     )
                 }
             }
@@ -500,7 +507,7 @@ private fun PositionCard(
                 text = "→",
                 style = AppTypography.LabelLarge,
                 color = AppColors.PrimaryGreen,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         }
     }
@@ -514,69 +521,71 @@ private fun ValueOnlyDropdown(
     options: List<String>,
     onSelectionChanged: (String) -> Unit,
     enabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    
+
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded && enabled },
-        modifier = modifier
+        modifier = modifier,
     ) {
         OutlinedTextField(
             value = selectedValue ?: "--",
             onValueChange = {},
             readOnly = true,
-            placeholder = { 
+            placeholder = {
                 Text(
                     text = "--",
                     style = AppTypography.BodyMedium,
                     color = AppColors.OnSurfaceVariant.copy(alpha = 0.6f),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) 
+                    modifier = Modifier.fillMaxWidth(),
+                )
             },
-            trailingIcon = { 
+            trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded,
-                    modifier = Modifier.size(16.dp)
-                ) 
+                    modifier = Modifier.size(16.dp),
+                )
             },
             enabled = enabled,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(44.dp)
-                .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = enabled),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = AppColors.PrimaryGreen,
-                unfocusedBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.4f),
-                disabledBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.2f),
-                focusedTextColor = AppColors.OnSurface,
-                unfocusedTextColor = AppColors.OnSurface,
-                disabledTextColor = AppColors.OnSurfaceVariant.copy(alpha = 0.5f)
-            ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(44.dp)
+                    .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = enabled),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = AppColors.PrimaryGreen,
+                    unfocusedBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.4f),
+                    disabledBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.2f),
+                    focusedTextColor = AppColors.OnSurface,
+                    unfocusedTextColor = AppColors.OnSurface,
+                    disabledTextColor = AppColors.OnSurfaceVariant.copy(alpha = 0.5f),
+                ),
             shape = RoundedCornerShape(AppSpacing.XS),
             textStyle = AppTypography.BodyMedium.copy(textAlign = TextAlign.Center),
-            singleLine = true
+            singleLine = true,
         )
-        
+
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { 
+                    text = {
                         Text(
                             text = option,
                             style = AppTypography.BodyMedium,
-                            color = AppColors.OnSurface
-                        ) 
+                            color = AppColors.OnSurface,
+                        )
                     },
                     onClick = {
                         onSelectionChanged(option)
                         expanded = false
-                    }
+                    },
                 )
             }
         }
@@ -590,47 +599,48 @@ private fun SimpleRowSelectionBar(
     uiState: PeonyIdentifierState,
     onPreviousRow: () -> Unit,
     onNextRow: () -> Unit,
-    onReset: () -> Unit
+    onReset: () -> Unit,
 ) {
     EnhancedBottomNavigationBar(
-        modifier = Modifier
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .combinedClickable(
-                onLongClick = onReset,
-                onClick = {}
-            )
+        modifier =
+            Modifier
+                .windowInsetsPadding(WindowInsets.navigationBars)
+                .combinedClickable(
+                    onLongClick = onReset,
+                    onClick = {},
+                ),
     ) {
         val selectedRang = uiState.selectedRang
         val availableRangs = uiState.availableRangs
         val isEnabled = !uiState.isLoading && uiState.selectedParcelle != null && availableRangs.isNotEmpty()
-        
+
         if (isEnabled && selectedRang != null) {
             val currentIndex = availableRangs.indexOf(selectedRang)
             val canGoToPrevious = currentIndex > 0
             val canGoToNext = currentIndex >= 0 && currentIndex < availableRangs.size - 1
-            
-            
+
             SimpleRowControl(
                 currentRow = selectedRang,
                 availableRows = availableRangs,
                 onPreviousRow = onPreviousRow,
-                onNextRow = onNextRow
+                onNextRow = onNextRow,
             )
         } else {
             // Show placeholder when no row is selected
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = if (uiState.selectedParcelle == null) {
-                        "Select field and parcel first"
-                    } else {
-                        "Loading rows..."
-                    },
+                    text =
+                        if (uiState.selectedParcelle == null) {
+                            "Select field and parcel first"
+                        } else {
+                            "Loading rows..."
+                        },
                     style = AppTypography.BottomBarLarge,
-                    color = AppColors.OnSurfaceVariant.copy(alpha = 0.7f)
+                    color = AppColors.OnSurfaceVariant.copy(alpha = 0.7f),
                 )
             }
         }
@@ -644,92 +654,101 @@ private fun SimpleRowControl(
     availableRows: List<String>,
     onPreviousRow: () -> Unit,
     onNextRow: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AppSpacing.M)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.M),
+        ) {
+            val currentIndex = availableRows.indexOf(currentRow)
+            val canGoToPrevious = currentIndex > 0
+            val canGoToNext = currentIndex >= 0 && currentIndex < availableRows.size - 1
+
+            // Previous arrow
+            IconButton(
+                onClick = onPreviousRow,
+                enabled = canGoToPrevious,
+                modifier = Modifier.padding(AppSpacing.XS),
             ) {
-                val currentIndex = availableRows.indexOf(currentRow)
-                val canGoToPrevious = currentIndex > 0
-                val canGoToNext = currentIndex >= 0 && currentIndex < availableRows.size - 1
-                
-                // Previous arrow
-                IconButton(
-                    onClick = onPreviousRow,
-                    enabled = canGoToPrevious,
-                    modifier = Modifier.padding(AppSpacing.XS)
-                ) {
-                    Text(
-                        text = "‹",
-                        style = AppTypography.HeadlineLarge,
-                        color = if (canGoToPrevious) AppColors.PrimaryGreen else AppColors.OnSurfaceVariant.copy(alpha = 0.3f)
-                    )
-                }
-                
-                // Current row display
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = "Row $currentRow",
-                        style = AppTypography.BottomBarLarge,
-                        color = AppColors.OnSurface
-                    )
-                    
-                    // Page indicators
-                    val totalRows = availableRows.size
-                    if (totalRows > 1) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            modifier = Modifier.padding(top = 4.dp)
-                        ) {
-                            repeat(minOf(totalRows, 10)) { index -> // Limit to 10 dots
-                                val isActive = index == currentIndex
-                                Box(
-                                    modifier = Modifier
+                Text(
+                    text = "‹",
+                    style = AppTypography.HeadlineLarge,
+                    color =
+                        if (canGoToPrevious) {
+                            AppColors.PrimaryGreen
+                        } else {
+                            AppColors.OnSurfaceVariant.copy(
+                                alpha = 0.3f,
+                            )
+                        },
+                )
+            }
+
+            // Current row display
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(
+                    text = "Row $currentRow",
+                    style = AppTypography.BottomBarLarge,
+                    color = AppColors.OnSurface,
+                )
+
+                // Page indicators
+                val totalRows = availableRows.size
+                if (totalRows > 1) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.padding(top = 4.dp),
+                    ) {
+                        repeat(minOf(totalRows, 10)) { index -> // Limit to 10 dots
+                            val isActive = index == currentIndex
+                            Box(
+                                modifier =
+                                    Modifier
                                         .size(if (isActive) 8.dp else 6.dp)
                                         .clip(RoundedCornerShape(50))
                                         .background(
-                                            if (isActive) 
-                                                AppColors.OnSurface 
-                                            else 
+                                            if (isActive) {
+                                                AppColors.OnSurface
+                                            } else {
                                                 AppColors.OnSurfaceVariant.copy(alpha = 0.3f)
-                                        )
-                                )
-                            }
-                            
-                            // Show "..." if there are more than 10 rows
-                            if (totalRows > 10) {
-                                Text(
-                                    text = "...",
-                                    style = AppTypography.BodySmall,
-                                    color = AppColors.OnSurfaceVariant,
-                                    modifier = Modifier.padding(horizontal = 2.dp)
-                                )
-                            }
+                                            },
+                                        ),
+                            )
+                        }
+
+                        // Show "..." if there are more than 10 rows
+                        if (totalRows > 10) {
+                            Text(
+                                text = "...",
+                                style = AppTypography.BodySmall,
+                                color = AppColors.OnSurfaceVariant,
+                                modifier = Modifier.padding(horizontal = 2.dp),
+                            )
                         }
                     }
                 }
-                
-                // Next arrow
-                IconButton(
-                    onClick = onNextRow,
-                    enabled = canGoToNext,
-                    modifier = Modifier.padding(AppSpacing.XS)
-                ) {
-                    Text(
-                        text = "›",
-                        style = AppTypography.HeadlineLarge,
-                        color = if (canGoToNext) AppColors.PrimaryGreen else AppColors.OnSurfaceVariant.copy(alpha = 0.3f)
-                    )
-                }
             }
+
+            // Next arrow
+            IconButton(
+                onClick = onNextRow,
+                enabled = canGoToNext,
+                modifier = Modifier.padding(AppSpacing.XS),
+            ) {
+                Text(
+                    text = "›",
+                    style = AppTypography.HeadlineLarge,
+                    color = if (canGoToNext) AppColors.PrimaryGreen else AppColors.OnSurfaceVariant.copy(alpha = 0.3f),
+                )
+            }
+        }
     }
 }
 
@@ -739,7 +758,7 @@ private fun SimpleRowControl(
 private fun ListTopBar(
     selectedChamp: String? = null,
     selectedParcelle: String? = null,
-    onNavigateBack: (() -> Unit)? = null
+    onNavigateBack: (() -> Unit)? = null,
 ) {
     TopAppBar(
         title = {
@@ -748,19 +767,19 @@ private fun ListTopBar(
                     Text(
                         text = "Position Selection",
                         style = AppTypography.HeadlineSmall,
-                        color = AppColors.OnSurface
+                        color = AppColors.OnSurface,
                     )
                     Text(
                         text = "Field $selectedChamp, Parcel $selectedParcelle",
                         style = AppTypography.BodyMedium,
-                        color = AppColors.OnSurfaceVariant
+                        color = AppColors.OnSurfaceVariant,
                     )
                 }
             } else {
                 Text(
                     text = "Peony Finder",
                     style = AppTypography.HeadlineSmall,
-                    color = AppColors.OnSurface
+                    color = AppColors.OnSurface,
                 )
             }
         },
@@ -770,16 +789,17 @@ private fun ListTopBar(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to field selection",
-                        tint = AppColors.OnSurface
+                        tint = AppColors.OnSurface,
                     )
                 }
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = AppColors.SurfaceContainer,
-            titleContentColor = AppColors.OnSurface,
-            navigationIconContentColor = AppColors.OnSurface
-        )
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = AppColors.SurfaceContainer,
+                titleContentColor = AppColors.OnSurface,
+                navigationIconContentColor = AppColors.OnSurface,
+            ),
     )
 }
 
@@ -788,7 +808,7 @@ private fun ListTopBar(
 @Composable
 private fun DetailsTopBar(
     fieldEntry: FieldEntry?,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -796,13 +816,13 @@ private fun DetailsTopBar(
                 Text(
                     text = "Position ${fieldEntry?.trou ?: ""}",
                     style = AppTypography.HeadlineSmall,
-                    color = AppColors.OnSurface
+                    color = AppColors.OnSurface,
                 )
                 fieldEntry?.let { entry ->
                     Text(
                         text = "Field ${entry.champ} • Parcel ${entry.parcelle} • Row ${entry.rang}",
                         style = AppTypography.BodySmall,
-                        color = AppColors.OnSurfaceVariant
+                        color = AppColors.OnSurfaceVariant,
                     )
                 }
             }
@@ -812,14 +832,15 @@ private fun DetailsTopBar(
                 Text(
                     text = "←",
                     style = AppTypography.HeadlineMedium,
-                    color = AppColors.OnSurface
+                    color = AppColors.OnSurface,
                 )
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = AppColors.SurfaceContainer,
-            titleContentColor = AppColors.OnSurface,
-            navigationIconContentColor = AppColors.OnSurface
-        )
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = AppColors.SurfaceContainer,
+                titleContentColor = AppColors.OnSurface,
+                navigationIconContentColor = AppColors.OnSurface,
+            ),
     )
 }

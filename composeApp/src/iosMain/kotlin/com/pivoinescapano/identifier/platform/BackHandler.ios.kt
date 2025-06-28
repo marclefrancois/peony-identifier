@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 @Composable
 actual fun BackHandler(
     enabled: Boolean,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     // No-op: iOS handles back navigation through system gestures
     // The swipe-from-left-edge gesture will naturally work

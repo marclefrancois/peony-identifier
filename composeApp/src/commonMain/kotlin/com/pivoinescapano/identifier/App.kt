@@ -19,8 +19,9 @@ import org.koin.compose.KoinApplication
 sealed class Screen {
     data class FieldSelection(
         val initialChamp: String? = null,
-        val initialParcelle: String? = null
+        val initialParcelle: String? = null,
     ) : Screen()
+
     data class PeonyIdentifier(val champ: String, val parcelle: String) : Screen()
 }
 
@@ -35,68 +36,72 @@ fun App() {
             // v1.3 Fix: Add proper background for iOS
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.background,
             ) {
                 var currentScreen by remember { mutableStateOf<Screen>(Screen.FieldSelection()) }
-                
+
                 // Animated screen transitions
                 val density = LocalDensity.current
-                
+
                 AnimatedContent(
-                targetState = currentScreen,
-                transitionSpec = {
-                    // Determine direction based on screen transition
-                    val isGoingForward = when {
-                        initialState is Screen.FieldSelection && targetState is Screen.PeonyIdentifier -> true
-                        initialState is Screen.PeonyIdentifier && targetState is Screen.FieldSelection -> false
-                        else -> true
-                    }
-                    
-                    if (isGoingForward) {
-                        // Forward: slide in from right, slide out to left
-                        slideInHorizontally(
-                            animationSpec = tween(300),
-                            initialOffsetX = { with(density) { 300.dp.roundToPx() } }
-                        ) togetherWith slideOutHorizontally(
-                            animationSpec = tween(300),
-                            targetOffsetX = { with(density) { (-300).dp.roundToPx() } }
-                        )
-                    } else {
-                        // Backward: slide in from left, slide out to right
-                        slideInHorizontally(
-                            animationSpec = tween(300),
-                            initialOffsetX = { with(density) { (-300).dp.roundToPx() } }
-                        ) togetherWith slideOutHorizontally(
-                            animationSpec = tween(300),
-                            targetOffsetX = { with(density) { 300.dp.roundToPx() } }
-                        )
-                    }
-                }
-            ) { screen ->
-                when (screen) {
-                    is Screen.FieldSelection -> {
-                        FieldSelectionScreen(
-                            initialChamp = screen.initialChamp,
-                            initialParcelle = screen.initialParcelle,
-                            onContinue = { champ, parcelle ->
-                                currentScreen = Screen.PeonyIdentifier(champ, parcelle)
+                    targetState = currentScreen,
+                    transitionSpec = {
+                        // Determine direction based on screen transition
+                        val isGoingForward =
+                            when {
+                                initialState is Screen.FieldSelection && targetState is Screen.PeonyIdentifier -> true
+                                initialState is Screen.PeonyIdentifier && targetState is Screen.FieldSelection -> false
+                                else -> true
                             }
-                        )
-                    }
-                    is Screen.PeonyIdentifier -> {
-                        PeonyIdentifierScreen(
-                            selectedChamp = screen.champ,
-                            selectedParcelle = screen.parcelle,
-                            onNavigateBack = {
-                                currentScreen = Screen.FieldSelection(
-                                    initialChamp = screen.champ,
-                                    initialParcelle = screen.parcelle
+
+                        if (isGoingForward) {
+                            // Forward: slide in from right, slide out to left
+                            slideInHorizontally(
+                                animationSpec = tween(300),
+                                initialOffsetX = { with(density) { 300.dp.roundToPx() } },
+                            ) togetherWith
+                                slideOutHorizontally(
+                                    animationSpec = tween(300),
+                                    targetOffsetX = { with(density) { (-300).dp.roundToPx() } },
                                 )
-                            }
-                        )
+                        } else {
+                            // Backward: slide in from left, slide out to right
+                            slideInHorizontally(
+                                animationSpec = tween(300),
+                                initialOffsetX = { with(density) { (-300).dp.roundToPx() } },
+                            ) togetherWith
+                                slideOutHorizontally(
+                                    animationSpec = tween(300),
+                                    targetOffsetX = { with(density) { 300.dp.roundToPx() } },
+                                )
+                        }
+                    },
+                ) { screen ->
+                    when (screen) {
+                        is Screen.FieldSelection -> {
+                            FieldSelectionScreen(
+                                initialChamp = screen.initialChamp,
+                                initialParcelle = screen.initialParcelle,
+                                onContinue = { champ, parcelle ->
+                                    currentScreen = Screen.PeonyIdentifier(champ, parcelle)
+                                },
+                            )
+                        }
+                        is Screen.PeonyIdentifier -> {
+                            PeonyIdentifierScreen(
+                                selectedChamp = screen.champ,
+                                selectedParcelle = screen.parcelle,
+                                onNavigateBack = {
+                                    currentScreen =
+                                        Screen.FieldSelection(
+                                            initialChamp = screen.champ,
+                                            initialParcelle = screen.parcelle,
+                                        )
+                                },
+                            )
+                        }
                     }
                 }
-            }
             }
         }
     }
