@@ -116,6 +116,8 @@ class PeonyIdentifierViewModel(
         val currentChamp = _uiState.value.selectedChamp ?: return
         val currentParcelle = _uiState.value.selectedParcelle ?: return
         
+        println("SwipeDebug: onRangSelected called with rang=$rang")
+        
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value.copy(
@@ -127,6 +129,8 @@ class PeonyIdentifierViewModel(
                     currentPeony = null,
                     showPeonyDetails = false
                 )
+                
+                println("SwipeDebug: Updated state - selectedRang=${_uiState.value.selectedRang}")
 
                 val trous = getFieldSelectionUseCase.getAvailableTrous(currentChamp, currentParcelle, rang)
                 val rowEntries = getFieldSelectionUseCase.getRowEntries(currentChamp, currentParcelle, rang)

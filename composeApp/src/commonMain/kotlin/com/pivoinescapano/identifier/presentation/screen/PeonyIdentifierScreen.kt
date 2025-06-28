@@ -614,6 +614,11 @@ private fun SwipeableRowSelectionBar(
             println("SwipeDebug: UI State - selectedRang=$selectedRang, currentIndex=$currentIndex, availableRangs=$availableRangs")
             println("SwipeDebug: UI State - canGoToPrevious=$canGoToPrevious, canGoToNext=$canGoToNext")
             
+            // Track state changes
+            LaunchedEffect(selectedRang, currentIndex) {
+                println("SwipeDebug: State changed! selectedRang=$selectedRang, currentIndex=$currentIndex")
+            }
+            
             SwipeableRowControl(
                 currentRow = selectedRang,
                 totalRows = availableRangs.size,
