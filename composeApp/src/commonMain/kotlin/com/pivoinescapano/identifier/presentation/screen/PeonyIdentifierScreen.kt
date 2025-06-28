@@ -1,14 +1,8 @@
 package com.pivoinescapano.identifier.presentation.screen
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,15 +22,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pivoinescapano.identifier.platform.BackHandler
 import com.pivoinescapano.identifier.presentation.component.content.ErrorContent
-import com.pivoinescapano.identifier.presentation.component.content.PeonyDetailsContent
 import com.pivoinescapano.identifier.presentation.component.content.PositionsListContent
-import com.pivoinescapano.identifier.presentation.component.navigation.DetailsTopBar
 import com.pivoinescapano.identifier.presentation.component.navigation.ListTopBar
 import com.pivoinescapano.identifier.presentation.component.navigation.SimpleRowSelectionBar
 import com.pivoinescapano.identifier.presentation.theme.AppAnimations
@@ -47,12 +38,14 @@ import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewM
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PeonyIdentifierScreen(
-    selectedChamp: String? = null,
-    selectedParcelle: String? = null,
-    onNavigateBack: (() -> Unit)? = null,
+    selectedChamp: String,
+    selectedParcelle: String,
+    onNavigateBack: () -> Unit,
+    onNavigateToDetail: (champ: String, parcelle: String, rang: String, trou: String) -> Unit,
+    onUpdateBackStackState: (champ: String, parcelle: String) -> Unit,
     viewModel: PeonyIdentifierViewModel = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -60,21 +53,24 @@ fun PeonyIdentifierScreen(
     var showScrollOverlay by remember { mutableStateOf(false) }
     var currentVisiblePosition by remember { mutableStateOf("") }
 
-    // v1.3 Initialize with field/parcel selection from navigation
+    // Initialize with field/parcel selection from navigation
     LaunchedEffect(selectedChamp, selectedParcelle) {
-        if (selectedChamp != null && selectedParcelle != null) {
-            if (uiState.selectedChamp != selectedChamp) {
-                viewModel.onChampSelected(selectedChamp)
-            }
-            if (uiState.selectedParcelle != selectedParcelle) {
-                viewModel.onParcelleSelected(selectedParcelle)
-            }
+        if (uiState.selectedChamp != selectedChamp) {
+            viewModel.onChampSelected(selectedChamp)
+        }
+        if (uiState.selectedParcelle != selectedParcelle) {
+            viewModel.onParcelleSelected(selectedParcelle)
         }
     }
 
-    // Animation states
-    val isInDetailsView = uiState.showPeonyDetails
-    val density = LocalDensity.current
+    // Update back stack state when navigating away (handles iOS gestures)
+    DisposableEffect(selectedChamp, selectedParcelle) {
+        onDispose {
+            onUpdateBackStackState(selectedChamp, selectedParcelle)
+        }
+    }
+
+    // Remove details view logic since it's now a separate screen
 
     // Show overlay when scrolling position list
     LaunchedEffect(positionListState.isScrollInProgress) {
@@ -87,35 +83,25 @@ fun PeonyIdentifierScreen(
     }
 
     // Handle Android physical back button
-    BackHandler(enabled = isInDetailsView) {
-        viewModel.navigateBack()
+    BackHandler(enabled = true) {
+        onNavigateBack()
     }
 
     Scaffold(
         topBar = {
-            if (isInDetailsView) {
-                DetailsTopBar(
-                    fieldEntry = uiState.currentFieldEntry,
-                    onBackClick = viewModel::navigateBack,
-                )
-            } else {
-                ListTopBar(
-                    selectedChamp = selectedChamp,
-                    selectedParcelle = selectedParcelle,
-                    onNavigateBack = onNavigateBack,
-                )
-            }
+            ListTopBar(
+                selectedChamp = selectedChamp,
+                selectedParcelle = selectedParcelle,
+                onNavigateBack = onNavigateBack,
+            )
         },
         bottomBar = {
-            // Only show bottom bar when not in details view
-            if (!isInDetailsView) {
-                SimpleRowSelectionBar(
-                    uiState = uiState,
-                    onPreviousRow = viewModel::goToPreviousRow,
-                    onNextRow = viewModel::goToNextRow,
-                    onReset = viewModel::reset,
-                )
-            }
+            SimpleRowSelectionBar(
+                uiState = uiState,
+                onPreviousRow = viewModel::goToPreviousRow,
+                onNextRow = viewModel::goToNextRow,
+                onReset = viewModel::reset,
+            )
         },
     ) { paddingValues ->
         Box(
@@ -124,88 +110,53 @@ fun PeonyIdentifierScreen(
                     .fillMaxSize()
                     .padding(paddingValues),
         ) {
-            // Animated content transitions using same approach as App.kt
-            AnimatedContent(
-                targetState = isInDetailsView,
-                transitionSpec = {
-                    if (targetState) {
-                        // Going to details: slide in from right, slide out to left
-                        slideInHorizontally(
-                            animationSpec = tween(300),
-                            initialOffsetX = { with(density) { 300.dp.roundToPx() } },
-                        ) togetherWith
-                            slideOutHorizontally(
-                                animationSpec = tween(300),
-                                targetOffsetX = { with(density) { (-300).dp.roundToPx() } },
-                            )
-                    } else {
-                        // Going back to list: slide in from left, slide out to right
-                        slideInHorizontally(
-                            animationSpec = tween(300),
-                            initialOffsetX = { with(density) { (-300).dp.roundToPx() } },
-                        ) togetherWith
-                            slideOutHorizontally(
-                                animationSpec = tween(300),
-                                targetOffsetX = { with(density) { 300.dp.roundToPx() } },
-                            )
+            // Position list content only (details moved to separate screen)
+            when {
+                uiState.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
                     }
-                },
-            ) { showingDetails ->
-                if (showingDetails) {
-                    // Details view
-                    PeonyDetailsContent(
-                        peony = uiState.currentPeony,
-                        fuzzyMatches = uiState.fuzzyMatches,
-                        fieldEntry = uiState.currentFieldEntry,
-                        onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected,
+                }
+
+                uiState.error != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        ErrorContent(
+                            error = uiState.error ?: "Unknown error occurred",
+                            onDismiss = viewModel::clearError,
+                        )
+                    }
+                }
+
+                uiState.selectedRang != null -> {
+                    PositionsListContent(
+                        uiState = uiState,
+                        onTrouSelected = { trou ->
+                            // Navigate to detail screen instead of internal state change
+                            onNavigateToDetail(selectedChamp, selectedParcelle, uiState.selectedRang!!, trou)
+                        },
+                        listState = positionListState,
+                        onVisiblePositionChanged = { currentVisiblePosition = it },
                     )
-                } else {
-                    // List view
-                    when {
-                        uiState.isLoading -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
+                }
 
-                        uiState.error != null -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                ErrorContent(
-                                    error = uiState.error ?: "Unknown error occurred",
-                                    onDismiss = viewModel::clearError,
-                                )
-                            }
-                        }
-
-                        uiState.selectedRang != null -> {
-                            PositionsListContent(
-                                uiState = uiState,
-                                onTrouSelected = viewModel::onTrouSelected,
-                                listState = positionListState,
-                                onVisiblePositionChanged = { currentVisiblePosition = it },
-                            )
-                        }
-
-                        else -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Text(
-                                    text = "Select field, parcel, and row to view positions",
-                                    style = AppTypography.BodyLarge,
-                                    textAlign = TextAlign.Center,
-                                    color = AppColors.OnSurfaceVariant,
-                                    modifier = Modifier.padding(AppSpacing.M),
-                                )
-                            }
-                        }
+                else -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = "Select field, parcel, and row to view positions",
+                            style = AppTypography.BodyLarge,
+                            textAlign = TextAlign.Center,
+                            color = AppColors.OnSurfaceVariant,
+                            modifier = Modifier.padding(AppSpacing.M),
+                        )
                     }
                 }
             }

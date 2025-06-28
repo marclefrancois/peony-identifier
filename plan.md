@@ -1,6 +1,6 @@
 # Peony Identifier App Plan
 
-## Project Status: ✅ Production Ready v1.3.0
+## Project Status: ✅ Production Ready v1.4.0
 
 A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility.
 
@@ -21,7 +21,7 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ **Async Image Loading**: Platform-specific image loading with caching (Android) and placeholders (iOS)
 - ✅ **Complete Information Display**: Always show field entry data even without peony matches
 - ✅ **Cross-Platform Deployment**: Both Android and iOS builds working successfully
-- ✅ **Intuitive Navigation System**: Smooth screen transitions with AnimatedContent
+- ✅ **Professional Navigation System**: Type-safe NavHost with state preservation
 - ✅ **Enhanced Design System v1.2**: Complete visual refinement with botanical theming
   - ✅ Botanical color palette: Rich green primary colors replacing purple theme
   - ✅ Enhanced typography: 10-level hierarchy with improved readability and line heights
@@ -35,12 +35,13 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
   - ✅ Performance optimization: Thread-safe caching maintains background loading efficiency
   - ✅ Developer tools: CSV-to-JSON conversion utility for future field data additions
 
-## Current App Layout ✅ Recently Redesigned with Enhanced Navigation
-- **Navigation System**: Clean screen-based navigation with smooth transitions
-  - AnimatedContent-based screen transitions with horizontal slide animations
-  - Dedicated field selection and position browsing screens
-  - Material3 Scaffold with conditional top/bottom bars for smooth transitions
-  - Cross-platform BackHandler support (Android physical back + iOS system navigation)
+## Current App Layout ✅ Recently Redesigned with NavHost Navigation
+- **Navigation System**: Professional NavHost-based navigation with type-safe routing
+  - Navigation Compose with serializable route objects for compile-time safety
+  - Three-screen architecture: FieldSelection → PeonyIdentifier → PeonyDetail
+  - Consistent 300ms horizontal slide animations for all transitions
+  - State preservation across navigation (field/parcel selections remembered)
+  - Cross-platform BackHandler support with iOS gesture navigation integration
 - **Top Section**: Compact selection controls in 2x2 grid (Field/Parcel, Row/Position)
   - Uses WindowInsets padding to respect system bars (status bar, navigation bar)  
   - Modern Material3 Surface design with smaller typography
@@ -125,14 +126,39 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ **Android Permissions**: Added INTERNET permission for image loading
 - ✅ **Portrait Lock**: Android app locked to portrait orientation
 - ✅ **Background JSON Loading**: Optimized 5.1MB peony database loading with background threading and caching
-- ✅ **Enhanced Navigation Implementation**: Clean screen-based navigation with Material3 Scaffold integration
-  - ✅ AnimatedContent transitions with smooth horizontal slide animations
-  - ✅ Separate field selection and position browsing screens for better UX
-  - ✅ Cross-platform BackHandler with expect/actual pattern for Android/iOS compatibility
+- ✅ **Professional Navigation Implementation**: NavHost-based navigation with Material3 Scaffold integration
+  - ✅ Navigation Compose with type-safe serializable routes
+  - ✅ Three-screen architecture with dedicated peony detail screen
+  - ✅ Cross-platform BackHandler with iOS gesture navigation support
   - ✅ Consistent 300ms animation timing for all screen transitions
-  - ✅ Content preservation during transitions to prevent empty screens during navigation
+  - ✅ State preservation using dual-layer approach (route params + savedStateHandle)
+  - ✅ Proper back animation direction for all navigation types
 
-## Version 1.3.0 Status: ✅ COMPLETE & DEPLOYED 🎉
+## Version 1.4.0 Status: ✅ COMPLETE & DEPLOYED 🎉
+
+### ✅ New in Version 1.4.0: Professional Navigation Architecture - **RELEASED!**
+- ✅ **Navigation Compose Integration**: Complete migration from custom AnimatedContent to NavHost
+  - ✅ Type-safe serializable routes with compile-time validation
+  - ✅ Three-screen architecture: FieldSelection → PeonyIdentifier → PeonyDetail
+  - ✅ Navigation Compose 2.9.0-beta03 for Compose Multiplatform compatibility
+  - ✅ Automatic back stack management with proper state preservation
+- ✅ **Cross-Platform State Preservation**: Advanced state management across navigation
+  - ✅ Dual-layer preservation: route parameters + savedStateHandle
+  - ✅ iOS gesture navigation support with state retention
+  - ✅ Field/parcel selections remembered in all navigation scenarios
+  - ✅ DisposableEffect integration for reliable state updates on screen disposal
+- ✅ **Enhanced Animation System**: Proper directional animations for all navigation types
+  - ✅ Correct forward/backward animation detection
+  - ✅ Consistent 300ms horizontal slide transitions
+  - ✅ Cross-platform animation consistency (Android back button + iOS gestures)
+  - ✅ Professional NavHost enterTransition/exitTransition configuration
+- ✅ **Architecture Improvements**: Clean separation of concerns with dedicated screens
+  - ✅ PeonyDetailScreen extracted as dedicated composable
+  - ✅ Simplified PeonyIdentifierScreen focused on position selection
+  - ✅ Type-safe parameter passing between all screens
+  - ✅ Better testability with screen-level isolation
+
+## Version 1.3.0 Status: ✅ COMPLETE & DEPLOYED
 
 ### ✅ New in Version 1.3.0: Enhanced UX Based on User Testing - **RELEASED!**
 - ✅ **Professional App Branding**: Complete app icon and splash screen implementation
@@ -212,20 +238,28 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 
 ## Version 1.1 Status: ✅ COMPLETE & DEPLOYED
 
-### ✅ New in Version 1.1: Enhanced Navigation System
-- ✅ **Clean Screen Navigation**: Intuitive screen-based navigation with smooth transitions
-  - ✅ AnimatedContent-based transitions with horizontal slide animations
-  - ✅ Dedicated screens for field selection and position browsing
-  - ✅ Arrow-based row navigation for precise position selection
-  - ✅ Consistent 300ms animation timing across all transitions
-- ✅ **Enhanced UI Architecture**: Material3 Scaffold with conditional navigation elements
-  - ✅ Dynamic top bar: "Peony Finder" title in list, back button + position info in details
-  - ✅ Smart bottom bar: Row navigation with clear directional arrows
-  - ✅ Cross-platform compatibility: Android back button + iOS system navigation
-- ✅ **Animation System**: Smooth and consistent transition architecture
-  - ✅ Horizontal slide transitions for screen changes
-  - ✅ Fade animations for content state changes
-  - ✅ Content preservation during transitions to eliminate empty screen flickers
+### ✅ New in Version 1.4: Professional NavHost Navigation
+- ✅ **Type-Safe Navigation**: Navigation Compose with compile-time route validation
+  - ✅ Serializable route objects for all navigation destinations
+  - ✅ Three-screen architecture: FieldSelection → PeonyIdentifier → PeonyDetail
+  - ✅ Automatic back stack management with state preservation
+  - ✅ Cross-platform gesture navigation support (iOS swipe, Android back button)
+- ✅ **Enhanced State Management**: Dual-layer state preservation system
+  - ✅ Route-based state preservation for manual navigation
+  - ✅ SavedStateHandle preservation for iOS gesture navigation
+  - ✅ Field/parcel selections remembered across all navigation scenarios
+  - ✅ DisposableEffect integration for reliable state updates
+- ✅ **Professional Animation System**: Consistent directional animations
+  - ✅ Proper forward/backward animation detection
+  - ✅ Horizontal slide transitions with correct direction
+  - ✅ 300ms timing for smooth cross-platform experience
+  - ✅ Animation consistency across manual and gesture navigation
+
+### ✅ Version 1.1-1.3: Enhanced UI and UX Features (Previous)
+- ✅ **Enhanced Design System**: Botanical theming with golden ratio spacing
+- ✅ **Professional Branding**: Complete app icons and splash screens
+- ✅ **Large Typography**: 30% larger UI elements for better accessibility
+- ✅ **Multi-Field Data**: 5,461+ peony entries across multiple field parcels
 
 ## Version 1.0 Status: ✅ COMPLETE & DEPLOYED
 
@@ -250,7 +284,7 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
   - ✅ Background parsing on Dispatchers.Default for CPU-intensive operations
   - ✅ Optimized 5.1MB peony database loading without blocking UI thread
 
-## Future Enhancements (Version 1.4+)
+## Future Enhancements (Version 1.5+)
 - [ ] **Additional Field Data**: Integration of remaining field data files (Champ3, Champ4, etc.)
 - [ ] **Advanced Search**: Direct search by variety name across all fields
 - [ ] **Data Export**: Export field data and search results to CSV/PDF
@@ -268,10 +302,11 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 ## Technical Stack
 - **Language**: Kotlin 2.1.21
 - **UI**: Compose Multiplatform 1.8.1 with Material3
+- **Navigation**: Navigation Compose 2.9.0-beta03 with type-safe routing
 - **Architecture**: Clean Architecture (Repository/UseCase/ViewModel)
 - **DI**: Koin 4.1.0
 - **Serialization**: kotlinx.serialization 1.8.0 with custom serializers
-- **State Management**: StateFlow/Compose State
+- **State Management**: StateFlow/Compose State with NavHost state preservation
 - **Image Loading**: Coil 2.7.0 (Android), Kamel 0.9.5 (iOS) with expect/actual pattern
 - **Platforms**: Android (SDK 24-35), iOS (via Kotlin/Native)
 - **Build System**: Gradle with Kotlin DSL, Xcode integration
@@ -280,9 +315,10 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ **Android**: APK builds successfully, portrait locked, image loading functional, gesture navigation working
 - ✅ **iOS**: Framework builds cleanly, async image loading functional, native swipe gestures implemented
 - ✅ **Cross-Platform**: All shared business logic and UI working across both platforms
-- ✅ **Navigation**: Clean screen-based transition system deployed and tested on both platforms
+- ✅ **Navigation**: Professional NavHost system with type-safe routing deployed and tested on both platforms
 - ✅ **Design System v1.2**: Botanical theme deployed, enhanced typography and spacing active
 - ✅ **Field Data v1.2.1**: Comprehensive multi-field coverage with 5,461+ additional entries
 - ✅ **App Branding v1.3.0**: Professional icons and splash screens deployed on both platforms
 - ✅ **Enhanced UX v1.3.0**: Improved navigation flow with field selection screen and larger typography
-- ✅ **Production Ready**: Complete feature set with professional branding, ready for app store submission
+- ✅ **Professional Navigation v1.4.0**: Type-safe NavHost with state preservation and cross-platform gesture support
+- ✅ **Production Ready**: Complete feature set with professional navigation architecture, ready for app store submission

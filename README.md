@@ -1,17 +1,17 @@
 # Peony Identifier
 
-> **Version 1.3** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with enhanced design system and intuitive navigation.
+> **Version 1.4** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with professional NavHost navigation and type-safe routing.
 
 ## 🌿 Project Overview
 
-The Peony Identifier is a production-ready cross-platform application that enables identification of peony varieties across multiple fields using hierarchical field selection and fuzzy string matching. Built with Compose Multiplatform, it features a comprehensive design system, intuitive screen transitions, and optimized performance for both Android and iOS platforms.
+The Peony Identifier is a production-ready cross-platform application that enables identification of peony varieties across multiple fields using hierarchical field selection and fuzzy string matching. Built with Compose Multiplatform, it features a professional NavHost navigation system, type-safe routing, and optimized performance for both Android and iOS platforms.
 
 ## 🚀 Key Features
 
 - **Hierarchical Field Selection**: Cascading dropdowns (Field → Parcel → Row → Position)
 - **Fuzzy String Matching**: Intelligent peony variety identification with exact/approximate matches
-- **Intuitive Navigation**: Smooth screen transitions with AnimatedContent and arrow-based row navigation
-- **Enhanced Design System v1.3**: Botanical theming with golden ratio-based spacing and larger typography
+- **Professional Navigation**: Type-safe NavHost with state preservation and cross-platform gesture support
+- **Enhanced Design System v1.4**: Botanical theming with professional navigation architecture
 - **Cross-Platform Images**: Async loading with Coil (Android) and Kamel (iOS)
 - **Offline-First**: JSON-based data loading with background threading and caching
 - **Accessibility**: WCAG AA compliant design with proper contrast ratios
@@ -28,8 +28,9 @@ The Peony Identifier is a production-ready cross-platform application that enabl
 
 ### Key Architectural Decisions
 - **Repository/UseCase/ViewModel** pattern for clean separation of concerns
+- **Navigation Compose** with type-safe serializable routes
 - **Koin** for dependency injection (avoid `object:` singletons for testability)
-- **StateFlow** for reactive state management
+- **StateFlow** for reactive state management with NavHost state preservation
 - **expect/actual** declarations for platform-specific implementations
 - **Material3** with custom botanical design system
 
@@ -119,12 +120,13 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 | Component | Technology | Version |
 |-----------|------------|----------|
 | **UI Framework** | Compose Multiplatform | 1.8.1 |
+| **Navigation** | Navigation Compose | 2.9.0-beta03 |
 | **Language** | Kotlin | 2.1.21 |
 | **DI** | Koin | 4.1.0 |
 | **Serialization** | kotlinx.serialization | 1.8.0 |
 | **Image Loading** | Coil (Android) / Kamel (iOS) | 2.7.0 / 0.9.5 |
-| **Architecture** | Clean Architecture | - |
-| **State Management** | StateFlow + Compose State | - |
+| **Architecture** | Clean Architecture + NavHost | - |
+| **State Management** | StateFlow + NavHost State Preservation | - |
 
 ## 📱 Platform-Specific Features
 
@@ -136,9 +138,9 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ### iOS
 - **Kamel** async image loading
-- **System back navigation** support
+- **System gesture navigation** with state preservation
 - **UIKit integration** via expect/actual pattern
-- **Smooth screen transition** animations
+- **NavHost transition** animations with proper directional support
 
 ## 🧪 Testing Strategy
 
@@ -167,13 +169,21 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 - **Image Optimization**: Platform-specific caching strategies
 - **Memory Management**: Proper Compose state handling
 
+## 🔄 Navigation Flow
+
+1. **Field Selection**: User selects field → parcel via FieldSelectionScreen
+2. **Position Selection**: Navigate to PeonyIdentifierScreen for row → position selection
+3. **Detail Navigation**: Navigate to PeonyDetailScreen for peony information
+4. **State Preservation**: Field/parcel selections remembered across navigation
+5. **Gesture Support**: iOS swipe and Android back button with proper animations
+
 ## 🔄 Data Flow
 
-1. **Field Selection**: User selects field → parcel → row → position
+1. **Navigation Parameters**: Type-safe route objects pass data between screens
 2. **Data Retrieval**: Repository loads field entry from cached JSON
 3. **Fuzzy Matching**: Use case performs string matching against peony database
 4. **State Update**: ViewModel updates UI state with results
-5. **UI Rendering**: Compose renders updated state with animations
+5. **UI Rendering**: Compose renders updated state with NavHost animations
 
 ## 🚢 Deployment
 
@@ -199,7 +209,7 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ### Development Tips
 - Use `./gradlew --no-daemon` for memory-constrained builds
-- Test navigation flow on physical iOS devices
+- Test NavHost navigation and gesture support on physical iOS devices
 - Monitor JSON loading performance with profiler
 - Validate design system changes across both platforms
 
@@ -228,4 +238,4 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ---
 
-**Current Status**: ✅ Production Ready v1.3 with Enhanced UX and Professional Branding
+**Current Status**: ✅ Production Ready v1.4 with Professional NavHost Navigation

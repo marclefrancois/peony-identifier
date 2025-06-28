@@ -3,7 +3,10 @@ package com.pivoinescapano.identifier.data.cache
 import com.pivoinescapano.identifier.data.loader.JsonDataLoader
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.model.PeonyInfo
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
