@@ -1,6 +1,6 @@
 # Peony Identifier
 
-> **Version 1.4** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with professional NavHost navigation and type-safe routing.
+> **Version 1.4.1** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with professional NavHost navigation and type-safe routing. Now powered by Kotlin 2.2.0 with enhanced K2 compiler performance.
 
 ## 🌿 Project Overview
 
@@ -11,7 +11,7 @@ The Peony Identifier is a production-ready cross-platform application that enabl
 - **Hierarchical Field Selection**: Cascading dropdowns (Field → Parcel → Row → Position)
 - **Fuzzy String Matching**: Intelligent peony variety identification with exact/approximate matches
 - **Professional Navigation**: Type-safe NavHost with state preservation and cross-platform gesture support
-- **Enhanced Design System v1.4**: Botanical theming with professional navigation architecture
+- **Enhanced Design System v1.4.1**: Botanical theming with modern Kotlin 2.2.0 architecture
 - **Cross-Platform Images**: Async loading with Coil (Android) and Kamel (iOS)
 - **Offline-First**: JSON-based data loading with background threading and caching
 - **Accessibility**: WCAG AA compliant design with proper contrast ratios
@@ -37,7 +37,7 @@ The Peony Identifier is a production-ready cross-platform application that enabl
 ## 🛠️ Development Setup
 
 ### Prerequisites
-- **Kotlin** 2.1.21
+- **Kotlin** 2.2.0 (Latest with K2 compiler)
 - **Android Studio** with Compose Multiplatform plugin
 - **Xcode** 15+ (for iOS development)
 - **JDK** 17+
@@ -119,11 +119,11 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 | Component | Technology | Version |
 |-----------|------------|----------|
-| **UI Framework** | Compose Multiplatform | 1.8.1 |
+| **UI Framework** | Compose Multiplatform | 1.8.2 |
 | **Navigation** | Navigation Compose | 2.9.0-beta03 |
-| **Language** | Kotlin | 2.1.21 |
+| **Language** | Kotlin | 2.2.0 |
 | **DI** | Koin | 4.1.0 |
-| **Serialization** | kotlinx.serialization | 1.8.0 |
+| **Serialization** | kotlinx.serialization | 1.9.0 |
 | **Image Loading** | Coil (Android) / Kamel (iOS) | 2.7.0 / 0.9.5 |
 | **Architecture** | Clean Architecture + NavHost | - |
 | **State Management** | StateFlow + NavHost State Preservation | - |
@@ -238,4 +238,4 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ---
 
-**Current Status**: ✅ Production Ready v1.4 with Professional NavHost Navigation
+**Current Status**: ✅ Production Ready v1.4.1 with Kotlin 2.2.0 and Enhanced Performance
