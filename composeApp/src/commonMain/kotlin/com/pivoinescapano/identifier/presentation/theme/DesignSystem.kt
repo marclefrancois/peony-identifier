@@ -3,10 +3,12 @@ package com.pivoinescapano.identifier.presentation.theme
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -255,8 +257,9 @@ fun OverlayCard(
         shape = RoundedCornerShape(AppSpacing.RadiusXL),
     ) {
         Column(
-            modifier =
-                Modifier.padding(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
                     horizontal = AppSpacing.L,
                     vertical = AppSpacing.M,
                 ),
