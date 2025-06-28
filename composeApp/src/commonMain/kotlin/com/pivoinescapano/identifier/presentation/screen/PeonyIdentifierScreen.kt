@@ -680,13 +680,19 @@ private fun SwipeableRowControl(
                             // Very sensitive thresholds for better responsiveness
                             // Right swipe (positive) = go to previous/lower row  
                             // Left swipe (negative) = go to next/higher row
-                            println("SwipeDebug: totalDrag=$totalDrag, canGoToPrevious=$canGoToPrevious, canGoToNext=$canGoToNext")
+                            
+                            // Compute canGo values fresh from current state
+                            val currentCanGoToPrevious = currentIndex > 0
+                            val currentCanGoToNext = currentIndex >= 0 && currentIndex < totalRows - 1
+                            
+                            println("SwipeDebug: totalDrag=$totalDrag, canGoToPrevious=$currentCanGoToPrevious, canGoToNext=$currentCanGoToNext")
+                            println("SwipeDebug: currentIndex=$currentIndex, totalRows=$totalRows")
                             when {
-                                totalDrag > 15 && canGoToPrevious -> {
+                                totalDrag > 15 && currentCanGoToPrevious -> {
                                     println("SwipeDebug: Right swipe detected, going to previous row")
                                     onPreviousRow()
                                 }
-                                totalDrag < -15 && canGoToNext -> {
+                                totalDrag < -15 && currentCanGoToNext -> {
                                     println("SwipeDebug: Left swipe detected, going to next row") 
                                     onNextRow()
                                 }
