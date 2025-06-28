@@ -662,16 +662,21 @@ private fun SwipeableRowControl(
             modifier = Modifier
                 .fillMaxWidth()
                 .pointerInput(Unit) {
+                    var totalDrag = 0f
                     detectHorizontalDragGestures(
+                        onDragStart = {
+                            totalDrag = 0f
+                        },
                         onDragEnd = {
-                            // This will be triggered when the drag ends
+                            // More sensitive thresholds for better responsiveness
+                            when {
+                                totalDrag > 30 && canGoToPrevious -> onPreviousRow()
+                                totalDrag < -30 && canGoToNext -> onNextRow()
+                            }
                         }
                     ) { _, dragAmount ->
-                        // Detect swipe direction and trigger navigation
-                        when {
-                            dragAmount > 50 && canGoToPrevious -> onPreviousRow()
-                            dragAmount < -50 && canGoToNext -> onNextRow()
-                        }
+                        // Accumulate drag distance for more reliable detection
+                        totalDrag += dragAmount
                     }
                 },
             contentAlignment = Alignment.Center
@@ -683,7 +688,8 @@ private fun SwipeableRowControl(
                 // Previous arrow
                 IconButton(
                     onClick = onPreviousRow,
-                    enabled = canGoToPrevious
+                    enabled = canGoToPrevious,
+                    modifier = Modifier.padding(AppSpacing.XS)
                 ) {
                     Text(
                         text = "‹",
@@ -717,7 +723,7 @@ private fun SwipeableRowControl(
                                         .clip(RoundedCornerShape(50))
                                         .background(
                                             if (isActive) 
-                                                AppColors.PrimaryGreen 
+                                                AppColors.OnSurface 
                                             else 
                                                 AppColors.OnSurfaceVariant.copy(alpha = 0.3f)
                                         )
@@ -740,7 +746,8 @@ private fun SwipeableRowControl(
                 // Next arrow
                 IconButton(
                     onClick = onNextRow,
-                    enabled = canGoToNext
+                    enabled = canGoToNext,
+                    modifier = Modifier.padding(AppSpacing.XS)
                 ) {
                     Text(
                         text = "›",
