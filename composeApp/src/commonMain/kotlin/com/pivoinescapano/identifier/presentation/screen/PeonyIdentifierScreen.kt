@@ -621,12 +621,9 @@ private fun SwipeableRowSelectionBar(
             
             SwipeableRowControl(
                 currentRow = selectedRang,
-                totalRows = availableRangs.size,
-                currentIndex = currentIndex,
+                availableRows = availableRangs,
                 onPreviousRow = onPreviousRow,
-                onNextRow = onNextRow,
-                canGoToPrevious = canGoToPrevious,
-                canGoToNext = canGoToNext
+                onNextRow = onNextRow
             )
         } else {
             // Show placeholder when no row is selected
@@ -653,12 +650,9 @@ private fun SwipeableRowSelectionBar(
 @Composable
 private fun SwipeableRowControl(
     currentRow: String,
-    totalRows: Int,
-    currentIndex: Int,
+    availableRows: List<String>,
     onPreviousRow: () -> Unit,
     onNextRow: () -> Unit,
-    canGoToPrevious: Boolean,
-    canGoToNext: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -681,12 +675,15 @@ private fun SwipeableRowControl(
                             // Right swipe (positive) = go to previous/lower row  
                             // Left swipe (negative) = go to next/higher row
                             
-                            // Compute canGo values fresh from current state
+                            // Compute everything fresh from current state
+                            val currentIndex = availableRows.indexOf(currentRow)
+                            val totalRows = availableRows.size
                             val currentCanGoToPrevious = currentIndex > 0
                             val currentCanGoToNext = currentIndex >= 0 && currentIndex < totalRows - 1
                             
-                            println("SwipeDebug: totalDrag=$totalDrag, canGoToPrevious=$currentCanGoToPrevious, canGoToNext=$currentCanGoToNext")
-                            println("SwipeDebug: currentIndex=$currentIndex, totalRows=$totalRows")
+                            println("SwipeDebug: totalDrag=$totalDrag, currentRow=$currentRow")
+                            println("SwipeDebug: availableRows=$availableRows, currentIndex=$currentIndex")
+                            println("SwipeDebug: canGoToPrevious=$currentCanGoToPrevious, canGoToNext=$currentCanGoToNext")
                             when {
                                 totalDrag > 15 && currentCanGoToPrevious -> {
                                     println("SwipeDebug: Right swipe detected, going to previous row")
@@ -704,7 +701,6 @@ private fun SwipeableRowControl(
                     ) { _, dragAmount ->
                         // Accumulate drag distance for more reliable detection
                         totalDrag += dragAmount
-                        println("SwipeDebug: Dragging - dragAmount=$dragAmount, totalDrag=$totalDrag")
                     }
                 },
             contentAlignment = Alignment.Center
@@ -713,6 +709,10 @@ private fun SwipeableRowControl(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(AppSpacing.M)
             ) {
+                val currentIndex = availableRows.indexOf(currentRow)
+                val canGoToPrevious = currentIndex > 0
+                val canGoToNext = currentIndex >= 0 && currentIndex < availableRows.size - 1
+                
                 // Previous arrow
                 IconButton(
                     onClick = onPreviousRow,
@@ -738,6 +738,8 @@ private fun SwipeableRowControl(
                     )
                     
                     // Page indicators
+                    val currentIndex = availableRows.indexOf(currentRow)
+                    val totalRows = availableRows.size
                     if (totalRows > 1) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
