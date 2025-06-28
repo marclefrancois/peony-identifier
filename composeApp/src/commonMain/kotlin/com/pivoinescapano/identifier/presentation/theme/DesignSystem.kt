@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 // Enhanced Color Palette - Botanical Theme
 object AppColors {
@@ -266,7 +267,6 @@ fun OverlayCard(
     }
 }
 
-// v1.3 Enhanced Field Selection Card
 @Composable
 fun FieldSelectionCard(
     modifier: Modifier = Modifier,
@@ -330,7 +330,6 @@ fun FieldSelectionCard(
     }
 }
 
-// v1.3 Enhanced Bottom Navigation Bar for Row Selection
 @Composable
 fun EnhancedBottomNavigationBar(
     modifier: Modifier = Modifier,
@@ -390,4 +389,24 @@ fun ContinueButton(
             fontWeight = FontWeight.SemiBold,
         )
     }
+}
+
+@Preview
+@Composable
+fun previewOverlayCard() {
+    OverlayCard(
+        modifier = Modifier.fillMaxWidth().height(200.dp),
+        content = {
+            Text(
+                text = "Scroll Position",
+                style = AppTypography.HeadlineMedium,
+                color = AppColors.OnPrimary,
+            )
+            Text(
+                text = "This card overlays the scroll position.",
+                style = AppTypography.BodyMedium,
+                color = AppColors.OnPrimary,
+            )
+        },
+    )
 }
