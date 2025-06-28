@@ -1,12 +1,30 @@
 package com.pivoinescapano.identifier.presentation.screen
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -14,9 +32,22 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.runtime.*
+import androidx.compose.material3.Badge
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,14 +55,19 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.size
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.model.PeonyInfo
 import com.pivoinescapano.identifier.platform.BackHandler
 import com.pivoinescapano.identifier.presentation.component.PeonyAsyncImage
 import com.pivoinescapano.identifier.presentation.state.PeonyIdentifierState
-import com.pivoinescapano.identifier.presentation.theme.*
+import com.pivoinescapano.identifier.presentation.theme.AppAnimations
+import com.pivoinescapano.identifier.presentation.theme.AppColors
+import com.pivoinescapano.identifier.presentation.theme.AppSpacing
+import com.pivoinescapano.identifier.presentation.theme.AppTypography
+import com.pivoinescapano.identifier.presentation.theme.EnhancedBottomNavigationBar
+import com.pivoinescapano.identifier.presentation.theme.OverlayCard
+import com.pivoinescapano.identifier.presentation.theme.UniformCard
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewModel
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
@@ -159,6 +195,7 @@ fun PeonyIdentifierScreen(
                                 CircularProgressIndicator()
                             }
                         }
+
                         uiState.error != null -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -170,6 +207,7 @@ fun PeonyIdentifierScreen(
                                 )
                             }
                         }
+
                         uiState.selectedRang != null -> {
                             PositionsListContent(
                                 uiState = uiState,
@@ -178,6 +216,7 @@ fun PeonyIdentifierScreen(
                                 onVisiblePositionChanged = { currentVisiblePosition = it },
                             )
                         }
+
                         else -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -513,85 +552,6 @@ private fun PositionCard(
     }
 }
 
-// Value-only dropdown for the bottom bar (no internal labels)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ValueOnlyDropdown(
-    selectedValue: String?,
-    options: List<String>,
-    onSelectionChanged: (String) -> Unit,
-    enabled: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded && enabled },
-        modifier = modifier,
-    ) {
-        OutlinedTextField(
-            value = selectedValue ?: "--",
-            onValueChange = {},
-            readOnly = true,
-            placeholder = {
-                Text(
-                    text = "--",
-                    style = AppTypography.BodyMedium,
-                    color = AppColors.OnSurfaceVariant.copy(alpha = 0.6f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(
-                    expanded = expanded,
-                    modifier = Modifier.size(16.dp),
-                )
-            },
-            enabled = enabled,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(44.dp)
-                    .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = enabled),
-            colors =
-                OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AppColors.PrimaryGreen,
-                    unfocusedBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.4f),
-                    disabledBorderColor = AppColors.OnSurfaceVariant.copy(alpha = 0.2f),
-                    focusedTextColor = AppColors.OnSurface,
-                    unfocusedTextColor = AppColors.OnSurface,
-                    disabledTextColor = AppColors.OnSurfaceVariant.copy(alpha = 0.5f),
-                ),
-            shape = RoundedCornerShape(AppSpacing.XS),
-            textStyle = AppTypography.BodyMedium.copy(textAlign = TextAlign.Center),
-            singleLine = true,
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = option,
-                            style = AppTypography.BodyMedium,
-                            color = AppColors.OnSurface,
-                        )
-                    },
-                    onClick = {
-                        onSelectionChanged(option)
-                        expanded = false
-                    },
-                )
-            }
-        }
-    }
-}
-
 // v1.4 Simple Row Selection Bar with Arrow Navigation
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -616,8 +576,6 @@ private fun SimpleRowSelectionBar(
 
         if (isEnabled && selectedRang != null) {
             val currentIndex = availableRangs.indexOf(selectedRang)
-            val canGoToPrevious = currentIndex > 0
-            val canGoToNext = currentIndex >= 0 && currentIndex < availableRangs.size - 1
 
             SimpleRowControl(
                 currentRow = selectedRang,

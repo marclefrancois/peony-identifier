@@ -91,7 +91,6 @@ dependencies {
 }
 
 ktlint {
-    version.set("1.0.1")
     android.set(true)
     outputToConsole.set(true)
     outputColorName.set("RED")
