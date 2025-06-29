@@ -68,8 +68,8 @@ android {
         applicationId = "com.pivoinescapano.identifier"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 16
+        versionName = "1.6.0"
     }
     packaging {
         resources {
