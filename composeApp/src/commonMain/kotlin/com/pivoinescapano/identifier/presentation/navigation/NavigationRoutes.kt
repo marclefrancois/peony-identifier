@@ -27,6 +27,7 @@ data class PeonyDetailRoute(
     val parcelle: String,
     val rang: String,
     val trou: String,
+    val fromSearchTerm: String? = null,
 )
 
 @Serializable

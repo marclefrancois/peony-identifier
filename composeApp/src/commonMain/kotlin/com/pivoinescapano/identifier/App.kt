@@ -19,9 +19,11 @@ import com.pivoinescapano.identifier.di.appModule
 import com.pivoinescapano.identifier.presentation.navigation.FieldSelectionRoute
 import com.pivoinescapano.identifier.presentation.navigation.PeonyDetailRoute
 import com.pivoinescapano.identifier.presentation.navigation.PeonyIdentifierRoute
+import com.pivoinescapano.identifier.presentation.navigation.PeonySearchRoute
 import com.pivoinescapano.identifier.presentation.screen.FieldSelectionScreen
 import com.pivoinescapano.identifier.presentation.screen.PeonyDetailScreen
 import com.pivoinescapano.identifier.presentation.screen.PeonyIdentifierScreen
+import com.pivoinescapano.identifier.presentation.screen.PeonySearchScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 
@@ -89,6 +91,9 @@ fun App() {
                                 }
                                 navController.navigate(PeonyIdentifierRoute(champ, parcelle))
                             },
+                            onNavigateToSearch = {
+                                navController.navigate(PeonySearchRoute)
+                            },
                         )
                     }
 
@@ -107,7 +112,7 @@ fun App() {
                                 navController.navigateUp()
                             },
                             onNavigateToDetail = { champ, parcelle, rang, trou ->
-                                navController.navigate(PeonyDetailRoute(champ, parcelle, rang, trou))
+                                navController.navigate(PeonyDetailRoute(champ, parcelle, rang, trou, fromSearchTerm = null))
                             },
                             onUpdateBackStackState = { champ, parcelle ->
                                 // Store state in the previous back stack entry (FieldSelection)
@@ -121,18 +126,50 @@ fun App() {
                                 backStackEntry.savedStateHandle["restoredRang"] = rang
                                 backStackEntry.savedStateHandle["restoredTrou"] = trou
                             },
+                            onNavigateToSearch = {
+                                navController.navigate(PeonySearchRoute)
+                            },
                         )
                     }
 
                     composable<PeonyDetailRoute> { backStackEntry ->
                         val route = backStackEntry.toRoute<PeonyDetailRoute>()
+                        // Check for restored search term from savedStateHandle
+                        val restoredSearchTerm = backStackEntry.savedStateHandle.get<String>("restoredSearchTerm")
+
                         PeonyDetailScreen(
                             champ = route.champ,
                             parcelle = route.parcelle,
                             rang = route.rang,
                             trou = route.trou,
                             onNavigateBack = {
+                                // If we came from search, restore the search term and navigate back to search
+                                if (route.fromSearchTerm != null || restoredSearchTerm != null) {
+                                    navController.navigate(PeonySearchRoute) {
+                                        popUpTo<PeonySearchRoute> { inclusive = true }
+                                    }
+                                    // Store the search term in the search screen's savedStateHandle for restoration
+                                    navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
+                                        savedState["restoredSearchTerm"] = route.fromSearchTerm ?: restoredSearchTerm
+                                    }
+                                } else {
+                                    navController.navigateUp()
+                                }
+                            },
+                        )
+                    }
+
+                    composable<PeonySearchRoute> { backStackEntry ->
+                        // Check for restored search term from savedStateHandle
+                        val restoredSearchTerm = backStackEntry.savedStateHandle.get<String>("restoredSearchTerm")
+
+                        PeonySearchScreen(
+                            restoredSearchTerm = restoredSearchTerm,
+                            onNavigateBack = {
                                 navController.navigateUp()
+                            },
+                            onNavigateToDetail = { champ, parcelle, rang, trou, searchTerm ->
+                                navController.navigate(PeonyDetailRoute(champ, parcelle, rang, trou, searchTerm))
                             },
                         )
                     }

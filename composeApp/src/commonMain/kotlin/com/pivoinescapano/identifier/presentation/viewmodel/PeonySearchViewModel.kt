@@ -34,47 +34,52 @@ class PeonySearchViewModel(
             try {
                 allVarieties = searchPeonyLocationsUseCase.getAllUniqueVarieties()
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = "Failed to load varieties: ${e.message}"
-                )
+                _uiState.value =
+                    _uiState.value.copy(
+                        errorMessage = "Failed to load varieties: ${e.message}",
+                    )
             }
         }
     }
 
     private fun setupDebouncedSearch() {
         searchQueryFlow
-            .debounce(300) // Wait 300ms after user stops typing
+            .debounce(300)
             .distinctUntilChanged()
             .onEach { query ->
                 if (query.isNotBlank()) {
                     performSearch(query)
                 } else {
-                    _uiState.value = _uiState.value.copy(
-                        searchResults = emptyList(),
-                        hasSearched = false
-                    )
+                    _uiState.value =
+                        _uiState.value.copy(
+                            searchResults = emptyList(),
+                            hasSearched = false,
+                        )
                 }
             }
             .launchIn(viewModelScope)
     }
 
     fun onSearchQueryChanged(query: String) {
-        _uiState.value = _uiState.value.copy(
-            searchQuery = query,
-            suggestions = if (query.isNotBlank()) {
-                generateSuggestions(query)
-            } else {
-                emptyList()
-            }
-        )
+        _uiState.value =
+            _uiState.value.copy(
+                searchQuery = query,
+                suggestions =
+                    if (query.isNotBlank()) {
+                        generateSuggestions(query)
+                    } else {
+                        emptyList()
+                    },
+            )
         searchQueryFlow.value = query
     }
 
     fun onSuggestionSelected(suggestion: String) {
-        _uiState.value = _uiState.value.copy(
-            searchQuery = suggestion,
-            suggestions = emptyList()
-        )
+        _uiState.value =
+            _uiState.value.copy(
+                searchQuery = suggestion,
+                suggestions = emptyList(),
+            )
         searchQueryFlow.value = suggestion
     }
 
@@ -87,24 +92,27 @@ class PeonySearchViewModel(
     private fun performSearch(query: String) {
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = true,
-                    errorMessage = null
-                )
+                _uiState.value =
+                    _uiState.value.copy(
+                        isLoading = true,
+                        errorMessage = null,
+                    )
 
                 val results = searchPeonyLocationsUseCase.execute(query)
 
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    searchResults = results,
-                    hasSearched = true
-                )
+                _uiState.value =
+                    _uiState.value.copy(
+                        isLoading = false,
+                        searchResults = results,
+                        hasSearched = true,
+                    )
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = "Search failed: ${e.message}",
-                    hasSearched = true
-                )
+                _uiState.value =
+                    _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = "Search failed: ${e.message}",
+                        hasSearched = true,
+                    )
             }
         }
     }
@@ -116,5 +124,16 @@ class PeonySearchViewModel(
     fun clearSearch() {
         _uiState.value = PeonySearchState()
         searchQueryFlow.value = ""
+    }
+
+    fun restoreSearchTerm(searchTerm: String) {
+        if (searchTerm.isNotBlank()) {
+            _uiState.value =
+                _uiState.value.copy(
+                    searchQuery = searchTerm,
+                    suggestions = generateSuggestions(searchTerm),
+                )
+            searchQueryFlow.value = searchTerm
+        }
     }
 }

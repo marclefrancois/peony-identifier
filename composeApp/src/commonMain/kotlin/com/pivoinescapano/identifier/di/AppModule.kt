@@ -9,8 +9,10 @@ import com.pivoinescapano.identifier.data.repository.impl.PeonyRepositoryImpl
 import com.pivoinescapano.identifier.data.usecase.GetFieldEntriesUseCase
 import com.pivoinescapano.identifier.domain.usecase.FindPeonyUseCase
 import com.pivoinescapano.identifier.domain.usecase.GetFieldSelectionUseCase
+import com.pivoinescapano.identifier.domain.usecase.SearchPeonyLocationsUseCase
 import com.pivoinescapano.identifier.presentation.viewmodel.FieldSelectionViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewModel
+import com.pivoinescapano.identifier.presentation.viewmodel.PeonySearchViewModel
 import org.koin.dsl.module
 
 val appModule =
@@ -27,8 +29,10 @@ val appModule =
         single { GetFieldSelectionUseCase(get()) }
         single { GetFieldEntriesUseCase(get()) }
         single { FindPeonyUseCase(get()) }
+        single { SearchPeonyLocationsUseCase(get()) }
 
         // ViewModels
         factory { FieldSelectionViewModel(get()) }
         factory { PeonyIdentifierViewModel(get(), get(), get()) }
+        factory { PeonySearchViewModel(get()) }
     }

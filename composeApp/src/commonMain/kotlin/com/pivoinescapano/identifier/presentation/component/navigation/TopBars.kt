@@ -3,6 +3,7 @@ package com.pivoinescapano.identifier.presentation.component.navigation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,6 +21,7 @@ fun ListTopBar(
     selectedChamp: String? = null,
     selectedParcelle: String? = null,
     onNavigateBack: (() -> Unit)? = null,
+    onNavigateToSearch: (() -> Unit)? = null,
 ) {
     TopAppBar(
         title = {
@@ -51,6 +53,17 @@ fun ListTopBar(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to field selection",
                         tint = AppColors.OnSurface,
+                    )
+                }
+            }
+        },
+        actions = {
+            if (onNavigateToSearch != null) {
+                IconButton(onClick = onNavigateToSearch) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search peonies",
+                        tint = AppColors.Error,
                     )
                 }
             }

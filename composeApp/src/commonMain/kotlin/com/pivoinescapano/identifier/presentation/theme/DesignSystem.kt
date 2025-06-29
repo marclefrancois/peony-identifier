@@ -351,11 +351,13 @@ fun EnhancedBottomNavigationBar(
         tonalElevation = 3.dp,
     ) {
         Box(
-            modifier = Modifier.padding(
-                bottom = with(LocalDensity.current) { 
-                    WindowInsets.navigationBars.getBottom(this).toDp() 
-                }
-            )
+            modifier =
+                Modifier.padding(
+                    bottom =
+                        with(LocalDensity.current) {
+                            WindowInsets.navigationBars.getBottom(this).toDp()
+                        },
+                ),
         ) {
             Row(
                 modifier =

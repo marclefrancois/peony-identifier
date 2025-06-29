@@ -49,6 +49,7 @@ fun PeonyIdentifierScreen(
     onNavigateToDetail: (champ: String, parcelle: String, rang: String, trou: String) -> Unit,
     onUpdateBackStackState: (champ: String, parcelle: String) -> Unit,
     onUpdateSelectionState: (rang: String?, trou: String?) -> Unit = { _, _ -> },
+    onNavigateToSearch: () -> Unit,
     viewModel: PeonyIdentifierViewModel = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -106,6 +107,7 @@ fun PeonyIdentifierScreen(
                 selectedChamp = selectedChamp,
                 selectedParcelle = selectedParcelle,
                 onNavigateBack = onNavigateBack,
+                onNavigateToSearch = onNavigateToSearch,
             )
         },
         bottomBar = {

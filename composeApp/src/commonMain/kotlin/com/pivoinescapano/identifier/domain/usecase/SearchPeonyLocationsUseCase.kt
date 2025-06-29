@@ -10,33 +10,34 @@ class SearchPeonyLocationsUseCase(
 ) {
     suspend fun execute(peonyName: String): List<PeonyLocation> {
         if (peonyName.isBlank()) return emptyList()
-        
+
         val allFieldEntries = fieldRepository.getAllFieldEntries()
         val matches = mutableListOf<Pair<PeonyLocation, Double>>()
-        
+
         for (entry in allFieldEntries) {
             val variete = entry.variete
             if (variete != null) {
                 val similarity = calculateSimilarity(peonyName, variete)
                 if (similarity >= 0.6) { // Use 0.6 threshold for fuzzy matching
-                    val location = PeonyLocation.fromFieldEntry(
-                        champ = entry.champ ?: "",
-                        parcelle = entry.parcelle ?: "",
-                        rang = entry.rang ?: "",
-                        trou = entry.trou ?: "",
-                        variete = entry.variete,
-                        taille = entry.taille
-                    )
+                    val location =
+                        PeonyLocation.fromFieldEntry(
+                            champ = entry.champ ?: "",
+                            parcelle = entry.parcelle ?: "",
+                            rang = entry.rang ?: "",
+                            trou = entry.trou ?: "",
+                            variete = entry.variete,
+                            taille = entry.taille,
+                        )
                     matches.add(location to similarity)
                 }
             }
         }
-        
+
         return matches
             .sortedByDescending { it.second } // Sort by similarity score descending
             .map { it.first }
     }
-    
+
     suspend fun getAllUniqueVarieties(): List<String> {
         val allFieldEntries = fieldRepository.getAllFieldEntries()
         return allFieldEntries
@@ -45,7 +46,7 @@ class SearchPeonyLocationsUseCase(
             .distinct()
             .sorted()
     }
-    
+
     /**
      * Calculate string similarity using Levenshtein distance
      * Returns a value between 0.0 (completely different) and 1.0 (identical)
