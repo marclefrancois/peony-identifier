@@ -216,7 +216,7 @@ fun FieldSelectionScreen(
                     },
                     enabled = uiState.canContinue,
                     text = "Continue to Position Selection",
-                    modifier = Modifier.padding(top = AppSpacing.SectionSpacing),
+                    modifier = Modifier.padding(top = AppSpacing.SectionSpacing, bottom = AppSpacing.M),
                 )
             }
 
@@ -229,7 +229,7 @@ fun FieldSelectionScreen(
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(bottom = AppSpacing.ContinueButtonHeight)
+                        .padding(bottom = AppSpacing.ContinueButtonHeight + AppSpacing.M)
                         .padding(AppSpacing.M)
                         .size(64.dp),
                 elevation =
