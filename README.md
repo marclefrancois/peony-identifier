@@ -1,6 +1,6 @@
 # Peony Identifier
 
-> **Version 1.5.0** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with professional NavHost navigation and type-safe routing. Now powered by Kotlin 2.2.0 with enhanced K2 compiler performance and improved user experience.
+> **Version 1.6.0** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with professional NavHost navigation, type-safe routing, and comprehensive search functionality. Now powered by Kotlin 2.2.0 with enhanced K2 compiler performance and improved user experience.
 
 ## 🌿 Project Overview
 
@@ -9,13 +9,14 @@ The Peony Identifier is a production-ready cross-platform application that enabl
 ## 🚀 Key Features
 
 - **Hierarchical Field Selection**: Cascading dropdowns (Field → Parcel → Row → Position) with intelligent auto-selection
+- **Universal Peony Search**: Real-time search across all field locations with autocomplete and fuzzy matching
 - **Fuzzy String Matching**: Intelligent peony variety identification with exact/approximate matches
 - **Professional Navigation**: Type-safe NavHost with state preservation and cross-platform gesture support
-- **Enhanced Design System v1.5.0**: Botanical theming with modern Kotlin 2.2.0 architecture and iOS polish
+- **Enhanced Design System v1.6.0**: Botanical theming with modern Kotlin 2.2.0 architecture and iOS polish
 - **Cross-Platform Images**: Async loading with Coil (Android) and Kamel (iOS)
 - **Offline-First**: JSON-based data loading with background threading and caching
 - **Accessibility**: WCAG AA compliant design with proper contrast ratios
-- **State Persistence**: Selected positions remain highlighted when returning from detail screens
+- **State Persistence**: Selected positions and search terms remain preserved across navigation
 - **iOS Safe Area**: Perfect safe area handling with dynamic padding for modern iOS devices
 
 ## 🏗️ Architecture
@@ -173,11 +174,19 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ## 🔄 Navigation Flow
 
+### Traditional Field Selection
 1. **Field Selection**: Auto-selected first field/parcel or user manual selection via FieldSelectionScreen
 2. **Position Selection**: Navigate to PeonyIdentifierScreen for row → position selection with visual selection indicators
 3. **Detail Navigation**: Navigate to PeonyDetailScreen for peony information
 4. **State Preservation**: All selections (field/parcel/position) remembered across navigation
 5. **Gesture Support**: iOS swipe and Android back button with proper animations and safe area handling
+
+### Search Flow (v1.6.0)
+1. **Search Access**: Tap floating search button from field selection screen
+2. **Real-time Search**: Type variety name with autocomplete suggestions and fuzzy matching
+3. **Location Results**: View all field locations containing the searched variety
+4. **Direct Navigation**: Tap location to navigate directly to peony detail with preserved search context
+5. **Search Persistence**: Return to search results with preserved query and state
 
 ## 🔄 Data Flow
 
@@ -240,4 +249,4 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ---
 
-**Current Status**: ✅ Production Ready v1.5.0 with Enhanced UX, iOS Polish, and Auto-Selection
+**Current Status**: ✅ Production Ready v1.6.0 with Comprehensive Search Feature, Enhanced UX, and Cross-Navigation State Preservation
