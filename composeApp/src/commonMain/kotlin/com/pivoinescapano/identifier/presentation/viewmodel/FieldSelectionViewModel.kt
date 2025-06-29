@@ -32,6 +32,11 @@ class FieldSelectionViewModel(
                         isLoading = false,
                         availableChamps = champs,
                     )
+
+                // Auto-select first field if no saved state and fields are available
+                if (champs.isNotEmpty() && _uiState.value.selectedChamp == null) {
+                    onChampSelected(champs.first())
+                }
             } catch (e: Exception) {
                 _uiState.value =
                     _uiState.value.copy(
@@ -60,6 +65,11 @@ class FieldSelectionViewModel(
                         selectedParcelle = null,
                         canContinue = false,
                     )
+
+                // Auto-select first parcel if available and no parcel is currently selected
+                if (parcelles.isNotEmpty() && _uiState.value.selectedParcelle == null) {
+                    onParcelleSelected(parcelles.first())
+                }
             } catch (e: Exception) {
                 _uiState.value =
                     _uiState.value.copy(
