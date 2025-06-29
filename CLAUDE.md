@@ -61,5 +61,11 @@ The project uses Gradle version catalogs (`gradle/libs.versions.toml`) for depen
 
 ## Coding Guidelines
 
+- **Comments**: 
+  - Refrain from commenting on obvious code
+  - Never document functions, use meaningful names instead
+  - Never document getters/setters, use meaningful names instead
+  - Comment only when necessary to explain complex logic
+
 - **Safety**: 
   - Never use force unwrapping
