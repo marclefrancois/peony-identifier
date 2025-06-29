@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.pivoinescapano.identifier.presentation.theme.AppColors
 import com.pivoinescapano.identifier.presentation.theme.AppTypography
 
@@ -33,6 +34,7 @@ fun PeonySearchBar(
     placeholder: String = "Search peony varieties...",
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     ExposedDropdownMenuBox(
         expanded = expanded && suggestions.isNotEmpty(),
@@ -106,6 +108,7 @@ fun PeonySearchBar(
                     onClick = {
                         onSuggestionClick(suggestion)
                         expanded = false
+                        keyboardController?.hide()
                     },
                 )
             }
