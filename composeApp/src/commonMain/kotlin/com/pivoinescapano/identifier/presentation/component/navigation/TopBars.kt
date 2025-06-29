@@ -57,7 +57,7 @@ fun ListTopBar(
         },
         colors =
             TopAppBarDefaults.topAppBarColors(
-                containerColor = AppColors.SurfaceContainer,
+                containerColor = AppColors.BarColor,
                 titleContentColor = AppColors.OnSurface,
                 navigationIconContentColor = AppColors.OnSurface,
             ),
@@ -98,7 +98,7 @@ fun DetailsTopBar(
         },
         colors =
             TopAppBarDefaults.topAppBarColors(
-                containerColor = AppColors.SurfaceContainer,
+                containerColor = AppColors.BarColor,
                 titleContentColor = AppColors.OnSurface,
                 navigationIconContentColor = AppColors.OnSurface,
             ),

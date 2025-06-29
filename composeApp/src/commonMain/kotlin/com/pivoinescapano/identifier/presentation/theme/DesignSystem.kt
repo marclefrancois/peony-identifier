@@ -38,6 +38,8 @@ object AppColors {
 
     val SurfaceContainer = Color(0xFFF8FBF8) // Softer green-tinted container
 
+    val BarColor = Color(0xFFB1CCB1) // Softer green-tinted container
+
     // Improved text colors with better contrast
     val OnSurface = Color(0xFF1A1C1A) // Deep charcoal with green undertone
     val OnSurfaceVariant = Color(0xFF424742) // Medium contrast text
@@ -340,7 +342,7 @@ fun EnhancedBottomNavigationBar(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = AppColors.SurfaceContainer,
+        color = AppColors.BarColor,
         shadowElevation = 8.dp,
         tonalElevation = 3.dp,
     ) {
