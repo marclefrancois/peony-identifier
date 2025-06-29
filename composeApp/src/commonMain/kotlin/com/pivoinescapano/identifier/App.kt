@@ -94,9 +94,15 @@ fun App() {
 
                     composable<PeonyIdentifierRoute> { backStackEntry ->
                         val route = backStackEntry.toRoute<PeonyIdentifierRoute>()
+                        // Check for restored state from savedStateHandle (handles returning from detail)
+                        val restoredRang = backStackEntry.savedStateHandle.get<String>("restoredRang")
+                        val restoredTrou = backStackEntry.savedStateHandle.get<String>("restoredTrou")
+
                         PeonyIdentifierScreen(
                             selectedChamp = route.champ,
                             selectedParcelle = route.parcelle,
+                            initialSelectedRang = restoredRang ?: route.selectedRang,
+                            initialSelectedTrou = restoredTrou ?: route.selectedTrou,
                             onNavigateBack = {
                                 navController.navigateUp()
                             },
@@ -109,6 +115,11 @@ fun App() {
                                     savedState["restoredChamp"] = champ
                                     savedState["restoredParcelle"] = parcelle
                                 }
+                            },
+                            onUpdateSelectionState = { rang, trou ->
+                                // Store selection state in current back stack entry for return from detail
+                                backStackEntry.savedStateHandle["restoredRang"] = rang
+                                backStackEntry.savedStateHandle["restoredTrou"] = trou
                             },
                         )
                     }

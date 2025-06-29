@@ -21,6 +21,7 @@ import com.pivoinescapano.identifier.presentation.theme.UniformCard
 fun PositionCard(
     position: String,
     entry: FieldEntry?,
+    isSelected: Boolean = false,
     onClick: () -> Unit,
 ) {
     UniformCard(
@@ -28,8 +29,8 @@ fun PositionCard(
             Modifier
                 .fillMaxWidth()
                 .clickable { onClick() },
-        elevation = 2.dp,
-        backgroundColor = AppColors.SurfaceContainer,
+        elevation = if (isSelected) 4.dp else 2.dp,
+        backgroundColor = if (isSelected) AppColors.PrimaryContainer else AppColors.SurfaceContainer,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

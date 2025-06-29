@@ -43,9 +43,12 @@ import org.koin.compose.koinInject
 fun PeonyIdentifierScreen(
     selectedChamp: String,
     selectedParcelle: String,
+    initialSelectedRang: String? = null,
+    initialSelectedTrou: String? = null,
     onNavigateBack: () -> Unit,
     onNavigateToDetail: (champ: String, parcelle: String, rang: String, trou: String) -> Unit,
     onUpdateBackStackState: (champ: String, parcelle: String) -> Unit,
+    onUpdateSelectionState: (rang: String?, trou: String?) -> Unit = { _, _ -> },
     viewModel: PeonyIdentifierViewModel = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -60,6 +63,16 @@ fun PeonyIdentifierScreen(
         }
         if (uiState.selectedParcelle != selectedParcelle) {
             viewModel.onParcelleSelected(selectedParcelle)
+        }
+    }
+
+    // Restore selection state when returning from detail screen
+    LaunchedEffect(initialSelectedRang, initialSelectedTrou) {
+        if (initialSelectedRang != null && uiState.selectedRang != initialSelectedRang) {
+            viewModel.onRangSelected(initialSelectedRang)
+        }
+        if (initialSelectedTrou != null && uiState.selectedTrou != initialSelectedTrou) {
+            viewModel.onTrouSelected(initialSelectedTrou)
         }
     }
 
@@ -137,7 +150,11 @@ fun PeonyIdentifierScreen(
                     PositionsListContent(
                         uiState = uiState,
                         onTrouSelected = { trou ->
-                            // Navigate to detail screen instead of internal state change
+                            // Update selected trou state first
+                            viewModel.onTrouSelected(trou)
+                            // Save current selection state for restoration
+                            onUpdateSelectionState(uiState.selectedRang, trou)
+                            // Then navigate to detail
                             onNavigateToDetail(selectedChamp, selectedParcelle, uiState.selectedRang!!, trou)
                         },
                         listState = positionListState,

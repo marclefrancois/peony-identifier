@@ -17,6 +17,8 @@ data class FieldSelectionRoute(
 data class PeonyIdentifierRoute(
     val champ: String,
     val parcelle: String,
+    val selectedRang: String? = null,
+    val selectedTrou: String? = null,
 )
 
 @Serializable

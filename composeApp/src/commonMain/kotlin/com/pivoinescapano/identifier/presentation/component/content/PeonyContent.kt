@@ -78,7 +78,8 @@ fun PositionsListContent(
     onVisiblePositionChanged: (String) -> Unit,
 ) {
     val positions = uiState.availableTrous
-    val fieldEntries = uiState.currentRowEntries // We need to add this to state
+    val fieldEntries = uiState.currentRowEntries
+    val selectedTrou = uiState.selectedTrou
 
     LaunchedEffect(listState.firstVisibleItemIndex, positions) {
         if (positions.isNotEmpty() && listState.firstVisibleItemIndex < positions.size) {
@@ -101,6 +102,7 @@ fun PositionsListContent(
             PositionCard(
                 position = position,
                 entry = entry,
+                isSelected = position == selectedTrou,
                 onClick = { onTrouSelected(position) },
             )
         }
