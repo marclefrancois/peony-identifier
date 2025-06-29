@@ -26,7 +26,7 @@ fun FieldEntryCard(entry: FieldEntry) {
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
-            text = "Variety: ${entry.variete ?: "Unknown"}",
+            text = "In our plan: ${entry.variete ?: "Unknown"}",
             style = AppTypography.HeadlineSmall,
             color = AppColors.OnSurface,
         )
@@ -36,6 +36,8 @@ fun FieldEntryCard(entry: FieldEntry) {
             buildList {
                 entry.annee_plantation?.let { add("Planted: $it") }
                 entry.taille?.let { add("Size: $it") }
+                entry.etiquette?.let { add("Etiquette: $it") }
+                entry.vente?.let { add("Vente: $it") }
             }
 
         if (additionalInfo.isNotEmpty()) {
@@ -61,7 +63,7 @@ fun PeonyCard(
             Modifier
                 .fillMaxWidth()
                 .let { if (onClick != null) it.clickable { onClick() } else it },
-        backgroundColor = if (isExactMatch) AppColors.ExactMatch.copy(alpha = 0.1f) else AppColors.SurfaceContainer,
+        backgroundColor = AppColors.SurfaceContainer,
         contentColor = AppColors.OnSurface,
     ) {
         Row(

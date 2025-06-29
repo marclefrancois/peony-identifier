@@ -10,7 +10,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        // v1.3 Install splash screen before super.onCreate()
         installSplashScreen()
 
         enableEdgeToEdge()

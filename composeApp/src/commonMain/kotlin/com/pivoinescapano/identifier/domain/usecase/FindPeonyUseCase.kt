@@ -8,7 +8,6 @@ class FindPeonyUseCase(
 ) {
     suspend fun execute(varieteName: String): PeonyInfo? {
         return peonyRepository.findPeonyByCultivar(varieteName)
-            ?: peonyRepository.findPeoniesByFuzzyMatch(varieteName).firstOrNull()
     }
 
     suspend fun findWithFuzzyMatching(

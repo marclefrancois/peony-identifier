@@ -24,7 +24,6 @@ actual fun PeonyAsyncImage(
     contentScale: ContentScale,
 ) {
     if (imageUrl.isNullOrBlank()) {
-        // Placeholder for missing images
         Card(
             modifier = modifier,
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
