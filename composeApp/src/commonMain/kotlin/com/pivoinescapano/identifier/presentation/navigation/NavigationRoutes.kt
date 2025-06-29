@@ -28,3 +28,6 @@ data class PeonyDetailRoute(
     val rang: String,
     val trou: String,
 )
+
+@Serializable
+object PeonySearchRoute

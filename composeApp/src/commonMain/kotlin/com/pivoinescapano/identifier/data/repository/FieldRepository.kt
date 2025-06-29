@@ -32,4 +32,6 @@ interface FieldRepository {
         parcelle: String,
         rang: String,
     ): List<FieldEntry>
+
+    suspend fun getAllFieldEntries(): List<FieldEntry>
 }
