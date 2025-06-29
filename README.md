@@ -1,6 +1,6 @@
 # Peony Identifier
 
-> **Version 1.4.1** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with professional NavHost navigation and type-safe routing. Now powered by Kotlin 2.2.0 with enhanced K2 compiler performance.
+> **Version 1.5.0** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with professional NavHost navigation and type-safe routing. Now powered by Kotlin 2.2.0 with enhanced K2 compiler performance and improved user experience.
 
 ## 🌿 Project Overview
 
@@ -8,13 +8,15 @@ The Peony Identifier is a production-ready cross-platform application that enabl
 
 ## 🚀 Key Features
 
-- **Hierarchical Field Selection**: Cascading dropdowns (Field → Parcel → Row → Position)
+- **Hierarchical Field Selection**: Cascading dropdowns (Field → Parcel → Row → Position) with intelligent auto-selection
 - **Fuzzy String Matching**: Intelligent peony variety identification with exact/approximate matches
 - **Professional Navigation**: Type-safe NavHost with state preservation and cross-platform gesture support
-- **Enhanced Design System v1.4.1**: Botanical theming with modern Kotlin 2.2.0 architecture
+- **Enhanced Design System v1.5.0**: Botanical theming with modern Kotlin 2.2.0 architecture and iOS polish
 - **Cross-Platform Images**: Async loading with Coil (Android) and Kamel (iOS)
 - **Offline-First**: JSON-based data loading with background threading and caching
 - **Accessibility**: WCAG AA compliant design with proper contrast ratios
+- **State Persistence**: Selected positions remain highlighted when returning from detail screens
+- **iOS Safe Area**: Perfect safe area handling with dynamic padding for modern iOS devices
 
 ## 🏗️ Architecture
 
@@ -171,11 +173,11 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ## 🔄 Navigation Flow
 
-1. **Field Selection**: User selects field → parcel via FieldSelectionScreen
-2. **Position Selection**: Navigate to PeonyIdentifierScreen for row → position selection
+1. **Field Selection**: Auto-selected first field/parcel or user manual selection via FieldSelectionScreen
+2. **Position Selection**: Navigate to PeonyIdentifierScreen for row → position selection with visual selection indicators
 3. **Detail Navigation**: Navigate to PeonyDetailScreen for peony information
-4. **State Preservation**: Field/parcel selections remembered across navigation
-5. **Gesture Support**: iOS swipe and Android back button with proper animations
+4. **State Preservation**: All selections (field/parcel/position) remembered across navigation
+5. **Gesture Support**: iOS swipe and Android back button with proper animations and safe area handling
 
 ## 🔄 Data Flow
 
@@ -238,4 +240,4 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ---
 
-**Current Status**: ✅ Production Ready v1.4.1 with Kotlin 2.2.0 and Enhanced Performance
+**Current Status**: ✅ Production Ready v1.5.0 with Enhanced UX, iOS Polish, and Auto-Selection

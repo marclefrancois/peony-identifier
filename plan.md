@@ -1,8 +1,8 @@
 # Peony Identifier App Plan
 
-## Project Status: ✅ Production Ready v1.4.1
+## Project Status: ✅ Production Ready v1.5.0
 
-A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility. Now powered by Kotlin 2.2.0 with enhanced performance and latest framework features.
+A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility. Now powered by Kotlin 2.2.0 with enhanced performance, latest framework features, and improved user experience.
 
 ### Completed Features
 - ✅ Clean architecture with Repository/UseCase/ViewModel pattern
@@ -134,9 +134,29 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
   - ✅ State preservation using dual-layer approach (route params + savedStateHandle)
   - ✅ Proper back animation direction for all navigation types
 
-## Version 1.4.1 Status: ✅ COMPLETE & DEPLOYED 🎉
+## Version 1.5.0 Status: ✅ COMPLETE & DEPLOYED 🎉
 
-### ✅ New in Version 1.4.1: Kotlin 2.2.0 Upgrade with Enhanced Performance - **RELEASED!**
+### ✅ New in Version 1.5.0: Enhanced User Experience and iOS Polish - **RELEASED!**
+
+- ✅ **Position Selection State Persistence**: Selected positions now remain highlighted when returning from detail screen
+  - ✅ Navigation state preservation using savedStateHandle pattern
+  - ✅ Visual selection indicators with elevated card styling
+  - ✅ Position cards show selected state with enhanced background and elevation
+  - ✅ Seamless navigation experience maintains user context
+- ✅ **iOS Bottom Bar Safe Area Enhancement**: Perfect safe area handling for modern iOS devices
+  - ✅ Dynamic padding calculation using WindowInsets.navigationBars.getBottom()
+  - ✅ Background color properly bleeds into safe area while content stays protected
+  - ✅ Works correctly on devices with and without home indicators
+  - ✅ Professional iOS-native feel with proper spacing
+- ✅ **Auto-Selection UX Improvement**: Intelligent default selections for faster workflow
+  - ✅ First field automatically selected when no saved state exists
+  - ✅ First parcel automatically selected after field selection
+  - ✅ Reduces required taps for first-time users while preserving manual selection capability
+  - ✅ Maintains saved state restoration for returning users
+
+## Version 1.4.1 Status: ✅ COMPLETE & DEPLOYED
+
+### ✅ Version 1.4.1: Kotlin 2.2.0 Upgrade with Enhanced Performance - **RELEASED!**
 
 - ✅ **Kotlin 2.2.0 Upgrade**: Complete migration to latest Kotlin version with enhanced K2 compiler
   - ✅ Kotlin 2.1.21 → 2.2.0 upgrade with full compatibility verification
@@ -341,4 +361,5 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ **Enhanced UX v1.3.0**: Improved navigation flow with field selection screen and larger typography
 - ✅ **Professional Navigation v1.4.0**: Type-safe NavHost with state preservation and cross-platform gesture support
 - ✅ **Kotlin 2.2.0 Upgrade v1.4.1**: Latest Kotlin with K2 compiler performance and enhanced framework versions
+- ✅ **Enhanced UX v1.5.0**: Position state persistence, iOS safe area polish, and auto-selection improvements
 - ✅ **Production Ready**: Complete feature set with modern Kotlin architecture, ready for app store submission
