@@ -78,9 +78,11 @@ if [ "$NEW_ANDROID_VERSION" = "$NEW_VERSION" ] && [ "$NEW_IOS_VERSION" = "$NEW_V
     echo "   $ANDROID_BUILD_FILE"
     echo "   $IOS_PLIST_FILE"
     echo ""
-    echo -e "${BLUE}🗑️  Backup files created:${NC}"
-    echo "   $ANDROID_BUILD_FILE.bak"
-    echo "   $IOS_PLIST_FILE.bak"
+    
+    # Clean up backup files
+    echo "🗑️  Cleaning up backup files..."
+    rm -f "$ANDROID_BUILD_FILE.bak"
+    rm -f "$IOS_PLIST_FILE.bak"
     echo ""
     echo -e "${GREEN}🎉 Version increment complete!${NC}"
 else
