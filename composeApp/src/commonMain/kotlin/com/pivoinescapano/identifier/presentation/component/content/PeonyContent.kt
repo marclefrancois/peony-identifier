@@ -95,7 +95,7 @@ fun PositionsListContent(
                 horizontal = AppSpacing.M,
                 vertical = AppSpacing.M,
             ),
-        verticalArrangement = Arrangement.spacedBy(AppSpacing.S),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.M),
     ) {
         items(positions) { position ->
             val entry = fieldEntries.find { it.trou == position }

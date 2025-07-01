@@ -44,6 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.repository.FieldRepository
 import com.pivoinescapano.identifier.data.usecase.GetFieldEntriesUseCase
+import com.pivoinescapano.identifier.presentation.component.FloatingSearchButton
 import com.pivoinescapano.identifier.presentation.theme.AppColors
 import com.pivoinescapano.identifier.presentation.theme.AppSpacing
 import com.pivoinescapano.identifier.presentation.theme.AppTypography
@@ -221,30 +222,14 @@ fun FieldSelectionScreen(
             }
 
             // Floating Search Button positioned over the content
-            FloatingActionButton(
-                shape = CircleShape,
+            FloatingSearchButton(
                 onClick = onNavigateToSearch,
-                containerColor = AppColors.Error,
-                contentColor = AppColors.OnPrimary,
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)
                         .padding(bottom = AppSpacing.ContinueButtonHeight + AppSpacing.M)
-                        .padding(AppSpacing.M)
-                        .size(64.dp),
-                elevation =
-                    FloatingActionButtonDefaults.elevation(
-                        defaultElevation = 8.dp,
-                        pressedElevation = 12.dp,
-                        hoveredElevation = 10.dp,
-                    ),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search peonies",
-                    modifier = Modifier.size(28.dp),
-                )
-            }
+                        .padding(AppSpacing.M),
+            )
         }
     }
 }

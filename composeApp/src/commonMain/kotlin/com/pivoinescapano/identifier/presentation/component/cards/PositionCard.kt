@@ -40,14 +40,22 @@ fun PositionCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "Position $position",
-                    style = AppTypography.LabelLarge,
-                    color = AppColors.PrimaryGreen,
+                    style = AppTypography.LabelMedium,
+                    color = AppColors.OnSurfaceVariant,
                 )
                 entry?.variete?.let { variety ->
                     Text(
-                        text = variety,
-                        style = AppTypography.BodyLarge,
-                        color = AppColors.OnSurface,
+                        text = if (variety.uppercase() == "VIDE") "Empty" else variety,
+                        style = AppTypography.HeadlineSmall,
+                        color = if (variety.uppercase() == "VIDE") AppColors.OnSurfaceVariant else AppColors.OnSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                } ?: run {
+                    Text(
+                        text = "Unknown variety",
+                        style = AppTypography.HeadlineSmall,
+                        color = AppColors.OnSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -62,9 +70,9 @@ fun PositionCard(
             }
             Text(
                 text = "→",
-                style = AppTypography.LabelLarge,
-                color = AppColors.PrimaryGreen,
-                modifier = Modifier.size(20.dp),
+                style = AppTypography.HeadlineMedium,
+                color = AppColors.OnSurfaceVariant,
+                modifier = Modifier.size(24.dp),
             )
         }
     }

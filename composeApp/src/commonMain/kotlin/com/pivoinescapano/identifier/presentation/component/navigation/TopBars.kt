@@ -21,7 +21,6 @@ fun ListTopBar(
     selectedChamp: String? = null,
     selectedParcelle: String? = null,
     onNavigateBack: (() -> Unit)? = null,
-    onNavigateToSearch: (() -> Unit)? = null,
 ) {
     TopAppBar(
         title = {
@@ -57,17 +56,7 @@ fun ListTopBar(
                 }
             }
         },
-        actions = {
-            if (onNavigateToSearch != null) {
-                IconButton(onClick = onNavigateToSearch) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search peonies",
-                        tint = AppColors.Error,
-                    )
-                }
-            }
-        },
+        actions = {},
         colors =
             TopAppBarDefaults.topAppBarColors(
                 containerColor = AppColors.BarColor,
