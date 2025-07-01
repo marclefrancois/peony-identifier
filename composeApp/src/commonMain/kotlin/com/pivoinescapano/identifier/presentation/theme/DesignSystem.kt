@@ -292,9 +292,9 @@ fun FieldSelectionCard(
                 .clickable { onClick() },
         elevation =
             CardDefaults.cardElevation(
-                defaultElevation = if (selected) 4.dp else 2.dp,
-                hoveredElevation = if (selected) 6.dp else 4.dp,
-                pressedElevation = if (selected) 8.dp else 6.dp,
+                defaultElevation = if (selected) 6.dp else 2.dp,
+                hoveredElevation = if (selected) 8.dp else 4.dp,
+                pressedElevation = if (selected) 10.dp else 6.dp,
             ),
         colors =
             CardDefaults.cardColors(
@@ -304,9 +304,9 @@ fun FieldSelectionCard(
         shape = RoundedCornerShape(AppSpacing.RadiusL),
         border =
             if (selected) {
-                BorderStroke(2.dp, AppColors.PrimaryGreen)
+                BorderStroke(1.dp, AppColors.PrimaryGreen.copy(alpha = 0.6f))
             } else {
-                BorderStroke(1.dp, AppColors.OutlineVariant)
+                null
             },
     ) {
         Column(

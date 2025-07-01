@@ -137,7 +137,7 @@ fun FieldSelectionScreen(
                     // Selection content
                     LazyColumn(
                         modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(AppSpacing.L),
+                        verticalArrangement = Arrangement.spacedBy(AppSpacing.XL),
                     ) {
                         // Field (Champ) Selection
                         item {
