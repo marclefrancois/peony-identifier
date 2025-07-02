@@ -158,18 +158,13 @@ fun App() {
                             rang = route.rang,
                             trou = route.trou,
                             onNavigateBack = {
-                                // If we came from search, restore the search term and navigate back to search
+                                // Store search term if we came from search
                                 if (route.fromSearchTerm != null || restoredSearchTerm != null) {
-                                    navController.navigate(PeonySearchRoute) {
-                                        popUpTo<PeonySearchRoute> { inclusive = true }
-                                    }
-                                    // Store the search term in the search screen's savedStateHandle for restoration
-                                    navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
+                                    navController.previousBackStackEntry?.savedStateHandle?.let { savedState ->
                                         savedState["restoredSearchTerm"] = route.fromSearchTerm ?: restoredSearchTerm
                                     }
-                                } else {
-                                    navController.navigateUp()
                                 }
+                                navController.navigateUp()
                             },
                         )
                     }
