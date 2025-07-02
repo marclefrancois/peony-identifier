@@ -1,38 +1,49 @@
 # Peony Identifier App Plan
 
-## Project Status: ✅ Production Ready v1.6.0
+## Project Status: 🚧 Planning v1.7.0
 
 A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility. Now powered by Kotlin 2.2.0 with enhanced performance, latest framework features, and improved user experience.
 
-## Version 1.6.0 Status: ✅ COMPLETE & DEPLOYED 🎉
+## Version 1.7.0 Status: 📋 PLANNED
 
-### ✅ New in Version 1.6.0: Comprehensive Peony Search Feature - **RELEASED!**
+### 🎯 Version 1.7.0: Enhanced Field Management & Note-Taking - **IN PLANNING**
 
-- ✅ **Universal Peony Search**: Complete search functionality across all field locations
-  - ✅ Real-time autocomplete with top 5 variety suggestions using fuzzy string matching
-  - ✅ Debounced search with 300ms delay for optimal performance
-  - ✅ Fuzzy matching with 0.6 similarity threshold using Levenshtein distance algorithm
-  - ✅ Search across all unique peony varieties from comprehensive field database
-- ✅ **Enhanced Search UX**: Professional search interface with Material3 design
-  - ✅ Smart keyboard behavior: no dismissal during typing, dismissal on suggestion selection
-  - ✅ Round, elevated search button with brand red color matching splash screen
-  - ✅ Floating action button overlay design with proper positioning and spacing
-  - ✅ Search icon integration in field selection screen with intuitive placement
-- ✅ **Cross-Navigation State Preservation**: Seamless search term retention across screens
-  - ✅ Search term preservation when navigating to peony detail screens
-  - ✅ Smart navigation back to search with restored query and results
-  - ✅ Type-safe route parameters for search term passing between screens
-  - ✅ SavedStateHandle integration for robust state management
-- ✅ **Search Results & Navigation**: Comprehensive location display and navigation
-  - ✅ LocationCard components showing field coordinates (champ, parcelle, rang, trou)
-  - ✅ Direct navigation from search results to specific peony detail screens
-  - ✅ Result count display with proper pluralization
-  - ✅ Empty state and no results handling with user-friendly messaging
-- ✅ **Architecture Integration**: Clean search architecture following app patterns
-  - ✅ PeonySearchViewModel with reactive state management using StateFlow
-  - ✅ SearchPeonyLocationsUseCase for business logic with fuzzy matching
-  - ✅ PeonySearchState data class for comprehensive UI state management
-  - ✅ Koin dependency injection integration with existing DI modules
+#### Major Changes: Restructured Navigation Flow
+
+- [ ] **New Home Screen Architecture**: Tile-based landing page with 3 main functions
+  - [ ] 🔍 **Search Tile**: Navigate to universal peony search (existing v1.6.0 feature)
+  - [ ] 📍 **Identify Tile**: Navigate to field selection → peony identification flow
+  - [ ] 📝 **Field Notes Tile**: Navigate to comprehensive field notes management
+  - [ ] Material3 card-based design with icons and descriptive text
+  - [ ] Clean separation of app's three core functions
+
+- [ ] **Enhanced Peony Details with Field Notes**: In-field documentation system
+  - [ ] **Quick Action Buttons**: 
+    - [ ] ❌ "Mark as Dead" - single tap to flag deceased peonies
+    - [ ] 🚫 "Position Blocked" - mark positions as inaccessible/blocked
+  - [ ] **Custom Notes Field**: 
+    - [ ] Multi-line text input with dictation support
+    - [ ] Real-time save to local storage
+    - [ ] Character limit with counter (500 chars recommended)
+  - [ ] **Notes Persistence**: 
+    - [ ] JSON-based local storage using platform file system
+    - [ ] Structure: `{champ, parcelle, rang, trou, notes, isDead, isBlocked, timestamp}`
+
+- [ ] **Field Notes Management Screen**: Comprehensive notes overview
+  - [ ] **Unified List Design**: Reuse position list screen components
+  - [ ] **Comprehensive Location Cards**: Show full hierarchy (Field → Parcel → Row → Position)
+  - [ ] **Smart Filtering**: Display only positions with associated notes
+  - [ ] **Multi-Level Sorting**: Primary by field, secondary by parcel, tertiary by row, quaternary by position
+  - [ ] **Note Preview**: Truncated note text with full view on tap
+
+- [ ] **Export & Management Features**: Data portability and maintenance
+  - [ ] **CSV Export**: 
+    - [ ] Headers: Field, Parcel, Row, Position, Variety, Notes, Status, Date
+    - [ ] Platform-specific file sharing (Android: Share Intent, iOS: Activity Controller)
+  - [ ] **Clear All Notes**: 
+    - [ ] Confirmation dialog with destructive action styling
+    - [ ] Option to export before clearing
+    - [ ] Complete data reset functionality
 
 ## Current App Features ✅ Complete
 
@@ -59,32 +70,62 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ **Enhanced Design System v1.2**: Complete visual refinement with botanical theming
 - ✅ **Universal Peony Search v1.6.0**: Comprehensive search feature with autocomplete and state preservation
 
-### Navigation Architecture
-- **Navigation System**: Professional NavHost-based navigation with type-safe routing
+### Navigation Architecture (v1.7.0)
+- **Enhanced Navigation System**: Tile-based home screen with professional NavHost routing
   - Navigation Compose with serializable route objects for compile-time safety
-  - Four-screen architecture: FieldSelection → PeonyIdentifier → PeonyDetail + PeonySearch
+  - Five-screen architecture: Home → FieldSelection/Search/FieldNotes → PeonyIdentifier → PeonyDetail
   - Consistent 300ms horizontal slide animations for all transitions
-  - State preservation across navigation (field/parcel/search selections remembered)
+  - State preservation across navigation (field/parcel/search/notes selections remembered)
   - Cross-platform BackHandler support with iOS gesture navigation integration
-  - Search integration with floating action button and cross-screen state preservation
+  - Separated search and identification flows with dedicated entry points
 
-## User Flow
+## User Flow (v1.7.0)
 
-### Traditional Field Selection Flow
-1. Select field (champ) → populates parcel spinner
-2. Select parcel (parcelle) → populates row spinner  
-3. Select row (rang) → populates position spinner
-4. Select position (trou) → shows peony variety name + fuzzy matches against peony database by cultivar
-5. Display matched peony details with image from URL in main display area
+### New Home Screen Flow
+1. Launch app → navigate to tile-based home screen
+2. Choose primary function: Search, Identify, or Field Notes
+3. Navigate to selected workflow with preserved context
 
-### New Search Flow (v1.6.0)
-1. Tap search button from field selection screen → navigate to search interface
-2. Type peony variety name → see real-time autocomplete suggestions
-3. Select suggestion or perform search → view all field locations containing that variety
-4. Tap location result → navigate directly to peony detail with preserved search context
-5. Navigate back → return to search results with preserved query and state
+### Enhanced Identification Flow
+1. **Home Screen**: Tap "Identify" tile → navigate to field selection
+2. **Field Selection**: Select field (champ) → populates parcel spinner
+3. **Position Selection**: Select parcel/row/position → shows peony variety details
+4. **Enhanced Details**: View peony info + add field notes with quick actions
+5. **Note Taking**: Mark status (dead/blocked) or add custom notes with dictation
 
-## Data Structure
+### Existing Search Flow (Preserved from v1.6.0)
+1. **Home Screen**: Tap "Search" tile → navigate to search interface
+2. **Search Interface**: Type peony variety name → see real-time autocomplete
+3. **Results**: View all field locations containing that variety
+4. **Navigation**: Tap location → navigate to peony detail with enhanced note-taking
+
+### New Field Notes Management Flow
+1. **Home Screen**: Tap "Field Notes" tile → navigate to notes list
+2. **Notes List**: View all positions with associated notes, sorted by location
+3. **Management**: Export notes to CSV or clear all with confirmation
+4. **Detail View**: Tap note → view/edit full note with location context
+
+## Data Structure (Enhanced for v1.7.0)
+
+### Field Notes Structure (New)
+- `field-notes.json` (local storage)
+- Array structure with field notes
+- Example structure:
+```json
+[
+  {
+    "champ": "1",
+    "parcelle": "1-PP",
+    "rang": "1",
+    "trou": "5",
+    "notes": "Peony showing signs of disease on lower leaves",
+    "isDead": false,
+    "isBlocked": false,
+    "timestamp": 1704067200000,
+    "variety": "A la Mode"
+  }
+]
+```
 
 ### Field JSONs (3 files)
 - `Champ1PP.json`, `Champ1GP.json`, `Champ2PP.json` (located in `composeResources/files/`)
@@ -128,7 +169,9 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 ]
 ```
 
-## Architecture Implementation ✅ Complete
+## Architecture Implementation (v1.7.0 Enhancements)
+
+### Existing Architecture ✅ Complete
 - ✅ Clean Repository pattern with interfaces and implementations
 - ✅ Use cases for business logic (fuzzy matching, field selection, search)
 - ✅ ViewModel with reactive state management using StateFlow
@@ -138,7 +181,15 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ Material3 UI components with proper error states
 - ✅ Cross-platform resource loading via Compose Resources
 
-## Technical Stack
+### New Architecture Components (v1.7.0)
+- [ ] **FieldNotesRepository**: Local JSON persistence with CRUD operations
+- [ ] **FieldNotesManager**: Business logic for note management and export
+- [ ] **Field Notes Use Cases**: CreateNote, UpdateNote, DeleteNote, ExportNotes
+- [ ] **FieldNotesViewModel**: State management for notes list and editing
+- [ ] **Platform-Specific Implementations**: Speech recognition and file sharing
+- [ ] **Enhanced Data Models**: FieldNote data class with timestamp and status flags
+
+## Technical Stack (v1.7.0)
 - **Language**: Kotlin 2.2.0 (Latest stable with K2 compiler)
 - **UI**: Compose Multiplatform 1.8.2 with Material3
 - **Navigation**: Navigation Compose 2.9.0-beta03 with type-safe routing
@@ -149,12 +200,16 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - **Image Loading**: Coil 2.7.0 (Android), Kamel 0.9.5 (iOS) with expect/actual pattern
 - **Platforms**: Android (SDK 24-35), iOS (via Kotlin/Native)
 - **Build System**: Gradle with Kotlin DSL, Xcode integration
+- **New Dependencies (v1.7.0)**:
+  - **Speech Recognition**: Platform-specific dictation APIs
+  - **File Management**: Enhanced platform file I/O for notes storage
+  - **CSV Generation**: Custom CSV writer for export functionality
 
-## Future Enhancements (Version 1.7+)
+## Future Enhancements (Version 1.8+)
 - [ ] **Additional Field Data**: Integration of remaining field data files (Champ3, Champ4, etc.)
-- ✅ **Advanced Search**: Direct search by variety name across all fields (Completed in v1.6.0)
+- [ ] **Advanced Note Features**: Photo attachments, voice notes, GPS coordinates
 - [ ] **Search Filters**: Filter by field, year, size, or other peony attributes
-- [ ] **Data Export**: Export field data and search results to CSV/PDF
+- [ ] **Cloud Sync**: Synchronize field notes across devices
 - [ ] **Network Features**: Sync with remote peony database updates
 - [ ] **Offline Favorites**: Save favorite peonies for quick access
 - [ ] **Photo Integration**: Add photos of actual plants in the field
@@ -167,6 +222,10 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - [ ] **Performance**: Advanced caching strategies for very large datasets
 
 ## Deployment Status
+- ✅ **Version 1.6.0**: Production ready with comprehensive search feature
+- 📋 **Version 1.7.0**: In planning phase - Enhanced field management & note-taking
+
+### Current Production Status (v1.6.0)
 - ✅ **Android**: APK builds successfully, portrait locked, image loading functional, gesture navigation working
 - ✅ **iOS**: Framework builds cleanly, async image loading functional, native swipe gestures implemented
 - ✅ **Cross-Platform**: All shared business logic and UI working across both platforms
@@ -179,7 +238,12 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ **Kotlin 2.2.0 Upgrade v1.4.1**: Latest Kotlin with K2 compiler performance and enhanced framework versions
 - ✅ **Enhanced UX v1.5.0**: Position state persistence, iOS safe area polish, and auto-selection improvements
 - ✅ **Search Feature v1.6.0**: Comprehensive peony search with fuzzy matching, autocomplete, and state preservation
-- ✅ **Production Ready**: Complete feature set with modern Kotlin architecture, ready for app store submission
+
+### Planned for v1.7.0
+- [ ] **Home Screen Architecture**: Tile-based navigation with separated functions
+- [ ] **Field Notes System**: Comprehensive note-taking with dictation support
+- [ ] **Data Export**: CSV export functionality with platform-specific sharing
+- [ ] **Enhanced Peony Details**: Quick action buttons and custom notes field
 
 ---
 

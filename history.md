@@ -2,6 +2,36 @@
 
 This document contains the complete development history and version releases of the Peony Identifier application.
 
+## Version 1.6.0 Status: ✅ COMPLETE & DEPLOYED
+
+### ✅ New in Version 1.6.0: Comprehensive Peony Search Feature - **RELEASED!**
+
+- ✅ **Universal Peony Search**: Complete search functionality across all field locations
+  - ✅ Real-time autocomplete with top 5 variety suggestions using fuzzy string matching
+  - ✅ Debounced search with 300ms delay for optimal performance
+  - ✅ Fuzzy matching with 0.6 similarity threshold using Levenshtein distance algorithm
+  - ✅ Search across all unique peony varieties from comprehensive field database
+- ✅ **Enhanced Search UX**: Professional search interface with Material3 design
+  - ✅ Smart keyboard behavior: no dismissal during typing, dismissal on suggestion selection
+  - ✅ Round, elevated search button with brand red color matching splash screen
+  - ✅ Floating action button overlay design with proper positioning and spacing
+  - ✅ Search icon integration in field selection screen with intuitive placement
+- ✅ **Cross-Navigation State Preservation**: Seamless search term retention across screens
+  - ✅ Search term preservation when navigating to peony detail screens
+  - ✅ Smart navigation back to search with restored query and results
+  - ✅ Type-safe route parameters for search term passing between screens
+  - ✅ SavedStateHandle integration for robust state management
+- ✅ **Search Results & Navigation**: Comprehensive location display and navigation
+  - ✅ LocationCard components showing field coordinates (champ, parcelle, rang, trou)
+  - ✅ Direct navigation from search results to specific peony detail screens
+  - ✅ Result count display with proper pluralization
+  - ✅ Empty state and no results handling with user-friendly messaging
+- ✅ **Architecture Integration**: Clean search architecture following app patterns
+  - ✅ PeonySearchViewModel with reactive state management using StateFlow
+  - ✅ SearchPeonyLocationsUseCase for business logic with fuzzy matching
+  - ✅ PeonySearchState data class for comprehensive UI state management
+  - ✅ Koin dependency injection integration with existing DI modules
+
 ## Version 1.5.0 Status: ✅ COMPLETE & DEPLOYED
 
 ### ✅ Version 1.5.0: Enhanced User Experience and iOS Polish - **RELEASED!**
