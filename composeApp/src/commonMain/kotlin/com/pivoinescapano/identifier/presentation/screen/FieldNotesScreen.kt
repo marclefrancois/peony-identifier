@@ -17,8 +17,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.pivoinescapano.identifier.presentation.theme.AppSpacing
 import com.pivoinescapano.identifier.presentation.theme.AppColors
+import com.pivoinescapano.identifier.presentation.theme.AppSpacing
 import com.pivoinescapano.identifier.presentation.theme.AppTypography
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
