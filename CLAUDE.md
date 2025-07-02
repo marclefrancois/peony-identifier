@@ -53,11 +53,11 @@ The project uses Gradle version catalogs (`gradle/libs.versions.toml`) for depen
 - AndroidX Lifecycle for ViewModel and runtime composition
 
 ## Testing
-
 - Uses kotlin-test for common tests
 - JUnit for platform-specific Android tests
 - Test files should be placed in appropriate test source sets (`commonTest`, `androidTest`, etc.)
 - Only use adb to test android result when asked specifficaly
+- IMPORTANT: only test if project compiles and runs IF speciffically asked, otherwise assume it compiles
 
 ## Coding Guidelines
 
