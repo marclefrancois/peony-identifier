@@ -27,10 +27,20 @@ class FieldSelectionViewModel(
                 val fieldEntries = getFieldEntriesUseCase()
                 val champs = fieldEntries.mapNotNull { it.champ }.distinct().sorted()
 
+                // Calculate entry counts per field
+                val fieldEntryCounts =
+                    fieldEntries
+                        .groupBy { it.champ }
+                        .mapValues { it.value.size }
+                        .filterKeys { it != null }
+                        .mapKeys { it.key!! }
+
                 _uiState.value =
                     _uiState.value.copy(
                         isLoading = false,
                         availableChamps = champs,
+                        fieldEntryCounts = fieldEntryCounts,
+                        totalEntries = fieldEntries.size,
                     )
 
                 // Auto-select first field if no saved state and fields are available
@@ -51,12 +61,20 @@ class FieldSelectionViewModel(
         viewModelScope.launch {
             try {
                 val fieldEntries = getFieldEntriesUseCase()
+                val fieldSpecificEntries = fieldEntries.filter { it.champ == champ }
                 val parcelles =
-                    fieldEntries
-                        .filter { it.champ == champ }
+                    fieldSpecificEntries
                         .mapNotNull { it.parcelle }
                         .distinct()
                         .sorted()
+
+                // Calculate entry counts per parcel for this field
+                val parcelEntryCounts =
+                    fieldSpecificEntries
+                        .groupBy { it.parcelle }
+                        .mapValues { it.value.size }
+                        .filterKeys { it != null }
+                        .mapKeys { it.key!! }
 
                 _uiState.value =
                     _uiState.value.copy(
@@ -64,6 +82,7 @@ class FieldSelectionViewModel(
                         availableParcelles = parcelles,
                         selectedParcelle = null,
                         canContinue = false,
+                        parcelEntryCounts = parcelEntryCounts,
                     )
 
                 // Auto-select first parcel if available and no parcel is currently selected

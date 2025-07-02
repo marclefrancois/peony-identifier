@@ -302,12 +302,7 @@ fun FieldSelectionCard(
                 contentColor = if (selected) AppColors.OnPrimaryContainer else AppColors.OnSurface,
             ),
         shape = RoundedCornerShape(AppSpacing.RadiusL),
-        border =
-            if (selected) {
-                BorderStroke(1.dp, AppColors.PrimaryGreen.copy(alpha = 0.6f))
-            } else {
-                null
-            },
+        border = BorderStroke(1.dp, AppColors.PrimaryGreen.copy(alpha = 0.6f)),
     ) {
         Column(
             modifier = Modifier.padding(AppSpacing.FieldSelectionPadding),
@@ -407,6 +402,67 @@ fun ContinueButton(
             style = AppTypography.LabelLarge.copy(fontSize = 16.sp),
             fontWeight = FontWeight.SemiBold,
         )
+    }
+}
+
+@Composable
+fun HomeTileCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    description: String,
+    icon: @Composable () -> Unit,
+    onClick: () -> Unit,
+) {
+    Card(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .clickable { onClick() },
+        elevation =
+            CardDefaults.cardElevation(
+                defaultElevation = 4.dp,
+                hoveredElevation = 8.dp,
+                pressedElevation = 2.dp,
+            ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = AppColors.PrimaryContainer,
+                contentColor = AppColors.OnPrimaryContainer,
+            ),
+        shape = RoundedCornerShape(AppSpacing.RadiusL),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(AppSpacing.L),
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.M),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier.padding(end = AppSpacing.S),
+                contentAlignment = Alignment.Center,
+            ) {
+                icon()
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = title,
+                    style = AppTypography.HeadlineSmall,
+                    color = AppColors.OnPrimaryContainer,
+                )
+                Text(
+                    text = description,
+                    style = AppTypography.BodyMedium,
+                    color = AppColors.OnSurfaceVariant,
+                )
+            }
+        }
     }
 }
 

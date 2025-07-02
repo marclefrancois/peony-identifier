@@ -8,4 +8,7 @@ data class FieldSelectionState(
     val selectedParcelle: String? = null,
     val canContinue: Boolean = false,
     val errorMessage: String? = null,
+    val fieldEntryCounts: Map<String, Int> = emptyMap(),
+    val parcelEntryCounts: Map<String, Int> = emptyMap(),
+    val totalEntries: Int = 0,
 )

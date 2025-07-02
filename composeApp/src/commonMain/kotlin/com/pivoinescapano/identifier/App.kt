@@ -16,11 +16,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.pivoinescapano.identifier.di.appModule
+import com.pivoinescapano.identifier.presentation.navigation.FieldNotesRoute
 import com.pivoinescapano.identifier.presentation.navigation.FieldSelectionRoute
+import com.pivoinescapano.identifier.presentation.navigation.HomeRoute
 import com.pivoinescapano.identifier.presentation.navigation.PeonyDetailRoute
 import com.pivoinescapano.identifier.presentation.navigation.PeonyIdentifierRoute
 import com.pivoinescapano.identifier.presentation.navigation.PeonySearchRoute
+import com.pivoinescapano.identifier.presentation.screen.FieldNotesScreen
 import com.pivoinescapano.identifier.presentation.screen.FieldSelectionScreen
+import com.pivoinescapano.identifier.presentation.screen.HomeScreen
 import com.pivoinescapano.identifier.presentation.screen.PeonyDetailScreen
 import com.pivoinescapano.identifier.presentation.screen.PeonyIdentifierScreen
 import com.pivoinescapano.identifier.presentation.screen.PeonySearchScreen
@@ -45,7 +49,7 @@ fun App() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = FieldSelectionRoute(),
+                    startDestination = HomeRoute,
                     enterTransition = {
                         // Forward: slide in from right
                         slideInHorizontally(
@@ -75,6 +79,20 @@ fun App() {
                         )
                     },
                 ) {
+                    composable<HomeRoute> {
+                        HomeScreen(
+                            onNavigateToSearch = {
+                                navController.navigate(PeonySearchRoute)
+                            },
+                            onNavigateToIdentify = {
+                                navController.navigate(FieldSelectionRoute())
+                            },
+                            onNavigateToFieldNotes = {
+                                navController.navigate(FieldNotesRoute)
+                            },
+                        )
+                    }
+
                     composable<FieldSelectionRoute> { backStackEntry ->
                         val route = backStackEntry.toRoute<FieldSelectionRoute>()
                         // Check for restored state from savedStateHandle (handles iOS gestures)
@@ -91,8 +109,8 @@ fun App() {
                                 }
                                 navController.navigate(PeonyIdentifierRoute(champ, parcelle))
                             },
-                            onNavigateToSearch = {
-                                navController.navigate(PeonySearchRoute)
+                            onNavigateBack = {
+                                navController.navigateUp()
                             },
                         )
                     }
@@ -125,9 +143,6 @@ fun App() {
                                 // Store selection state in current back stack entry for return from detail
                                 backStackEntry.savedStateHandle["restoredRang"] = rang
                                 backStackEntry.savedStateHandle["restoredTrou"] = trou
-                            },
-                            onNavigateToSearch = {
-                                navController.navigate(PeonySearchRoute)
                             },
                         )
                     }
@@ -170,6 +185,14 @@ fun App() {
                             },
                             onNavigateToDetail = { champ, parcelle, rang, trou, searchTerm ->
                                 navController.navigate(PeonyDetailRoute(champ, parcelle, rang, trou, searchTerm))
+                            },
+                        )
+                    }
+
+                    composable<FieldNotesRoute> {
+                        FieldNotesScreen(
+                            onNavigateBack = {
+                                navController.navigateUp()
                             },
                         )
                     }

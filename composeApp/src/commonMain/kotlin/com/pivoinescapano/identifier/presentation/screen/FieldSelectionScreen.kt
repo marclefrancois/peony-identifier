@@ -3,21 +3,30 @@ package com.pivoinescapano.identifier.presentation.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Agriculture
+import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,18 +35,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.repository.FieldRepository
 import com.pivoinescapano.identifier.data.usecase.GetFieldEntriesUseCase
-import com.pivoinescapano.identifier.presentation.component.FloatingSearchButton
 import com.pivoinescapano.identifier.presentation.theme.AppColors
 import com.pivoinescapano.identifier.presentation.theme.AppSpacing
 import com.pivoinescapano.identifier.presentation.theme.AppTypography
 import com.pivoinescapano.identifier.presentation.theme.ContinueButton
 import com.pivoinescapano.identifier.presentation.theme.FieldSelectionCard
-import com.pivoinescapano.identifier.presentation.theme.UniformCard
 import com.pivoinescapano.identifier.presentation.viewmodel.FieldSelectionViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
@@ -48,7 +55,7 @@ fun FieldSelectionScreen(
     initialChamp: String? = null,
     initialParcelle: String? = null,
     onContinue: (champ: String, parcelle: String) -> Unit,
-    onNavigateToSearch: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: FieldSelectionViewModel = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -68,7 +75,26 @@ fun FieldSelectionScreen(
         }
     }
 
-    Scaffold { paddingValues ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Select Field Location",
+                        style = AppTypography.HeadlineSmall,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                        )
+                    }
+                },
+            )
+        },
+    ) { paddingValues ->
         Box(
             modifier =
                 Modifier
@@ -81,27 +107,6 @@ fun FieldSelectionScreen(
                         .fillMaxSize()
                         .padding(horizontal = AppSpacing.EdgePadding),
             ) {
-                // Header
-                Column(
-                    modifier = Modifier.padding(bottom = AppSpacing.M),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(AppSpacing.M),
-                ) {
-                    Text(
-                        text = "Select Field Location",
-                        style = AppTypography.HeadlineLarge,
-                        color = AppColors.OnSurface,
-                        textAlign = TextAlign.Center,
-                    )
-
-                    Text(
-                        text = "Choose the field and parcel to identify peonies",
-                        style = AppTypography.BodyLarge,
-                        color = AppColors.OnSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-
                 // Content area that takes available space
                 if (uiState.isLoading) {
                     // Loading state
@@ -131,15 +136,42 @@ fun FieldSelectionScreen(
                         item {
                             FieldSelectionCard(
                                 title = "Field (Champ)",
-                                subtitle = if (uiState.selectedChamp != null) "Selected: ${uiState.selectedChamp}" else "Select a field",
                                 selected = uiState.selectedChamp != null,
                                 onClick = { /* We'll show dropdown instead */ },
                             ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = AppSpacing.S),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(AppSpacing.S),
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Landscape,
+                                        contentDescription = "Field",
+                                        tint = AppColors.PrimaryGreen,
+                                        modifier = Modifier.size(20.dp),
+                                    )
+                                    Text(
+                                        text = "Field Location",
+                                        style = AppTypography.BodyMedium,
+                                        color = AppColors.OnSurfaceVariant,
+                                    )
+                                }
                                 LargeDropdownSelector(
                                     label = "Choose Field",
-                                    options = uiState.availableChamps,
-                                    selectedOption = uiState.selectedChamp,
-                                    onSelectionChanged = viewModel::onChampSelected,
+                                    options =
+                                        uiState.availableChamps.map { field ->
+                                            val count = uiState.fieldEntryCounts[field] ?: 0
+                                            "Field $field ($count entries)"
+                                        },
+                                    selectedOption =
+                                        uiState.selectedChamp?.let { field ->
+                                            val count = uiState.fieldEntryCounts[field] ?: 0
+                                            "Field $field ($count entries)"
+                                        },
+                                    onSelectionChanged = { selection ->
+                                        val fieldNumber = selection.substringAfter("Field ").substringBefore(" (")
+                                        viewModel.onChampSelected(fieldNumber)
+                                    },
                                 )
                             }
                         }
@@ -149,44 +181,73 @@ fun FieldSelectionScreen(
                             item {
                                 FieldSelectionCard(
                                     title = "Parcel (Parcelle)",
-                                    subtitle = if (uiState.selectedParcelle != null) "Selected: ${uiState.selectedParcelle}" else "Select a parcel",
                                     selected = uiState.selectedParcelle != null,
                                     onClick = { /* We'll show dropdown instead */ },
                                 ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(bottom = AppSpacing.S),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(AppSpacing.S),
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Agriculture,
+                                            contentDescription = "Parcel",
+                                            tint = AppColors.PrimaryGreen,
+                                            modifier = Modifier.size(20.dp),
+                                        )
+                                        Text(
+                                            text = "Parcel Section",
+                                            style = AppTypography.BodyMedium,
+                                            color = AppColors.OnSurfaceVariant,
+                                        )
+                                    }
                                     LargeDropdownSelector(
                                         label = "Choose Parcel",
-                                        options = uiState.availableParcelles,
-                                        selectedOption = uiState.selectedParcelle,
-                                        onSelectionChanged = viewModel::onParcelleSelected,
+                                        options =
+                                            uiState.availableParcelles.map { parcel ->
+                                                val count = uiState.parcelEntryCounts[parcel] ?: 0
+                                                "$parcel ($count entries)"
+                                            },
+                                        selectedOption =
+                                            uiState.selectedParcelle?.let { parcel ->
+                                                val count = uiState.parcelEntryCounts[parcel] ?: 0
+                                                "$parcel ($count entries)"
+                                            },
+                                        onSelectionChanged = { selection ->
+                                            val parcelName = selection.substringBefore(" (")
+                                            viewModel.onParcelleSelected(parcelName)
+                                        },
                                     )
                                 }
                             }
                         }
 
-                        // Preview Card - only show if both are selected
+                        // Selection Summary Card - only show if both are selected
                         if (uiState.selectedChamp != null && uiState.selectedParcelle != null) {
                             item {
-                                UniformCard(
-                                    backgroundColor = AppColors.PrimaryContainer,
-                                    contentColor = AppColors.OnPrimaryContainer,
+                                FieldSelectionCard(
+                                    title = "Selection Summary",
+                                    subtitle = "Field ${uiState.selectedChamp} • Parcel ${uiState.selectedParcelle}",
+                                    selected = false,
+                                    onClick = { /* Read-only card */ },
                                 ) {
-                                    Text(
-                                        text = "Selection Preview",
-                                        style = AppTypography.HeadlineSmall,
-                                        color = AppColors.OnPrimaryContainer,
-                                    )
-
-                                    Text(
-                                        text = "Field: ${uiState.selectedChamp}",
-                                        style = AppTypography.BodyLarge,
-                                        color = AppColors.OnPrimaryContainer,
-                                    )
-
-                                    Text(
-                                        text = "Parcel: ${uiState.selectedParcelle}",
-                                        style = AppTypography.BodyLarge,
-                                        color = AppColors.OnPrimaryContainer,
-                                    )
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(bottom = AppSpacing.S),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(AppSpacing.S),
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Agriculture,
+                                            contentDescription = "Selection Summary",
+                                            tint = AppColors.PrimaryGreen,
+                                            modifier = Modifier.size(20.dp),
+                                        )
+                                        Text(
+                                            text = "Ready to Continue",
+                                            style = AppTypography.BodyMedium,
+                                            color = AppColors.OnSurfaceVariant,
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -207,16 +268,6 @@ fun FieldSelectionScreen(
                     modifier = Modifier.padding(top = AppSpacing.SectionSpacing, bottom = AppSpacing.M),
                 )
             }
-
-            // Floating Search Button positioned over the content
-            FloatingSearchButton(
-                onClick = onNavigateToSearch,
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = AppSpacing.ContinueButtonHeight + AppSpacing.M)
-                        .padding(AppSpacing.M),
-            )
         }
     }
 }
@@ -296,7 +347,7 @@ fun previewFieldSelectionScreen() {
         initialChamp = null,
         initialParcelle = null,
         onContinue = { _, _ -> },
-        onNavigateToSearch = {},
+        onNavigateBack = {},
         viewModel =
             FieldSelectionViewModel(
                 GetFieldEntriesUseCase(

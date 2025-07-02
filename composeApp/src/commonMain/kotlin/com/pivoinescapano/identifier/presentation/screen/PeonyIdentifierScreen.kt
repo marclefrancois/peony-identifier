@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pivoinescapano.identifier.platform.BackHandler
-import com.pivoinescapano.identifier.presentation.component.FloatingSearchButton
 import com.pivoinescapano.identifier.presentation.component.content.ErrorContent
 import com.pivoinescapano.identifier.presentation.component.content.PositionsListContent
 import com.pivoinescapano.identifier.presentation.component.navigation.ListTopBar
@@ -50,7 +49,6 @@ fun PeonyIdentifierScreen(
     onNavigateToDetail: (champ: String, parcelle: String, rang: String, trou: String) -> Unit,
     onUpdateBackStackState: (champ: String, parcelle: String) -> Unit,
     onUpdateSelectionState: (rang: String?, trou: String?) -> Unit = { _, _ -> },
-    onNavigateToSearch: () -> Unit,
     viewModel: PeonyIdentifierViewModel = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -204,15 +202,6 @@ fun PeonyIdentifierScreen(
                     )
                 }
             }
-
-            // Floating Search Button positioned over the bottom bar
-            FloatingSearchButton(
-                onClick = onNavigateToSearch,
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(AppSpacing.M),
-            )
         }
     }
 }

@@ -31,4 +31,10 @@ data class PeonyDetailRoute(
 )
 
 @Serializable
+object HomeRoute
+
+@Serializable
 object PeonySearchRoute
+
+@Serializable
+object FieldNotesRoute
