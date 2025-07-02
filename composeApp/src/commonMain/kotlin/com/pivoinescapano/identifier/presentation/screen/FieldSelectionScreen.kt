@@ -1,29 +1,18 @@
 package com.pivoinescapano.identifier.presentation.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -37,9 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.repository.FieldRepository
@@ -92,7 +79,7 @@ fun FieldSelectionScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(horizontal =  AppSpacing.EdgePadding)
+                        .padding(horizontal = AppSpacing.EdgePadding),
             ) {
                 // Header
                 Column(
@@ -310,47 +297,59 @@ fun previewFieldSelectionScreen() {
         initialParcelle = null,
         onContinue = { _, _ -> },
         onNavigateToSearch = {},
-        viewModel = FieldSelectionViewModel(
-            GetFieldEntriesUseCase(
-                object: FieldRepository {
-                    override suspend fun getFieldEntries(fieldNumber: String): List<FieldEntry> {
-                        return emptyList()
-                    }
+        viewModel =
+            FieldSelectionViewModel(
+                GetFieldEntriesUseCase(
+                    object : FieldRepository {
+                        override suspend fun getFieldEntries(fieldNumber: String): List<FieldEntry> {
+                            return emptyList()
+                        }
 
-                    override suspend fun getDistinctChamps(): List<String> {
-                        return emptyList()
-                    }
+                        override suspend fun getDistinctChamps(): List<String> {
+                            return emptyList()
+                        }
 
-                    override suspend fun getDistinctParcelles(champ: String): List<String> {
-                        return emptyList()
-                    }
+                        override suspend fun getDistinctParcelles(champ: String): List<String> {
+                            return emptyList()
+                        }
 
-                    override suspend fun getDistinctRangs(champ: String, parcelle: String): List<String> {
-                        return emptyList()
-                    }
+                        override suspend fun getDistinctRangs(
+                            champ: String,
+                            parcelle: String,
+                        ): List<String> {
+                            return emptyList()
+                        }
 
-                    override suspend fun getDistinctTrous(champ: String, parcelle: String, rang: String): List<String> {
-                        return emptyList()
-                    }
+                        override suspend fun getDistinctTrous(
+                            champ: String,
+                            parcelle: String,
+                            rang: String,
+                        ): List<String> {
+                            return emptyList()
+                        }
 
-                    override suspend fun getFieldEntry(champ: String, parcelle: String, rang: String, trou: String): FieldEntry? {
-                        return null
-                    }
+                        override suspend fun getFieldEntry(
+                            champ: String,
+                            parcelle: String,
+                            rang: String,
+                            trou: String,
+                        ): FieldEntry? {
+                            return null
+                        }
 
-                    override suspend fun getRowEntries(
-                        champ: String,
-                        parcelle: String,
-                        rang: String
-                    ): List<FieldEntry> {
-                        return emptyList()
-                    }
+                        override suspend fun getRowEntries(
+                            champ: String,
+                            parcelle: String,
+                            rang: String,
+                        ): List<FieldEntry> {
+                            return emptyList()
+                        }
 
-                    override suspend fun getAllFieldEntries(): List<FieldEntry> {
-                        return emptyList()
-                    }
-
-                }
-            )
-        )
+                        override suspend fun getAllFieldEntries(): List<FieldEntry> {
+                            return emptyList()
+                        }
+                    },
+                ),
+            ),
     )
 }

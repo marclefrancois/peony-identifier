@@ -18,15 +18,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -34,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.pivoinescapano.identifier.presentation.theme.AppColors
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,20 +44,21 @@ fun FullscreenImageViewer(
     val offsetY = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
 
-    val transformableState = rememberTransformableState { zoomChange, offsetChange, _ ->
-        coroutineScope.launch {
-            val newScale = (scale.value * zoomChange).coerceIn(0.5f, 5f)
-            scale.snapTo(newScale)
-            
-            if (newScale <= 1f) {
-                offsetX.snapTo(0f)
-                offsetY.snapTo(0f)
-            } else {
-                offsetX.snapTo(offsetX.value + offsetChange.x)
-                offsetY.snapTo(offsetY.value + offsetChange.y)
+    val transformableState =
+        rememberTransformableState { zoomChange, offsetChange, _ ->
+            coroutineScope.launch {
+                val newScale = (scale.value * zoomChange).coerceIn(0.5f, 5f)
+                scale.snapTo(newScale)
+
+                if (newScale <= 1f) {
+                    offsetX.snapTo(0f)
+                    offsetY.snapTo(0f)
+                } else {
+                    offsetX.snapTo(offsetX.value + offsetChange.x)
+                    offsetY.snapTo(offsetY.value + offsetChange.y)
+                }
             }
         }
-    }
 
     // Animate back to scale 1.0 and center when gesture ends
     LaunchedEffect(transformableState.isTransformInProgress) {
@@ -71,19 +68,19 @@ fun FullscreenImageViewer(
                 launch {
                     scale.animateTo(
                         targetValue = 1f,
-                        animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f)
+                        animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f),
                     )
                 }
                 launch {
                     offsetX.animateTo(
                         targetValue = 0f,
-                        animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f)
+                        animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f),
                     )
                 }
                 launch {
                     offsetY.animateTo(
                         targetValue = 0f,
-                        animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f)
+                        animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f),
                     )
                 }
             }
@@ -93,9 +90,10 @@ fun FullscreenImageViewer(
     if (imageUrl != null) {
         Dialog(
             onDismissRequest = onDismiss,
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false,
-            ),
+            properties =
+                DialogProperties(
+                    usePlatformDefaultWidth = false,
+                ),
         ) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
@@ -120,7 +118,7 @@ fun FullscreenImageViewer(
                                     translationY = offsetY.value,
                                 )
                                 .transformable(state = transformableState),
-                        )
+                    )
 
                     // Close button
                     IconButton(
