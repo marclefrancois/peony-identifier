@@ -66,6 +66,7 @@ The project uses Gradle version catalogs (`gradle/libs.versions.toml`) for depen
   - Never document functions, use meaningful names instead
   - Never document getters/setters, use meaningful names instead
   - Comment only when necessary to explain complex logic
+  - NEVER add comment on same line as code, always use a new line
 
 - **Safety**: 
   - Never use force unwrapping

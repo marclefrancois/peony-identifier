@@ -97,7 +97,7 @@ fun FullscreenImageViewer(
         ) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = Color.Black, // Black background for better image viewing
+                color = Color.Black,
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -107,7 +107,7 @@ fun FullscreenImageViewer(
                     PeonyAsyncImage(
                         imageUrl = imageUrl,
                         contentDescription = contentDescription ?: "Peony image",
-                        contentScale = ContentScale.Fit, // Show full image without cropping
+                        contentScale = ContentScale.Fit,
                         modifier =
                             Modifier
                                 .fillMaxSize()
