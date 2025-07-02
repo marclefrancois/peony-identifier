@@ -1,6 +1,7 @@
 package com.pivoinescapano.identifier.presentation.component.cards
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,11 +10,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.model.PeonyInfo
+import com.pivoinescapano.identifier.presentation.component.FullscreenImageViewer
 import com.pivoinescapano.identifier.presentation.component.PeonyAsyncImage
 import com.pivoinescapano.identifier.presentation.theme.AppColors
 import com.pivoinescapano.identifier.presentation.theme.AppSpacing
@@ -58,6 +65,7 @@ fun PeonyCard(
     isExactMatch: Boolean,
     onClick: (() -> Unit)? = null,
 ) {
+    var showFullscreenImage by remember { mutableStateOf(false) }
     UniformCard(
         modifier =
             Modifier
@@ -84,7 +92,7 @@ fun PeonyCard(
                 ) {
                     Text(
                         text = "Exact Match",
-                        style = AppTypography.LabelSmall,
+                        style = AppTypography.LabelMedium,
                     )
                 }
             }
@@ -93,33 +101,44 @@ fun PeonyCard(
         // Image and info row
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppSpacing.S),
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.M),
         ) {
             // Peony image
             PeonyAsyncImage(
                 imageUrl = peony.image,
                 contentDescription = "Image of ${peony.cultivar}",
-                modifier = Modifier.size(120.dp),
+                modifier =
+                    Modifier
+                        .size(140.dp)
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onDoubleTap = {
+                                    if (peony.image != null) {
+                                        showFullscreenImage = true
+                                    }
+                                },
+                            )
+                        },
             )
 
             // Peony details
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(AppSpacing.XS),
+                verticalArrangement = Arrangement.spacedBy(AppSpacing.S),
             ) {
                 Text(
                     text = "Originator: ${peony.originator}",
-                    style = AppTypography.BodyMedium,
+                    style = AppTypography.BodyLarge,
                     color = AppColors.OnSurfaceVariant,
                 )
                 Text(
                     text = "Date: ${peony.date}",
-                    style = AppTypography.BodyMedium,
+                    style = AppTypography.BodyLarge,
                     color = AppColors.OnSurfaceVariant,
                 )
                 Text(
                     text = "Group: ${peony.group}",
-                    style = AppTypography.BodyMedium,
+                    style = AppTypography.BodyLarge,
                     color = AppColors.OnSurfaceVariant,
                 )
             }
@@ -128,13 +147,23 @@ fun PeonyCard(
         if (peony.description.isNotBlank()) {
             Text(
                 text = "Description:",
-                style = AppTypography.LabelLarge,
+                style = AppTypography.HeadlineSmall,
                 color = AppColors.OnSurface,
             )
             Text(
                 text = peony.description.replace(Regex("<[^>]*>"), ""),
-                style = AppTypography.BodyMedium,
+                style = AppTypography.BodyLarge,
                 color = AppColors.OnSurfaceVariant,
+                lineHeight = AppTypography.BodyLarge.lineHeight?.times(1.2f) ?: AppTypography.BodyLarge.lineHeight,
+            )
+        }
+
+        // Fullscreen image viewer
+        if (showFullscreenImage && peony.image != null) {
+            FullscreenImageViewer(
+                imageUrl = peony.image,
+                contentDescription = "Fullscreen image of ${peony.cultivar}",
+                onDismiss = { showFullscreenImage = false },
             )
         }
     }
