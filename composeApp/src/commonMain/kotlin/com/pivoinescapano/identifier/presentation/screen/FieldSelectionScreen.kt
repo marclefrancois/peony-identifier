@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -81,7 +82,8 @@ fun FieldSelectionScreen(
                 title = {
                     Text(
                         text = "Select Field Location",
-                        style = AppTypography.HeadlineSmall,
+                        style = AppTypography.HeadlineMedium,
+                        color = AppColors.OnSurface,
                     )
                 },
                 navigationIcon = {
@@ -89,9 +91,16 @@ fun FieldSelectionScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
+                            tint = AppColors.OnSurface,
                         )
                     }
                 },
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = AppColors.BarColor,
+                        titleContentColor = AppColors.OnSurface,
+                        navigationIconContentColor = AppColors.OnSurface,
+                    ),
             )
         },
     ) { paddingValues ->
@@ -105,7 +114,7 @@ fun FieldSelectionScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(horizontal = AppSpacing.EdgePadding),
+                        .padding(AppSpacing.EdgePadding),
             ) {
                 // Content area that takes available space
                 if (uiState.isLoading) {
@@ -264,7 +273,7 @@ fun FieldSelectionScreen(
                         }
                     },
                     enabled = uiState.canContinue,
-                    text = "Continue to Position Selection",
+                    text = "Continue",
                     modifier = Modifier.padding(top = AppSpacing.SectionSpacing, bottom = AppSpacing.M),
                 )
             }
