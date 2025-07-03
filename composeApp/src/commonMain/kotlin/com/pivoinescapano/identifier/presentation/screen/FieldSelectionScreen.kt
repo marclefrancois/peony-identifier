@@ -44,7 +44,6 @@ import com.pivoinescapano.identifier.data.usecase.GetFieldEntriesUseCase
 import com.pivoinescapano.identifier.presentation.theme.AppColors
 import com.pivoinescapano.identifier.presentation.theme.AppSpacing
 import com.pivoinescapano.identifier.presentation.theme.AppTypography
-import com.pivoinescapano.identifier.presentation.theme.ContinueButton
 import com.pivoinescapano.identifier.presentation.theme.FieldSelectionCard
 import com.pivoinescapano.identifier.presentation.viewmodel.FieldSelectionViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -146,7 +145,6 @@ fun FieldSelectionScreen(
                             FieldSelectionCard(
                                 title = "Field (Champ)",
                                 selected = uiState.selectedChamp != null,
-                                onClick = { /* We'll show dropdown instead */ },
                             ) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth().padding(bottom = AppSpacing.S),
@@ -191,7 +189,6 @@ fun FieldSelectionScreen(
                                 FieldSelectionCard(
                                     title = "Parcel (Parcelle)",
                                     selected = uiState.selectedParcelle != null,
-                                    onClick = { /* We'll show dropdown instead */ },
                                 ) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth().padding(bottom = AppSpacing.S),
@@ -237,8 +234,14 @@ fun FieldSelectionScreen(
                                 FieldSelectionCard(
                                     title = "Selection Summary",
                                     subtitle = "Field ${uiState.selectedChamp} • Parcel ${uiState.selectedParcelle}",
-                                    selected = false,
-                                    onClick = { /* Read-only card */ },
+                                    selected = true,
+                                    onClick = {
+                                        val champ = uiState.selectedChamp
+                                        val parcelle = uiState.selectedParcelle
+                                        if (champ != null && parcelle != null) {
+                                            onContinue(champ, parcelle)
+                                        }
+                                    },
                                 ) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth().padding(bottom = AppSpacing.S),
@@ -252,9 +255,9 @@ fun FieldSelectionScreen(
                                             modifier = Modifier.size(20.dp),
                                         )
                                         Text(
-                                            text = "Ready to Continue",
+                                            text = "Tap to Continue",
                                             style = AppTypography.BodyMedium,
-                                            color = AppColors.OnSurfaceVariant,
+                                            color = AppColors.OnPrimaryContainer,
                                         )
                                     }
                                 }
@@ -262,20 +265,6 @@ fun FieldSelectionScreen(
                         }
                     }
                 }
-
-                // Continue Button at bottom
-                ContinueButton(
-                    onClick = {
-                        val champ = uiState.selectedChamp
-                        val parcelle = uiState.selectedParcelle
-                        if (champ != null && parcelle != null) {
-                            onContinue(champ, parcelle)
-                        }
-                    },
-                    enabled = uiState.canContinue,
-                    text = "Continue",
-                    modifier = Modifier.padding(top = AppSpacing.SectionSpacing, bottom = AppSpacing.M),
-                )
             }
         }
     }

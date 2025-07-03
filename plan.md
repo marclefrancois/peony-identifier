@@ -17,6 +17,13 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
   - [ ] Material3 card-based design with icons and descriptive text
   - [ ] Clean separation of app's three core functions
 
+- ✅ **Enhanced Field Selection UX**: Streamlined navigation interaction
+  - ✅ **Clickable Selection Summary**: Replace continue button with tappable selection summary
+    - ✅ Selection summary becomes interactive element that triggers navigation
+    - ✅ Visual feedback on tap (selected state styling with enhanced colors)
+    - ✅ Maintains current selection state display functionality
+    - ✅ Improves single-tap workflow by reducing UI elements
+
 - [ ] **Enhanced Peony Details with Field Notes**: In-field documentation system
   - [ ] **Quick Action Buttons**: 
     - [ ] ❌ "Mark as Dead" - single tap to flag deceased peonies

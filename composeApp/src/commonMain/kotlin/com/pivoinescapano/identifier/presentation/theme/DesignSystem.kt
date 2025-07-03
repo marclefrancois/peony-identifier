@@ -282,14 +282,14 @@ fun FieldSelectionCard(
     title: String,
     subtitle: String? = null,
     selected: Boolean = false,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clickable { onClick() },
+                .let { if (onClick != null) it.clickable { onClick() } else it },
         elevation =
             CardDefaults.cardElevation(
                 defaultElevation = if (selected) 6.dp else 2.dp,
