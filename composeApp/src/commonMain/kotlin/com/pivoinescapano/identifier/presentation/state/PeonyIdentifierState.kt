@@ -2,6 +2,7 @@ package com.pivoinescapano.identifier.presentation.state
 
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import com.pivoinescapano.identifier.data.model.PeonyInfo
+import com.pivoinescapano.identifier.domain.model.FieldNote
 
 data class PeonyIdentifierState(
     val isLoading: Boolean = false,
@@ -21,6 +22,9 @@ data class PeonyIdentifierState(
     val currentRowEntries: List<FieldEntry> = emptyList(),
     val currentPeony: PeonyInfo? = null,
     val fuzzyMatches: List<PeonyInfo> = emptyList(),
+    // Field notes
+    val currentFieldNote: FieldNote? = null,
+    val isNoteSaving: Boolean = false,
     // UI flags
     val showPeonyDetails: Boolean = false,
 )

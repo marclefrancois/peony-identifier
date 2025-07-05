@@ -2,6 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Gernal Guidelines
+- Go ahead and spawn subagent whenever relevant to speed the process up.
+
 ## Project Overview
 
 This is a Kotlin Multiplatform Compose application targeting Android and iOS platforms. The project uses Compose Multiplatform for shared UI and follows the standard KMP project structure.

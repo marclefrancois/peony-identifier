@@ -54,6 +54,7 @@ object AppColors {
     val ExactMatch = Color(0xFF2E7D32) // Primary green for exact matches
     val Error = Color(0xFFD32F2F) // Material red error
     val Success = Color(0xFF388E3C) // Success green
+    val Warning = Color(0xFFFF9800) // Material orange warning
 
     // Overlay and feedback colors
     val ScrollOverlay = Color(0xE6000000) // Enhanced overlay opacity

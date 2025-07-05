@@ -4,8 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pivoinescapano.identifier.data.cache.DataCacheManager
 import com.pivoinescapano.identifier.data.model.PeonyInfo
+import com.pivoinescapano.identifier.domain.model.FieldNoteStatus
+import com.pivoinescapano.identifier.domain.usecase.CreateFieldNoteUseCase
 import com.pivoinescapano.identifier.domain.usecase.FindPeonyUseCase
+import com.pivoinescapano.identifier.domain.usecase.GetFieldNotesUseCase
 import com.pivoinescapano.identifier.domain.usecase.GetFieldSelectionUseCase
+import com.pivoinescapano.identifier.domain.usecase.UpdateFieldNoteUseCase
 import com.pivoinescapano.identifier.presentation.state.PeonyIdentifierState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +20,9 @@ class PeonyIdentifierViewModel(
     private val getFieldSelectionUseCase: GetFieldSelectionUseCase,
     private val findPeonyUseCase: FindPeonyUseCase,
     private val dataCacheManager: DataCacheManager,
+    private val createFieldNoteUseCase: CreateFieldNoteUseCase,
+    private val updateFieldNoteUseCase: UpdateFieldNoteUseCase,
+    private val getFieldNotesUseCase: GetFieldNotesUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PeonyIdentifierState())
     val uiState: StateFlow<PeonyIdentifierState> = _uiState.asStateFlow()
@@ -170,8 +177,14 @@ class PeonyIdentifierViewModel(
                 if (fieldEntry != null) {
                     _uiState.value = _uiState.value.copy(currentFieldEntry = fieldEntry)
 
-                    // Try to find matching peony
-                    val varieteName = fieldEntry.variete
+                    // Load field note first to check for saved variety
+                    val fieldNoteResult = getFieldNotesUseCase.getNotesForPosition(currentChamp, currentParcelle, currentRang, trou)
+                    val fieldNote = fieldNoteResult.getOrNull()
+
+                    // Prioritize saved variety from field note, fallback to field entry variety
+                    val varieteName = fieldNote?.variety ?: fieldEntry.variete
+
+                    // Try to find exact match
                     val peony =
                         if (varieteName != null) {
                             findPeonyUseCase.execute(varieteName)
@@ -179,9 +192,13 @@ class PeonyIdentifierViewModel(
                             null
                         }
 
+                    // Only show fuzzy matches if:
+                    // 1. No exact match found
+                    // 2. No saved variety exists (meaning user hasn't made a selection yet)
+                    // 3. There's a variety name to search with
                     val fuzzyMatches =
-                        if (peony == null && varieteName != null) {
-                            findPeonyUseCase.findWithFuzzyMatching(varieteName, 0.6)
+                        if (peony == null && fieldNote?.variety == null && fieldEntry.variete != null) {
+                            findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variete!!, 0.6)
                         } else {
                             emptyList()
                         }
@@ -192,6 +209,7 @@ class PeonyIdentifierViewModel(
                             fuzzyMatches = fuzzyMatches,
                             showPeonyDetails = true,
                             isLoading = false,
+                            currentFieldNote = fieldNote,
                         )
                 } else {
                     _uiState.value =
@@ -217,6 +235,49 @@ class PeonyIdentifierViewModel(
                 fuzzyMatches = emptyList(),
                 showPeonyDetails = true,
             )
+
+        // Save the selected variety to field note
+        saveSelectedVarietyToFieldNote(peony.cultivar)
+    }
+
+    private fun saveSelectedVarietyToFieldNote(variety: String) {
+        val champ = _uiState.value.selectedChamp ?: return
+        val parcelle = _uiState.value.selectedParcelle ?: return
+        val rang = _uiState.value.selectedRang ?: return
+        val trou = _uiState.value.selectedTrou ?: return
+
+        viewModelScope.launch {
+            try {
+                val currentNote = _uiState.value.currentFieldNote
+                if (currentNote != null) {
+                    val updatedNote = currentNote.copy(variety = variety)
+                    val result = updateFieldNoteUseCase(updatedNote)
+                    result.onSuccess { updated ->
+                        _uiState.value = _uiState.value.copy(currentFieldNote = updated)
+                    }.onFailure { error ->
+                        println("Failed to update field note variety: ${error.message}")
+                    }
+                } else {
+                    val result =
+                        createFieldNoteUseCase(
+                            champ = champ,
+                            parcelle = parcelle,
+                            rang = rang,
+                            trou = trou,
+                            variety = variety,
+                            notes = "",
+                            status = FieldNoteStatus.NORMAL,
+                        )
+                    result.onSuccess { created ->
+                        _uiState.value = _uiState.value.copy(currentFieldNote = created)
+                    }.onFailure { error ->
+                        println("Failed to create field note with variety: ${error.message}")
+                    }
+                }
+            } catch (e: Exception) {
+                println("Error saving variety to field note: ${e.message}")
+            }
+        }
     }
 
     fun clearError() {
@@ -273,5 +334,112 @@ class PeonyIdentifierViewModel(
         val availableRangs = _uiState.value.availableRangs
         val currentIndex = availableRangs.indexOf(currentRang)
         return currentIndex > 0
+    }
+
+    fun updateFieldNote(notes: String) {
+        val champ = _uiState.value.selectedChamp ?: return
+        val parcelle = _uiState.value.selectedParcelle ?: return
+        val rang = _uiState.value.selectedRang ?: return
+        val trou = _uiState.value.selectedTrou ?: return
+        val variety = _uiState.value.currentFieldEntry?.variete
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isNoteSaving = true)
+
+                val currentNote = _uiState.value.currentFieldNote
+                if (currentNote != null) {
+                    val updatedNote = currentNote.copy(notes = notes)
+                    val result = updateFieldNoteUseCase(updatedNote)
+                    result.onSuccess { updated ->
+                        _uiState.value =
+                            _uiState.value.copy(
+                                currentFieldNote = updated,
+                                isNoteSaving = false,
+                            )
+                    }.onFailure { error ->
+                        _uiState.value = _uiState.value.copy(isNoteSaving = false)
+                        println("Failed to update field note: ${error.message}")
+                    }
+                } else {
+                    val result =
+                        createFieldNoteUseCase(
+                            champ = champ,
+                            parcelle = parcelle,
+                            rang = rang,
+                            trou = trou,
+                            variety = variety,
+                            notes = notes,
+                        )
+                    result.onSuccess { created ->
+                        _uiState.value =
+                            _uiState.value.copy(
+                                currentFieldNote = created,
+                                isNoteSaving = false,
+                            )
+                    }.onFailure { error ->
+                        _uiState.value = _uiState.value.copy(isNoteSaving = false)
+                        println("Failed to create field note: ${error.message}")
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isNoteSaving = false)
+                println("Error updating field note: ${e.message}")
+            }
+        }
+    }
+
+    fun updateFieldNoteStatus(status: FieldNoteStatus) {
+        val champ = _uiState.value.selectedChamp ?: return
+        val parcelle = _uiState.value.selectedParcelle ?: return
+        val rang = _uiState.value.selectedRang ?: return
+        val trou = _uiState.value.selectedTrou ?: return
+        val variety = _uiState.value.currentFieldEntry?.variete
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isNoteSaving = true)
+
+                val currentNote = _uiState.value.currentFieldNote
+                if (currentNote != null) {
+                    val updatedNote = currentNote.copy(status = status)
+                    val result = updateFieldNoteUseCase(updatedNote)
+                    result.onSuccess { updated ->
+                        _uiState.value =
+                            _uiState.value.copy(
+                                currentFieldNote = updated,
+                                isNoteSaving = false,
+                            )
+                    }.onFailure { error ->
+                        _uiState.value = _uiState.value.copy(isNoteSaving = false)
+                        println("Failed to update field note status: ${error.message}")
+                    }
+                } else {
+                    val result =
+                        createFieldNoteUseCase(
+                            champ = champ,
+                            parcelle = parcelle,
+                            rang = rang,
+                            trou = trou,
+                            variety = variety,
+                            notes = "",
+                            status = status,
+                        )
+                    result.onSuccess { created ->
+                        _uiState.value =
+                            _uiState.value.copy(
+                                currentFieldNote = created,
+                                isNoteSaving = false,
+                            )
+                    }.onFailure { error ->
+                        _uiState.value = _uiState.value.copy(isNoteSaving = false)
+                        println("Failed to create field note with status: ${error.message}")
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isNoteSaving = false)
+                println("Error updating field note status: ${e.message}")
+            }
+        }
     }
 }

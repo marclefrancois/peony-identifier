@@ -1,21 +1,18 @@
 package com.pivoinescapano.identifier
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.pivoinescapano.identifier.di.appModule
+import com.pivoinescapano.identifier.di.platformModule
 import com.pivoinescapano.identifier.presentation.navigation.FieldNotesRoute
 import com.pivoinescapano.identifier.presentation.navigation.FieldSelectionRoute
 import com.pivoinescapano.identifier.presentation.navigation.HomeRoute
@@ -36,7 +33,7 @@ import org.koin.compose.KoinApplication
 @Preview
 fun App() {
     KoinApplication(application = {
-        modules(appModule)
+        modules(appModule, platformModule)
     }) {
         MaterialTheme {
             // v1.3 Fix: Add proper background for iOS
@@ -45,39 +42,11 @@ fun App() {
                 color = MaterialTheme.colorScheme.background,
             ) {
                 val navController = rememberNavController()
-                val density = LocalDensity.current
+                LocalDensity.current
 
                 NavHost(
                     navController = navController,
                     startDestination = HomeRoute,
-                    enterTransition = {
-                        // Forward: slide in from right
-                        slideInHorizontally(
-                            animationSpec = tween(300),
-                            initialOffsetX = { with(density) { 300.dp.roundToPx() } },
-                        )
-                    },
-                    exitTransition = {
-                        // Forward: slide out to left
-                        slideOutHorizontally(
-                            animationSpec = tween(300),
-                            targetOffsetX = { with(density) { (-300).dp.roundToPx() } },
-                        )
-                    },
-                    popEnterTransition = {
-                        // Backward: slide in from left
-                        slideInHorizontally(
-                            animationSpec = tween(300),
-                            initialOffsetX = { with(density) { (-300).dp.roundToPx() } },
-                        )
-                    },
-                    popExitTransition = {
-                        // Backward: slide out to right
-                        slideOutHorizontally(
-                            animationSpec = tween(300),
-                            targetOffsetX = { with(density) { 300.dp.roundToPx() } },
-                        )
-                    },
                 ) {
                     composable<HomeRoute> {
                         HomeScreen(
@@ -188,6 +157,9 @@ fun App() {
                         FieldNotesScreen(
                             onNavigateBack = {
                                 navController.navigateUp()
+                            },
+                            onNavigateToDetail = { champ, parcelle, rang, trou ->
+                                navController.navigate(PeonyDetailRoute(champ, parcelle, rang, trou, fromSearchTerm = null))
                             },
                         )
                     }

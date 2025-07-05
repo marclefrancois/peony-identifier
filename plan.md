@@ -1,21 +1,21 @@
 # Peony Identifier App Plan
 
-## Project Status: 🚧 Planning v1.7.0
+## Project Status: 🚧 In Development v1.7.0
 
 A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility. Now powered by Kotlin 2.2.0 with enhanced performance, latest framework features, and improved user experience.
 
-## Version 1.7.0 Status: 📋 PLANNED
+## Version 1.7.0 Status: 🚧 IN DEVELOPMENT
 
-### 🎯 Version 1.7.0: Enhanced Field Management & Note-Taking - **IN PLANNING**
+### 🎯 Version 1.7.0: Enhanced Field Management & Note-Taking - **IN DEVELOPMENT**
 
 #### Major Changes: Restructured Navigation Flow
 
-- [ ] **New Home Screen Architecture**: Tile-based landing page with 3 main functions
-  - [ ] 🔍 **Search Tile**: Navigate to universal peony search (existing v1.6.0 feature)
-  - [ ] 📍 **Identify Tile**: Navigate to field selection → peony identification flow
-  - [ ] 📝 **Field Notes Tile**: Navigate to comprehensive field notes management
-  - [ ] Material3 card-based design with icons and descriptive text
-  - [ ] Clean separation of app's three core functions
+- ✅ **New Home Screen Architecture**: Tile-based landing page with 3 main functions
+  - ✅ 🔍 **Search Tile**: Navigate to universal peony search (existing v1.6.0 feature)
+  - ✅ 📍 **Identify Tile**: Navigate to field selection → peony identification flow
+  - ✅ 📝 **Field Notes Tile**: Navigate to comprehensive field notes management
+  - ✅ Material3 card-based design with icons and descriptive text
+  - ✅ Clean separation of app's three core functions
 
 - ✅ **Enhanced Field Selection UX**: Streamlined navigation interaction
   - ✅ **Clickable Selection Summary**: Replace continue button with tappable selection summary
@@ -24,33 +24,132 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
     - ✅ Maintains current selection state display functionality
     - ✅ Improves single-tap workflow by reducing UI elements
 
-- [ ] **Enhanced Peony Details with Field Notes**: In-field documentation system
-  - [ ] **Quick Action Buttons**: 
-    - [ ] ❌ "Mark as Dead" - single tap to flag deceased peonies
-    - [ ] 🚫 "Position Blocked" - mark positions as inaccessible/blocked
-  - [ ] **Custom Notes Field**: 
-    - [ ] Multi-line text input with dictation support
-    - [ ] Real-time save to local storage
-    - [ ] Character limit with counter (500 chars recommended)
-  - [ ] **Notes Persistence**: 
-    - [ ] JSON-based local storage using platform file system
-    - [ ] Structure: `{champ, parcelle, rang, trou, notes, isDead, isBlocked, timestamp}`
+- ✅ **Field Notes System**: Comprehensive note-taking and management
+  
+  #### Phase 1: Core Data Infrastructure ✅ COMPLETED
+  - ✅ **Data Models & Storage**:
+    - ✅ `FieldNote` data class with: `id`, `champ`, `parcelle`, `rang`, `trou`, `variety`, `notes`, `status`, `timestamp`, `lastModified`
+    - ✅ `FieldNoteStatus` enum: `NORMAL`, `DEAD`, `BLOCKED`
+    - ✅ Local JSON storage using platform-specific file system
+    - ✅ Thread-safe storage operations with Mutex protection
+  
+  - ✅ **Repository Layer**:
+    - ✅ `FieldNotesRepository` interface with CRUD operations
+    - ✅ `FieldNotesRepositoryImpl` with JSON persistence
+    - ✅ Platform-specific file system abstraction (Android/iOS)
+    - ✅ Automatic backup and recovery mechanisms
+  
+  - ✅ **Use Cases**:
+    - ✅ `CreateFieldNoteUseCase`: Add new note with validation
+    - ✅ `UpdateFieldNoteUseCase`: Modify existing note
+    - ✅ `DeleteFieldNoteUseCase`: Remove note with confirmation
+    - ✅ `GetFieldNotesUseCase`: Retrieve notes with filtering/sorting
+    - ✅ `ExportFieldNotesUseCase`: Generate CSV export
+    - ✅ `ClearAllNotesUseCase`: Bulk deletion with backup
 
-- [ ] **Field Notes Management Screen**: Comprehensive notes overview
-  - [ ] **Unified List Design**: Reuse position list screen components
-  - [ ] **Comprehensive Location Cards**: Show full hierarchy (Field → Parcel → Row → Position)
-  - [ ] **Smart Filtering**: Display only positions with associated notes
-  - [ ] **Multi-Level Sorting**: Primary by field, secondary by parcel, tertiary by row, quaternary by position
-  - [ ] **Note Preview**: Truncated note text with full view on tap
+  #### Phase 2: Enhanced Peony Details Integration ✅ COMPLETED
+  - ✅ **PeonyDetailScreen Enhancements**:
+    - ✅ **Quick Action Buttons**: 
+      - ✅ ❌ "Mark as Dead" - single tap to flag deceased peonies
+      - ✅ 🚫 "Position Blocked" - mark positions as inaccessible/blocked
+      - ✅ 📝 Real-time note editing with auto-save
+    - ✅ **Custom Notes Field**: 
+      - ✅ Multi-line text input with Material3 styling
+      - ✅ Real-time save to local storage (auto-save every 3 seconds)
+      - ✅ Character limit with counter (500 chars recommended)
+      - ✅ Debounced auto-save functionality
+    - ✅ **Visual Status Indicators**:
+      - ✅ Dead plants: Red border with skull icon
+      - ✅ Blocked positions: Orange border with blocked icon
+      - ✅ Notes present: Blue border with note icon
+    - ✅ **Note History**:
+      - ✅ Display creation and last modified timestamps
+      - ✅ Real-time saving indicators
+      - ✅ Relative time formatting (e.g., "5m ago")
 
-- [ ] **Export & Management Features**: Data portability and maintenance
-  - [ ] **CSV Export**: 
-    - [ ] Headers: Field, Parcel, Row, Position, Variety, Notes, Status, Date
-    - [ ] Platform-specific file sharing (Android: Share Intent, iOS: Activity Controller)
-  - [ ] **Clear All Notes**: 
-    - [ ] Confirmation dialog with destructive action styling
-    - [ ] Option to export before clearing
-    - [ ] Complete data reset functionality
+  #### Phase 3: Field Notes Management Screen ✅ COMPLETED
+  - ✅ **FieldNotesScreen Implementation**:
+    - ✅ **State Management**:
+      - ✅ `FieldNotesViewModel` with StateFlow-based state
+      - ✅ `FieldNotesState` data class for UI state
+      - ✅ Loading, error, and success states
+    - ✅ **UI Components**:
+      - ✅ **Unified List Design**: Reuse existing list components
+      - ✅ **Comprehensive Location Cards**: Show full hierarchy (Field → Parcel → Row → Position)
+      - ✅ **Smart Filtering**: Display only positions with associated notes
+      - ✅ **Multi-Level Sorting**: Primary by field, secondary by parcel, tertiary by row, quaternary by position
+      - ✅ **Note Preview**: Truncated note text with "Read More" expansion
+    - ✅ **Search & Filter**:
+      - ✅ Search by note content, variety, or position
+      - ✅ Filter by status (All, Dead, Blocked, Normal)
+      - ✅ Sort options (Date, Position, Status)
+      - ✅ Statistics dashboard with status breakdown
+
+  #### Phase 4: Export & Management Features
+  - [ ] **Data Export**:
+    - [ ] **CSV Export**: 
+      - [ ] Headers: Field, Parcel, Row, Position, Variety, Notes, Status, Created, Modified
+      - [ ] Platform-specific file sharing (Android: Share Intent, iOS: Activity Controller)
+      - [ ] Export filtering options (date range, status, field)
+    - [ ] **Backup/Restore**:
+      - [ ] JSON backup export for full data portability
+      - [ ] Import functionality for data restoration
+  
+  - [ ] **Data Management**:
+    - [ ] **Clear All Notes**: 
+      - [ ] Confirmation dialog with destructive action styling
+      - [ ] Option to export before clearing
+      - [ ] Complete data reset functionality
+    - [ ] **Statistics Dashboard**:
+      - [ ] Total notes count
+      - [ ] Status breakdown (dead, blocked, normal)
+      - [ ] Notes by field/parcel
+      - [ ] Recent activity summary
+
+  #### Phase 5: Advanced Features
+  - [ ] **Speech-to-Text Integration**:
+    - [ ] Platform-specific speech recognition
+    - [ ] Voice note dictation with real-time transcription
+    - [ ] Language detection and processing
+  
+  - [ ] **Offline Sync & Backup**:
+    - [ ] Automatic cloud backup (platform-specific)
+    - [ ] Conflict resolution for concurrent edits
+    - [ ] Sync status indicators
+
+  #### Technical Implementation Details
+  - [ ] **File Storage Structure**:
+    ```
+    /Documents/PeonyIdentifier/
+    ├── field-notes.json          # Main notes storage
+    ├── field-notes-backup.json   # Automatic backup
+    └── exports/                  # CSV export storage
+        ├── notes-export-YYYY-MM-DD.csv
+        └── notes-backup-YYYY-MM-DD.json
+    ```
+  
+  - [ ] **Data Synchronization**:
+    - [ ] Debounced auto-save (3 seconds after text changes)
+    - [ ] Optimistic UI updates with rollback on error
+    - [ ] Thread-safe concurrent access using Mutex
+  
+  - [ ] **Performance Optimizations**:
+    - [ ] Lazy loading for large note collections
+    - [ ] Pagination for notes list (50 items per page)
+    - [ ] Background processing for export operations
+    - [ ] Memory-efficient image handling for attachments
+
+  #### Integration Points
+  - [ ] **Navigation Integration**:
+    - [ ] Deep linking from PeonyDetailScreen to FieldNotesScreen
+    - [ ] Context-aware navigation (field/position filtering)
+    - [ ] Breadcrumb navigation for complex filtering
+  
+  - [ ] **UI/UX Consistency**:
+    - [ ] Follow existing Material3 theme and spacing
+    - [ ] Reuse existing components (cards, buttons, dialogs)
+    - [ ] Consistent error handling and loading states
+    - [ ] Accessibility support (content descriptions, focus management)
 
 ## Current App Features ✅ Complete
 
@@ -247,10 +346,13 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 - ✅ **Search Feature v1.6.0**: Comprehensive peony search with fuzzy matching, autocomplete, and state preservation
 
 ### Planned for v1.7.0
-- [ ] **Home Screen Architecture**: Tile-based navigation with separated functions
-- [ ] **Field Notes System**: Comprehensive note-taking with dictation support
-- [ ] **Data Export**: CSV export functionality with platform-specific sharing
-- [ ] **Enhanced Peony Details**: Quick action buttons and custom notes field
+- ✅ **Home Screen Architecture**: Tile-based navigation with separated functions
+- ✅ **Field Notes System**: Comprehensive 5-phase implementation
+  - ✅ **Phase 1**: Core data infrastructure (models, repository, use cases)
+  - ✅ **Phase 2**: Enhanced Peony Details integration (quick actions, note editor)
+  - ✅ **Phase 3**: Field Notes Management Screen (listing, filtering, search)
+  - [ ] **Phase 4**: Export & management features (CSV, backup, statistics)
+  - [ ] **Phase 5**: Advanced features (speech-to-text, cloud sync)
 
 ---
 

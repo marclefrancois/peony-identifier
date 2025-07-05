@@ -93,7 +93,11 @@ fun PeonyDetailScreen(
                         peony = uiState.currentPeony,
                         fuzzyMatches = uiState.fuzzyMatches,
                         fieldEntry = uiState.currentFieldEntry,
+                        fieldNote = uiState.currentFieldNote,
+                        isNoteSaving = uiState.isNoteSaving,
                         onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected,
+                        onUpdateFieldNote = viewModel::updateFieldNote,
+                        onUpdateFieldNoteStatus = viewModel::updateFieldNoteStatus,
                     )
                 }
             }
