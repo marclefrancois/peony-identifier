@@ -6,12 +6,14 @@ import kotlinx.coroutines.withContext
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSString
+import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSUserDomainMask
 import platform.Foundation.create
 import platform.Foundation.writeToFile
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
+import platform.UIKit.UIModalPresentationPageSheet
 
 actual fun provideFileSharing(): FileSharing = FileSharing()
 
@@ -24,13 +26,10 @@ actual class FileSharing {
     ): Result<Unit> {
         return withContext(Dispatchers.Main) {
             try {
-                val documentsDirectory =
-                    NSFileManager.defaultManager.URLsForDirectory(
-                        NSDocumentDirectory,
-                        NSUserDomainMask,
-                    ).first() as platform.Foundation.NSURL
-
-                val fileURL = documentsDirectory.URLByAppendingPathComponent(fileName)
+                // Use temporary directory for sharing files - iOS has fewer restrictions on sharing temp files
+                val tempDirectory = NSTemporaryDirectory()
+                val tempURL = platform.Foundation.NSURL.fileURLWithPath(tempDirectory)
+                val fileURL = tempURL.URLByAppendingPathComponent(fileName)
 
                 val nsString = NSString.create(string = content)
                 val success =
@@ -41,23 +40,37 @@ actual class FileSharing {
                         error = null,
                     )
 
-                if (success) {
+                if (success && fileURL != null) {
                     val activityViewController =
                         UIActivityViewController(
-                            activityItems = listOf(fileURL!!),
+                            activityItems = listOf(fileURL),
                             applicationActivities = null,
                         )
 
-                    val rootViewController = UIApplication.sharedApplication.keyWindow?.rootViewController
-                    rootViewController?.presentViewController(
-                        activityViewController,
-                        animated = true,
-                        completion = null,
-                    )
+                    // Set presentation style for iPad compatibility
+                    activityViewController.modalPresentationStyle = UIModalPresentationPageSheet
 
-                    Result.success(Unit)
+                    // Try multiple ways to get the root view controller for iOS 13+ compatibility
+                    val rootViewController = UIApplication.sharedApplication.keyWindow?.rootViewController
+
+                    if (rootViewController != null) {
+                        rootViewController.presentViewController(
+                            activityViewController,
+                            animated = true,
+                            completion = null,
+                        )
+                        Result.success(Unit)
+                    } else {
+                        Result.failure(Exception("Could not find root view controller to present sharing dialog"))
+                    }
                 } else {
-                    Result.failure(Exception("Failed to write file"))
+                    val errorMessage =
+                        when {
+                            !success -> "Failed to write file to ${fileURL?.path ?: "unknown path"}"
+                            fileURL == null -> "Failed to create file URL"
+                            else -> "Unknown error occurred"
+                        }
+                    Result.failure(Exception(errorMessage))
                 }
             } catch (e: Exception) {
                 Result.failure(e)

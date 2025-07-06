@@ -241,11 +241,6 @@ fun FieldNotesScreen(
 
     if (state.isExportDialogVisible) {
         ExportDialog(
-            availableFields = state.availableFields.toList(),
-            onExport = { filter ->
-                viewModel.updateExportFilter(filter)
-                viewModel.exportNotesWithFilter()
-            },
             onShare = { filter ->
                 viewModel.updateExportFilter(filter)
                 viewModel.shareNotesWithFilter()
