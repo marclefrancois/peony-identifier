@@ -37,6 +37,7 @@ import com.pivoinescapano.identifier.presentation.theme.OverlayCard
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewModel
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,22 +50,12 @@ fun PeonyIdentifierScreen(
     onNavigateToDetail: (champ: String, parcelle: String, rang: String, trou: String) -> Unit,
     onUpdateBackStackState: (champ: String, parcelle: String) -> Unit,
     onUpdateSelectionState: (rang: String?, trou: String?) -> Unit = { _, _ -> },
-    viewModel: PeonyIdentifierViewModel = koinInject(),
+    viewModel: PeonyIdentifierViewModel = koinInject { parametersOf(selectedChamp, selectedParcelle) },
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val positionListState = rememberLazyListState()
     var showScrollOverlay by remember { mutableStateOf(false) }
     var currentVisiblePosition by remember { mutableStateOf("") }
-
-    // Initialize with field/parcel selection from navigation
-    LaunchedEffect(selectedChamp, selectedParcelle) {
-        if (uiState.selectedChamp != selectedChamp) {
-            viewModel.onChampSelected(selectedChamp)
-        }
-        if (uiState.selectedParcelle != selectedParcelle) {
-            viewModel.onParcelleSelected(selectedParcelle)
-        }
-    }
 
     // Restore selection state when returning from detail screen
     LaunchedEffect(initialSelectedRang, initialSelectedTrou) {

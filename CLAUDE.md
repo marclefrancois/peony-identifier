@@ -71,5 +71,12 @@ The project uses Gradle version catalogs (`gradle/libs.versions.toml`) for depen
   - Comment only when necessary to explain complex logic
   - NEVER add comment on same line as code, always use a new line
 
+- **ViewModel vs View**:
+  - ViewModels are responsible for preparing and managing the data for the UI
+  - Views are responsible for displaying the UI and reacting to user interactions
+  - View should not contain any business logic or data manipulation
+  - A viewModel should only be used for 1 view, never shared between multiple views
+  - ViewModels for details screen should receive parameters from the previous screen (e.g. peony ID) thru navigation arguments
+
 - **Safety**: 
   - Never use force unwrapping

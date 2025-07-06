@@ -22,6 +22,7 @@ import com.pivoinescapano.identifier.domain.usecase.UpdateFieldNoteUseCase
 import com.pivoinescapano.identifier.platform.provideFileSharing
 import com.pivoinescapano.identifier.presentation.viewmodel.FieldNotesViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.FieldSelectionViewModel
+import com.pivoinescapano.identifier.presentation.viewmodel.PeonyDetailViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonySearchViewModel
 import org.koin.dsl.module
@@ -57,7 +58,12 @@ val appModule =
 
         // ViewModels
         factory { FieldSelectionViewModel(get()) }
-        factory { PeonyIdentifierViewModel(get(), get(), get(), get(), get(), get()) }
+        factory { (champ: String, parcelle: String) ->
+            PeonyIdentifierViewModel(champ, parcelle, get(), get(), get())
+        }
+        factory { (champ: String, parcelle: String, rang: String, trou: String) ->
+            PeonyDetailViewModel(champ, parcelle, rang, trou, get(), get(), get(), get(), get())
+        }
         factory { PeonySearchViewModel(get()) }
         factory { FieldNotesViewModel(get(), get()) }
     }

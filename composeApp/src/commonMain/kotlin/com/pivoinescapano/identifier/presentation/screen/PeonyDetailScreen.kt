@@ -7,7 +7,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,8 +15,9 @@ import com.pivoinescapano.identifier.platform.BackHandler
 import com.pivoinescapano.identifier.presentation.component.content.ErrorContent
 import com.pivoinescapano.identifier.presentation.component.content.PeonyDetailsContent
 import com.pivoinescapano.identifier.presentation.component.navigation.DetailsTopBar
-import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewModel
+import com.pivoinescapano.identifier.presentation.viewmodel.PeonyDetailViewModel
 import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,25 +27,9 @@ fun PeonyDetailScreen(
     rang: String,
     trou: String,
     onNavigateBack: () -> Unit,
-    viewModel: PeonyIdentifierViewModel = koinInject(),
+    viewModel: PeonyDetailViewModel = koinInject { parametersOf(champ, parcelle, rang, trou) },
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    // Initialize with navigation parameters
-    LaunchedEffect(champ, parcelle, rang, trou) {
-        if (uiState.selectedChamp != champ) {
-            viewModel.onChampSelected(champ)
-        }
-        if (uiState.selectedParcelle != parcelle) {
-            viewModel.onParcelleSelected(parcelle)
-        }
-        if (uiState.selectedRang != rang) {
-            viewModel.onRangSelected(rang)
-        }
-        if (uiState.selectedTrou != trou) {
-            viewModel.onTrouSelected(trou)
-        }
-    }
 
     // Handle Android physical back button
     BackHandler(enabled = true) {
@@ -55,7 +39,7 @@ fun PeonyDetailScreen(
     Scaffold(
         topBar = {
             DetailsTopBar(
-                fieldEntry = uiState.currentFieldEntry,
+                fieldEntry = uiState.fieldEntry,
                 onBackClick = onNavigateBack,
             )
         },
@@ -90,10 +74,10 @@ fun PeonyDetailScreen(
 
                 else -> {
                     PeonyDetailsContent(
-                        peony = uiState.currentPeony,
+                        peony = uiState.peony,
                         fuzzyMatches = uiState.fuzzyMatches,
-                        fieldEntry = uiState.currentFieldEntry,
-                        fieldNote = uiState.currentFieldNote,
+                        fieldEntry = uiState.fieldEntry,
+                        fieldNote = uiState.fieldNote,
                         isNoteSaving = uiState.isNoteSaving,
                         isPeonyConfirmed = uiState.isPeonyConfirmed,
                         onFuzzyMatchSelected = viewModel::onFuzzyMatchSelected,
