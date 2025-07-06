@@ -234,28 +234,6 @@ class FieldNotesViewModel(
         }
     }
 
-    fun createBackup() {
-        viewModelScope.launch {
-            _state.value = _state.value.copy(isExporting = true, exportSuccess = null)
-
-            exportService.createBackup()
-                .onSuccess { exportPath ->
-                    _state.value =
-                        _state.value.copy(
-                            isExporting = false,
-                            exportSuccess = "Backup created successfully: $exportPath",
-                        )
-                }
-                .onFailure { exception ->
-                    _state.value =
-                        _state.value.copy(
-                            isExporting = false,
-                            error = "Failed to create backup: ${exception.message}",
-                        )
-                }
-        }
-    }
-
     fun clearImportResult() {
         _state.value = _state.value.copy(importResult = null)
     }

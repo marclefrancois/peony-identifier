@@ -61,8 +61,6 @@ class PeonyDetailViewModel(
                             null
                         }
 
-                    val displayPeony = confirmedPeony ?: exactPeony
-
                     val fuzzyMatches =
                         if (fieldEntry.variete != null && exactPeony == null) {
                             val matches = findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variete, 0.6)
@@ -157,7 +155,6 @@ class PeonyDetailViewModel(
         viewModelScope.launch {
             try {
                 val currentState = _uiState.value
-                val fieldEntry = currentState.fieldEntry ?: return@launch
 
                 // Find the confirmed peony
                 val confirmedPeony = findPeonyUseCase.execute(variety)
@@ -186,8 +183,6 @@ class PeonyDetailViewModel(
     }
 
     fun updateFieldNote(notes: String) {
-        val variety = _uiState.value.fieldEntry?.variete
-
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value.copy(isNoteSaving = true)
@@ -213,7 +208,6 @@ class PeonyDetailViewModel(
                             parcelle = parcelle,
                             rang = rang,
                             trou = trou,
-                            variety = variety,
                             notes = notes,
                         )
                     result.onSuccess { created ->
@@ -235,8 +229,6 @@ class PeonyDetailViewModel(
     }
 
     fun updateFieldNoteStatus(status: FieldNoteStatus) {
-        val variety = _uiState.value.fieldEntry?.variete
-
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value.copy(isNoteSaving = true)
@@ -262,8 +254,6 @@ class PeonyDetailViewModel(
                             parcelle = parcelle,
                             rang = rang,
                             trou = trou,
-                            variety = variety,
-                            notes = "",
                             status = status,
                         )
                     result.onSuccess { created ->

@@ -16,8 +16,8 @@ class CreateFieldNoteUseCase(
         parcelle: String,
         rang: String,
         trou: String,
-        variety: String?,
-        notes: String,
+        variety: String? = null,
+        notes: String = "",
         status: FieldNoteStatus = FieldNoteStatus.NORMAL,
     ): Result<FieldNote> {
         return withContext(Dispatchers.IO) {

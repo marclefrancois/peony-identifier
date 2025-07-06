@@ -117,8 +117,8 @@ private fun FieldNoteIndicators(fieldNote: FieldNote) {
                 FieldNoteIndicator(backgroundColor = AppColors.Warning)
             }
             FieldNoteStatus.NORMAL -> {
-                // Show notes indicator only if there are notes and no variety confirmation
-                if (fieldNote.notes.isNotEmpty() && fieldNote.variety == null) {
+                // Show notes indicator if there are notes
+                if (fieldNote.notes.isNotEmpty()) {
                     FieldNoteIndicator(backgroundColor = AppColors.Info)
                 }
             }

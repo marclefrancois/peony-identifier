@@ -19,9 +19,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
@@ -39,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.pivoinescapano.identifier.data.model.FieldEntry
@@ -111,7 +110,6 @@ fun PeonyDetailsContent(
                 fieldNote = fieldNote,
                 isNoteSaving = isNoteSaving,
                 onUpdateFieldNote = onUpdateFieldNote,
-                focusManager = focusManager,
             )
         }
 
@@ -242,6 +240,7 @@ fun FieldEntryCardWithStatus(
                             )
                             Text("Dead plant", style = AppTypography.BodySmall, color = AppColors.Error)
                         }
+
                         FieldNoteStatus.BLOCKED -> {
                             Icon(
                                 Icons.Default.Block,
@@ -250,10 +249,11 @@ fun FieldEntryCardWithStatus(
                             )
                             Text("Position blocked", style = AppTypography.BodySmall, color = AppColors.Warning)
                         }
+
                         FieldNoteStatus.NORMAL -> {
                             if (note.notes.isNotEmpty()) {
                                 Icon(
-                                    Icons.Default.Notes,
+                                    Icons.AutoMirrored.Filled.Notes,
                                     contentDescription = "Has notes",
                                     tint = AppColors.PrimaryGreen,
                                 )
@@ -386,7 +386,6 @@ fun FieldNotesSection(
     fieldNote: FieldNote?,
     isNoteSaving: Boolean,
     onUpdateFieldNote: (String) -> Unit,
-    focusManager: FocusManager? = null,
 ) {
     var noteText by remember(fieldNote?.notes) { mutableStateOf(fieldNote?.notes ?: "") }
     var lastSavedText by remember(fieldNote?.notes) { mutableStateOf(fieldNote?.notes ?: "") }

@@ -121,11 +121,6 @@ class PeonySearchViewModel(
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
-    fun clearSearch() {
-        _uiState.value = PeonySearchState()
-        searchQueryFlow.value = ""
-    }
-
     fun restoreSearchTerm(searchTerm: String) {
         if (searchTerm.isNotBlank()) {
             _uiState.value =

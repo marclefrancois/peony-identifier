@@ -14,13 +14,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Notes
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.GetApp
-import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -115,7 +115,7 @@ fun FieldNotesScreen(
                     Box {
                         IconButton(onClick = { showSortMenu = true }) {
                             Icon(
-                                Icons.Default.Sort,
+                                Icons.AutoMirrored.Filled.Sort,
                                 contentDescription = "Sort",
                                 tint = AppColors.OnSurface,
                             )
@@ -218,31 +218,21 @@ fun FieldNotesScreen(
     if (state.isClearConfirmDialogVisible) {
         AlertDialog(
             onDismissRequest = { viewModel.hideClearConfirmDialog() },
-            title = { Text("Clear All Notes") },
-            text = { Text("Would you like to create a backup before clearing all field notes?") },
+            title = { Text("Clear All Notes?") },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.clearAllNotesWithExport()
+                        viewModel.clearAllNotesWithoutExport()
                     },
                 ) {
-                    Text("Backup & Clear")
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                Column {
-                    TextButton(
-                        onClick = {
-                            viewModel.clearAllNotesWithoutExport()
-                        },
-                    ) {
-                        Text("Clear Without Backup", color = MaterialTheme.colorScheme.error)
-                    }
-                    TextButton(
-                        onClick = { viewModel.hideClearConfirmDialog() },
-                    ) {
-                        Text("Cancel")
-                    }
+                TextButton(
+                    onClick = { viewModel.hideClearConfirmDialog() },
+                ) {
+                    Text("Cancel")
                 }
             },
         )
@@ -477,7 +467,7 @@ private fun StatusIndicator(
                 when (status) {
                     FieldNoteStatus.DEAD -> Icons.Default.Delete
                     FieldNoteStatus.BLOCKED -> Icons.Default.Block
-                    FieldNoteStatus.NORMAL -> if (hasNotes) Icons.Default.Notes else null
+                    FieldNoteStatus.NORMAL -> if (hasNotes) Icons.AutoMirrored.Filled.Notes else null
                 }
 
             icon?.let {

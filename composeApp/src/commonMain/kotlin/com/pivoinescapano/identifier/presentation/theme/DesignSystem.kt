@@ -111,15 +111,6 @@ object AppTypography {
             lineHeight = 16.sp,
             letterSpacing = 0.4.sp,
         )
-
-    // Label styles for UI elements
-    val LabelLarge =
-        TextStyle(
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            lineHeight = 20.sp,
-            letterSpacing = 0.1.sp,
-        )
     val LabelMedium =
         TextStyle(
             fontSize = 12.sp,
@@ -174,15 +165,12 @@ object AppSpacing {
     // Component-specific spacing
     val CardPadding = L // 16dp standard card padding
     val CardSpacing = M // 12dp internal card spacing
-
-    val SectionSpacing = XL // 24dp between major sections
     val EdgePadding = L // 16dp screen edge padding
 
     // v1.3 Enhanced Bottom Bar Sizing
     val LargeBottomBarHeight = 64.dp // Enhanced bottom bar height (33% larger)
     val FieldSelectionPadding = 24.dp // Generous padding for field selection screen
     val FieldSelectionDropdownHeight = 64.dp // Large dropdown height for field selection
-    val ContinueButtonHeight = 52.dp // Prominent continue button
 
     // Visual elements
     val OverlayCardSize = 120.dp // Scroll position overlay
@@ -369,44 +357,6 @@ fun EnhancedBottomNavigationBar(
     }
 }
 
-// v1.3 Continue Button Component
-@Composable
-fun ContinueButton(
-    onClick: () -> Unit,
-    enabled: Boolean = true,
-    modifier: Modifier = Modifier,
-    text: String = "Continue",
-) {
-    Button(
-        onClick = onClick,
-        enabled = enabled,
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .height(AppSpacing.ContinueButtonHeight),
-        colors =
-            ButtonDefaults.buttonColors(
-                containerColor = AppColors.PrimaryGreen,
-                contentColor = AppColors.OnPrimary,
-                disabledContainerColor = AppColors.OutlineVariant,
-                disabledContentColor = AppColors.OnSurfaceVariant,
-            ),
-        shape = RoundedCornerShape(AppSpacing.RadiusL),
-        elevation =
-            ButtonDefaults.buttonElevation(
-                defaultElevation = 2.dp,
-                pressedElevation = 6.dp,
-                disabledElevation = 0.dp,
-            ),
-    ) {
-        Text(
-            text = text,
-            style = AppTypography.LabelLarge.copy(fontSize = 16.sp),
-            fontWeight = FontWeight.SemiBold,
-        )
-    }
-}
-
 @Composable
 fun HomeTileCard(
     modifier: Modifier = Modifier,
@@ -470,7 +420,7 @@ fun HomeTileCard(
 
 @Preview
 @Composable
-fun previewOverlayCard() {
+fun PreviewOverlayCard() {
     OverlayCard(
         modifier = Modifier.fillMaxWidth().height(200.dp),
         content = {

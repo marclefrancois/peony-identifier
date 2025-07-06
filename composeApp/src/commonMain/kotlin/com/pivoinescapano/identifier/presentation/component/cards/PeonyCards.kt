@@ -168,7 +168,7 @@ fun PeonyCard(
                 text = peony.description.replace(Regex("<[^>]*>"), ""),
                 style = AppTypography.BodyLarge,
                 color = AppColors.OnSurfaceVariant,
-                lineHeight = AppTypography.BodyLarge.lineHeight?.times(1.2f) ?: AppTypography.BodyLarge.lineHeight,
+                lineHeight = AppTypography.BodyLarge.lineHeight.times(1.2f),
             )
         }
 

@@ -340,7 +340,7 @@ private fun LargeDropdownSelector(
 
 @Preview
 @Composable
-fun previewFieldSelectionScreen() {
+fun PreviewFieldSelectionScreen() {
     FieldSelectionScreen(
         initialChamp = null,
         initialParcelle = null,
