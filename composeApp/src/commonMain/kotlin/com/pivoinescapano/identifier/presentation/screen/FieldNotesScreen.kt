@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import com.pivoinescapano.identifier.domain.model.FieldNote
 import com.pivoinescapano.identifier.domain.model.FieldNoteStatus
 import com.pivoinescapano.identifier.platform.currentTimeMillis
+import com.pivoinescapano.identifier.presentation.component.dialog.ExportDialog
 import com.pivoinescapano.identifier.presentation.state.SortOrder
 import com.pivoinescapano.identifier.presentation.theme.AppColors
 import com.pivoinescapano.identifier.presentation.theme.AppSpacing
@@ -235,6 +236,21 @@ fun FieldNotesScreen(
                     Text("Cancel")
                 }
             },
+        )
+    }
+
+    if (state.isExportDialogVisible) {
+        ExportDialog(
+            availableFields = state.availableFields.toList(),
+            onExport = { filter ->
+                viewModel.updateExportFilter(filter)
+                viewModel.exportNotesWithFilter()
+            },
+            onShare = { filter ->
+                viewModel.updateExportFilter(filter)
+                viewModel.shareNotesWithFilter()
+            },
+            onDismiss = { viewModel.hideExportDialog() },
         )
     }
 }
