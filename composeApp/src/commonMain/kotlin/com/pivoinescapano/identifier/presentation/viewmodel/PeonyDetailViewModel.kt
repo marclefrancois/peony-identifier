@@ -3,6 +3,7 @@ package com.pivoinescapano.identifier.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pivoinescapano.identifier.data.model.PeonyInfo
+import com.pivoinescapano.identifier.domain.model.FieldNote
 import com.pivoinescapano.identifier.domain.model.FieldNoteStatus
 import com.pivoinescapano.identifier.domain.usecase.CreateFieldNoteUseCase
 import com.pivoinescapano.identifier.domain.usecase.FindPeonyUseCase
@@ -122,7 +123,7 @@ class PeonyDetailViewModel(
                     val updatedNote = currentNote.copy(variety = variety)
                     val result = updateFieldNoteUseCase(updatedNote)
                     result.onSuccess { updated ->
-                        loadDetailData() // Refresh data to update fuzzy matches and confirmation status
+                        updateStateWithConfirmedVariety(updated, variety)
                     }.onFailure { error ->
                         println("Failed to update field note variety: ${error.message}")
                     }
@@ -138,13 +139,48 @@ class PeonyDetailViewModel(
                             status = FieldNoteStatus.NORMAL,
                         )
                     result.onSuccess { created ->
-                        loadDetailData() // Refresh data to update fuzzy matches and confirmation status
+                        updateStateWithConfirmedVariety(created, variety)
                     }.onFailure { error ->
                         println("Failed to create field note with variety: ${error.message}")
                     }
                 }
             } catch (e: Exception) {
                 println("Error saving variety to field note: ${e.message}")
+            }
+        }
+    }
+
+    private fun updateStateWithConfirmedVariety(
+        updatedFieldNote: FieldNote,
+        variety: String,
+    ) {
+        viewModelScope.launch {
+            try {
+                val currentState = _uiState.value
+                val fieldEntry = currentState.fieldEntry ?: return@launch
+
+                // Find the confirmed peony
+                val confirmedPeony = findPeonyUseCase.execute(variety)
+
+                // Update fuzzy matches to include the confirmed peony if not already present
+                val currentFuzzyMatches = currentState.fuzzyMatches
+                val updatedFuzzyMatches =
+                    if (confirmedPeony != null && !currentFuzzyMatches.contains(confirmedPeony)) {
+                        listOf(confirmedPeony) + currentFuzzyMatches
+                    } else {
+                        currentFuzzyMatches
+                    }
+
+                _uiState.value =
+                    currentState.copy(
+                        fieldNote = updatedFieldNote,
+                        fuzzyMatches = updatedFuzzyMatches,
+                        isPeonyConfirmed = true,
+                    )
+            } catch (e: Exception) {
+                println("Error updating state with confirmed variety: ${e.message}")
+                // Fallback to full reload if state update fails
+                loadDetailData()
             }
         }
     }
