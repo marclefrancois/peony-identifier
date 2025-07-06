@@ -81,6 +81,9 @@ class PeonyIdentifierViewModel(
                         availableTrous = emptyList(),
                         currentFieldEntry = null,
                         currentPeony = null,
+                        fuzzyMatches = emptyList(),
+                        isPeonyConfirmed = false,
+                        rowFieldNotes = emptyList(),
                         showPeonyDetails = false,
                     )
 
@@ -106,6 +109,9 @@ class PeonyIdentifierViewModel(
                         availableTrous = emptyList(),
                         currentFieldEntry = null,
                         currentPeony = null,
+                        fuzzyMatches = emptyList(),
+                        isPeonyConfirmed = false,
+                        rowFieldNotes = emptyList(),
                         showPeonyDetails = false,
                     )
 
@@ -136,16 +142,23 @@ class PeonyIdentifierViewModel(
                         currentFieldEntry = null,
                         currentRowEntries = emptyList(),
                         currentPeony = null,
+                        fuzzyMatches = emptyList(),
+                        isPeonyConfirmed = false,
                         showPeonyDetails = false,
                     )
 
                 val trous = getFieldSelectionUseCase.getAvailableTrous(currentChamp, currentParcelle, rang)
                 val rowEntries = getFieldSelectionUseCase.getRowEntries(currentChamp, currentParcelle, rang)
 
+                // Load field notes for all positions in the current row
+                val rowFieldNotesResult = getFieldNotesUseCase.getNotesForRow(currentChamp, currentParcelle, rang)
+                val rowFieldNotes = rowFieldNotesResult.getOrElse { emptyList() }
+
                 _uiState.value =
                     _uiState.value.copy(
                         availableTrous = trous,
                         currentRowEntries = rowEntries,
+                        rowFieldNotes = rowFieldNotes,
                     )
             } catch (e: Exception) {
                 _uiState.value =
@@ -197,8 +210,8 @@ class PeonyIdentifierViewModel(
                     // 2. No saved variety exists (meaning user hasn't made a selection yet)
                     // 3. There's a variety name to search with
                     val fuzzyMatches =
-                        if (peony == null && fieldNote?.variety == null && fieldEntry.variete != null) {
-                            findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variete!!, 0.6)
+                        if (peony == null && fieldEntry.variete != null) {
+                            findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variete, 0.6)
                         } else {
                             emptyList()
                         }
@@ -229,10 +242,14 @@ class PeonyIdentifierViewModel(
     }
 
     fun onFuzzyMatchSelected(peony: PeonyInfo) {
+        // Keep the current fuzzy matches but remove the selected one and add it to the top
+        val remainingMatches = _uiState.value.fuzzyMatches.filter { it.cultivar != peony.cultivar }
+
         _uiState.value =
             _uiState.value.copy(
                 currentPeony = peony,
-                fuzzyMatches = emptyList(),
+                fuzzyMatches = remainingMatches,
+                isPeonyConfirmed = true,
                 showPeonyDetails = true,
             )
 
@@ -289,17 +306,6 @@ class PeonyIdentifierViewModel(
         loadInitialData()
     }
 
-    fun navigateBack() {
-        _uiState.value =
-            _uiState.value.copy(
-                selectedTrou = null,
-                currentFieldEntry = null,
-                currentPeony = null,
-                fuzzyMatches = emptyList(),
-                showPeonyDetails = false,
-            )
-    }
-
     fun goToNextRow() {
         val currentRang = _uiState.value.selectedRang ?: return
         val availableRangs = _uiState.value.availableRangs
@@ -320,20 +326,6 @@ class PeonyIdentifierViewModel(
             val previousRang = availableRangs[currentIndex - 1]
             onRangSelected(previousRang)
         }
-    }
-
-    fun canGoToNextRow(): Boolean {
-        val currentRang = _uiState.value.selectedRang ?: return false
-        val availableRangs = _uiState.value.availableRangs
-        val currentIndex = availableRangs.indexOf(currentRang)
-        return currentIndex >= 0 && currentIndex < availableRangs.size - 1
-    }
-
-    fun canGoToPreviousRow(): Boolean {
-        val currentRang = _uiState.value.selectedRang ?: return false
-        val availableRangs = _uiState.value.availableRangs
-        val currentIndex = availableRangs.indexOf(currentRang)
-        return currentIndex > 0
     }
 
     fun updateFieldNote(notes: String) {

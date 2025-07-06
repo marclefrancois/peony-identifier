@@ -35,6 +35,25 @@ class GetFieldNotesUseCase(
         }
     }
 
+    suspend fun getNotesForRow(
+        champ: String,
+        parcelle: String,
+        rang: String,
+    ): Result<List<FieldNote>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val allNotesResult = fieldNotesRepository.getAllNotes()
+                allNotesResult.map { notes ->
+                    notes.filter { note ->
+                        note.champ == champ && note.parcelle == parcelle && note.rang == rang
+                    }
+                }
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
     suspend fun getNotesWithStatus(status: FieldNoteStatus): Result<List<FieldNote>> {
         return withContext(Dispatchers.IO) {
             try {

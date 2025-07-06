@@ -62,6 +62,7 @@ fun PeonyDetailsContent(
     fieldEntry: FieldEntry?,
     fieldNote: FieldNote?,
     isNoteSaving: Boolean,
+    isPeonyConfirmed: Boolean = false,
     onFuzzyMatchSelected: (PeonyInfo) -> Unit,
     onUpdateFieldNote: (String) -> Unit,
     onUpdateFieldNoteStatus: (FieldNoteStatus) -> Unit,
@@ -111,10 +112,14 @@ fun PeonyDetailsContent(
             )
         }
 
-        // Exact peony match
+        // Current peony (exact match or confirmed selection)
         peony?.let { p ->
             item {
-                PeonyCard(p, isExactMatch = true)
+                PeonyCard(
+                    peony = p,
+                    isExactMatch = !isPeonyConfirmed,
+                    isConfirmed = isPeonyConfirmed,
+                )
             }
         }
 
@@ -167,9 +172,11 @@ fun PositionsListContent(
     ) {
         items(positions) { position ->
             val entry = fieldEntries.find { it.trou == position }
+            val fieldNote = uiState.rowFieldNotes.find { it.trou == position }
             PositionCard(
                 position = position,
                 entry = entry,
+                fieldNote = fieldNote,
                 isSelected = position == selectedTrou,
                 onClick = { onTrouSelected(position) },
             )

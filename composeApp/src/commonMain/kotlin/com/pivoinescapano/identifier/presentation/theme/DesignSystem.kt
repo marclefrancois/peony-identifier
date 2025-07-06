@@ -55,6 +55,7 @@ object AppColors {
     val Error = Color(0xFFD32F2F) // Material red error
     val Success = Color(0xFF388E3C) // Success green
     val Warning = Color(0xFFFF9800) // Material orange warning
+    val Info = Color(0xFF1976D2) // Material blue for notes/info
 
     // Overlay and feedback colors
     val ScrollOverlay = Color(0xE6000000) // Enhanced overlay opacity

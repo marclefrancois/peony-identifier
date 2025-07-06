@@ -22,8 +22,10 @@ data class PeonyIdentifierState(
     val currentRowEntries: List<FieldEntry> = emptyList(),
     val currentPeony: PeonyInfo? = null,
     val fuzzyMatches: List<PeonyInfo> = emptyList(),
+    val isPeonyConfirmed: Boolean = false, // true if current peony was selected from fuzzy matches
     // Field notes
     val currentFieldNote: FieldNote? = null,
+    val rowFieldNotes: List<FieldNote> = emptyList(),
     val isNoteSaving: Boolean = false,
     // UI flags
     val showPeonyDetails: Boolean = false,

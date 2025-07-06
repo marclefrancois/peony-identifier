@@ -62,7 +62,8 @@ fun FieldEntryCard(entry: FieldEntry) {
 @Composable
 fun PeonyCard(
     peony: PeonyInfo,
-    isExactMatch: Boolean,
+    isExactMatch: Boolean = false,
+    isConfirmed: Boolean = false,
     onClick: (() -> Unit)? = null,
 ) {
     var showFullscreenImage by remember { mutableStateOf(false) }
@@ -85,15 +86,28 @@ fun PeonyCard(
                 color = AppColors.OnSurface,
                 modifier = Modifier.weight(1f),
             )
-            if (isExactMatch) {
-                Badge(
-                    containerColor = AppColors.ExactMatch,
-                    contentColor = AppColors.OnPrimary,
-                ) {
-                    Text(
-                        text = "Exact Match",
-                        style = AppTypography.LabelMedium,
-                    )
+            when {
+                isExactMatch -> {
+                    Badge(
+                        containerColor = AppColors.ExactMatch,
+                        contentColor = AppColors.OnPrimary,
+                    ) {
+                        Text(
+                            text = "Exact Match",
+                            style = AppTypography.LabelMedium,
+                        )
+                    }
+                }
+                isConfirmed -> {
+                    Badge(
+                        containerColor = AppColors.Info,
+                        contentColor = AppColors.OnPrimary,
+                    ) {
+                        Text(
+                            text = "Confirmed",
+                            style = AppTypography.LabelMedium,
+                        )
+                    }
                 }
             }
         }
