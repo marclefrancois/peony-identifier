@@ -133,10 +133,17 @@ fun PeonyDetailsContent(
                 )
             }
             items(fuzzyMatches) { match ->
+                val isMatchConfirmed = isPeonyConfirmed && fieldNote?.variety == match.cultivar
                 PeonyCard(
                     peony = match,
                     isExactMatch = false,
-                    onClick = { onFuzzyMatchSelected(match) },
+                    isConfirmed = isMatchConfirmed,
+                    onClick =
+                        if (!isMatchConfirmed) {
+                            { onFuzzyMatchSelected(match) }
+                        } else {
+                            null
+                        },
                 )
             }
         }

@@ -46,27 +46,50 @@ class PeonyDetailViewModel(
                     val fieldNoteResult = getFieldNotesUseCase.getNotesForPosition(champ, parcelle, rang, trou)
                     val fieldNote = fieldNoteResult.getOrNull()
 
-                    val varieteName = fieldNote?.variety ?: fieldEntry.variete
-
-                    val peony =
-                        if (varieteName != null) {
-                            findPeonyUseCase.execute(varieteName)
+                    val exactPeony =
+                        if (fieldEntry.variete != null) {
+                            findPeonyUseCase.execute(fieldEntry.variete)
                         } else {
                             null
                         }
 
+                    val confirmedPeony =
+                        if (fieldNote?.variety != null && fieldNote.variety != fieldEntry.variete) {
+                            findPeonyUseCase.execute(fieldNote.variety)
+                        } else {
+                            null
+                        }
+
+                    val displayPeony = confirmedPeony ?: exactPeony
+
                     val fuzzyMatches =
-                        if (peony == null && fieldEntry.variete != null) {
-                            findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variete, 0.6)
+                        if (fieldEntry.variete != null && exactPeony == null) {
+                            val matches = findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variete, 0.6)
+
+                            // If there's a confirmed peony, include it in the fuzzy matches
+                            if (confirmedPeony != null && !matches.contains(confirmedPeony)) {
+                                listOf(confirmedPeony) + matches
+                            } else {
+                                matches
+                            }
+                        } else if (exactPeony != null && confirmedPeony != null && fieldEntry.variete != null) {
+                            // When there's both exact and confirmed peony, show fuzzy matches including the confirmed one
+                            val matches = findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variete, 0.6)
+                            if (!matches.contains(confirmedPeony)) {
+                                listOf(confirmedPeony) + matches
+                            } else {
+                                matches
+                            }
                         } else {
                             emptyList()
                         }
 
                     _uiState.value =
                         _uiState.value.copy(
-                            peony = peony,
+                            peony = exactPeony, // Only show exact match as the main peony
                             fuzzyMatches = fuzzyMatches,
                             fieldNote = fieldNote,
+                            isPeonyConfirmed = confirmedPeony != null,
                             isLoading = false,
                         )
                 } else {
@@ -87,16 +110,8 @@ class PeonyDetailViewModel(
     }
 
     fun onFuzzyMatchSelected(peony: PeonyInfo) {
-        val remainingMatches = _uiState.value.fuzzyMatches.filter { it.cultivar != peony.cultivar }
-
-        _uiState.value =
-            _uiState.value.copy(
-                peony = peony,
-                fuzzyMatches = remainingMatches,
-                isPeonyConfirmed = true,
-            )
-
         saveSelectedVarietyToFieldNote(peony.cultivar)
+        // The state will be updated when loadDetailData() is called after saving the field note
     }
 
     private fun saveSelectedVarietyToFieldNote(variety: String) {
@@ -107,7 +122,7 @@ class PeonyDetailViewModel(
                     val updatedNote = currentNote.copy(variety = variety)
                     val result = updateFieldNoteUseCase(updatedNote)
                     result.onSuccess { updated ->
-                        _uiState.value = _uiState.value.copy(fieldNote = updated)
+                        loadDetailData() // Refresh data to update fuzzy matches and confirmation status
                     }.onFailure { error ->
                         println("Failed to update field note variety: ${error.message}")
                     }
@@ -123,7 +138,7 @@ class PeonyDetailViewModel(
                             status = FieldNoteStatus.NORMAL,
                         )
                     result.onSuccess { created ->
-                        _uiState.value = _uiState.value.copy(fieldNote = created)
+                        loadDetailData() // Refresh data to update fuzzy matches and confirmation status
                     }.onFailure { error ->
                         println("Failed to create field note with variety: ${error.message}")
                     }
