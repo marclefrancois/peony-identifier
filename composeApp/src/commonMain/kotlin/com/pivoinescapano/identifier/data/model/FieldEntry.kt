@@ -1,16 +1,22 @@
 package com.pivoinescapano.identifier.data.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class FieldEntry(
     val champ: String?,
-    val parcelle: String?,
+    @SerialName("parcelle")
+    val parcel: String?,
     val rang: String?,
     val trou: String?,
-    val variete: String?,
-    val annee_plantation: String? = null,
-    val taille: String? = null,
+    @SerialName("variete")
+    val variety: String?,
+    @SerialName("annee_plantation")
+    val yearPlanted: String? = null,
+    @SerialName("taille")
+    val size: String? = null,
     val etiquette: String? = null,
-    val vente: String? = null,
+    @SerialName("vente")
+    val forSale: String? = null,
 )

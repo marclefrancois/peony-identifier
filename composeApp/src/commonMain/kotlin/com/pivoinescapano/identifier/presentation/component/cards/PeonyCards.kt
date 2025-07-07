@@ -33,7 +33,7 @@ fun FieldEntryCard(entry: FieldEntry) {
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
-            text = "In our plan: ${entry.variete ?: "Unknown"}",
+            text = "In our plan: ${entry.variety ?: "Unknown"}",
             style = AppTypography.HeadlineSmall,
             color = AppColors.OnSurface,
         )
@@ -41,10 +41,10 @@ fun FieldEntryCard(entry: FieldEntry) {
         // Only show additional info if available
         val additionalInfo =
             buildList {
-                entry.annee_plantation?.let { add("Planted: $it") }
-                entry.taille?.let { add("Size: $it") }
+                entry.yearPlanted?.let { add("Planted: $it") }
+                entry.size?.let { add("Size: $it") }
                 entry.etiquette?.let { add("Etiquette: $it") }
-                entry.vente?.let { add("Vente: $it") }
+                entry.forSale?.let { add("Vente: $it") }
             }
 
         if (additionalInfo.isNotEmpty()) {

@@ -22,7 +22,7 @@ class FieldRepositoryImpl(
     override suspend fun getDistinctParcelles(champ: String): List<String> {
         return loadFieldEntries()
             .filter { it.champ == champ }
-            .mapNotNull { it.parcelle }
+            .mapNotNull { it.parcel }
             .distinct()
             .sorted()
     }
@@ -32,7 +32,7 @@ class FieldRepositoryImpl(
         parcelle: String,
     ): List<String> {
         return loadFieldEntries()
-            .filter { it.champ == champ && it.parcelle == parcelle }
+            .filter { it.champ == champ && it.parcel == parcelle }
             .mapNotNull { it.rang }
             .distinct()
             .sortedBy { it.toIntOrNull() ?: 0 }
@@ -44,7 +44,7 @@ class FieldRepositoryImpl(
         rang: String,
     ): List<String> {
         return loadFieldEntries()
-            .filter { it.champ == champ && it.parcelle == parcelle && it.rang == rang }
+            .filter { it.champ == champ && it.parcel == parcelle && it.rang == rang }
             .mapNotNull { it.trou }
             .distinct()
             .sortedBy { it.toIntOrNull() ?: 0 }
@@ -57,7 +57,7 @@ class FieldRepositoryImpl(
         trou: String,
     ): FieldEntry? {
         return loadFieldEntries()
-            .find { it.champ == champ && it.parcelle == parcelle && it.rang == rang && it.trou == trou }
+            .find { it.champ == champ && it.parcel == parcelle && it.rang == rang && it.trou == trou }
     }
 
     override suspend fun getRowEntries(
@@ -66,7 +66,7 @@ class FieldRepositoryImpl(
         rang: String,
     ): List<FieldEntry> {
         return loadFieldEntries()
-            .filter { it.champ == champ && it.parcelle == parcelle && it.rang == rang }
+            .filter { it.champ == champ && it.parcel == parcelle && it.rang == rang }
             .sortedBy { it.trou?.toIntOrNull() ?: 0 }
     }
 

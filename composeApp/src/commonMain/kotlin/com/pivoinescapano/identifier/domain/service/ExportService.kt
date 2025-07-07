@@ -1,5 +1,6 @@
 package com.pivoinescapano.identifier.domain.service
 
+import com.pivoinescapano.identifier.data.repository.FieldRepository
 import com.pivoinescapano.identifier.domain.model.ExportFilter
 import com.pivoinescapano.identifier.domain.model.ExportFormat
 import com.pivoinescapano.identifier.domain.model.FieldNote
@@ -10,11 +11,11 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class ExportService(
     private val fieldNotesRepository: FieldNotesRepository,
+    private val fieldRepository: FieldRepository,
     private val fileSharing: FileSharing,
 ) {
     private val json =
@@ -195,16 +196,28 @@ class ExportService(
         return filtered
     }
 
-    private fun generateCSV(notes: List<FieldNote>): String {
-        val csvHeader = "Field,Parcel,Row,Position,Variety,Notes,Status,Created,Modified"
+    private suspend fun generateCSV(notes: List<FieldNote>): String {
+        val csvHeader = "Field,Parcel,Row,Position,In our notes,Confirmed in the field,Notes,Status,Created,Modified"
+
+        // Get all field entries for lookup
+        val allFieldEntries = fieldRepository.getAllFieldEntries()
+        val fieldEntryMap =
+            allFieldEntries.associateBy { entry ->
+                "${entry.champ ?: ""}-${entry.parcel ?: ""}-${entry.rang ?: ""}-${entry.trou ?: ""}"
+            }
+
         val csvRows =
             notes.map { note ->
-                val variety = escapeCSV(note.variety ?: "")
-                val notes = escapeCSV(note.notes)
+                val positionKey = "${note.champ}-${note.parcelle}-${note.rang}-${note.trou}"
+                val fieldEntry = fieldEntryMap[positionKey]
+
+                val inOurNotes = escapeCSV(fieldEntry?.variety ?: "")
+                val confirmedInField = escapeCSV(note.variety ?: "")
+                val notesContent = escapeCSV(note.notes)
                 val createdDate = formatDate(note.timestamp)
                 val modifiedDate = formatDate(note.lastModified)
 
-                "${note.champ},${note.parcelle},${note.rang},${note.trou},$variety,$notes,${note.status},$createdDate,$modifiedDate"
+                "${note.champ},${note.parcelle},${note.rang},${note.trou},$inOurNotes,$confirmedInField,$notesContent,${note.status},$createdDate,$modifiedDate"
             }
 
         return (listOf(csvHeader) + csvRows).joinToString("\n")

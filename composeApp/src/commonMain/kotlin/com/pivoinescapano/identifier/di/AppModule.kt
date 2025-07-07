@@ -35,7 +35,7 @@ val appModule =
 
         // Platform Services
         single { provideFileSharing() }
-        single { ExportService(get(), get()) }
+        single { ExportService(get(), get(), get()) }
 
         // Repositories with optimized loading
         single<FieldRepository> { FieldRepositoryImpl(get()) }

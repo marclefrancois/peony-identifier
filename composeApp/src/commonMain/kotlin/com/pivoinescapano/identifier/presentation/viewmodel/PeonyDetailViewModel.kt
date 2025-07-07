@@ -48,22 +48,22 @@ class PeonyDetailViewModel(
                     val fieldNote = fieldNoteResult.getOrNull()
 
                     val exactPeony =
-                        if (fieldEntry.variete != null) {
-                            findPeonyUseCase.execute(fieldEntry.variete)
+                        if (fieldEntry.variety != null) {
+                            findPeonyUseCase.execute(fieldEntry.variety)
                         } else {
                             null
                         }
 
                     val confirmedPeony =
-                        if (fieldNote?.variety != null && fieldNote.variety != fieldEntry.variete) {
+                        if (fieldNote?.variety != null && fieldNote.variety != fieldEntry.variety) {
                             findPeonyUseCase.execute(fieldNote.variety)
                         } else {
                             null
                         }
 
                     val fuzzyMatches =
-                        if (fieldEntry.variete != null && exactPeony == null) {
-                            val matches = findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variete, 0.6)
+                        if (fieldEntry.variety != null && exactPeony == null) {
+                            val matches = findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variety, 0.6)
 
                             // If there's a confirmed peony, include it in the fuzzy matches
                             if (confirmedPeony != null && !matches.contains(confirmedPeony)) {
@@ -71,9 +71,9 @@ class PeonyDetailViewModel(
                             } else {
                                 matches
                             }
-                        } else if (exactPeony != null && confirmedPeony != null && fieldEntry.variete != null) {
+                        } else if (exactPeony != null && confirmedPeony != null && fieldEntry.variety != null) {
                             // When there's both exact and confirmed peony, show fuzzy matches including the confirmed one
-                            val matches = findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variete, 0.6)
+                            val matches = findPeonyUseCase.findWithFuzzyMatching(fieldEntry.variety, 0.6)
                             if (!matches.contains(confirmedPeony)) {
                                 listOf(confirmedPeony) + matches
                             } else {

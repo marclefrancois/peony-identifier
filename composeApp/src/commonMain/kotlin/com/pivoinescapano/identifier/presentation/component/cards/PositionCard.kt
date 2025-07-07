@@ -51,7 +51,7 @@ fun PositionCard(
                     style = AppTypography.LabelMedium,
                     color = AppColors.OnSurfaceVariant,
                 )
-                entry?.variete?.let { variety ->
+                entry?.variety?.let { variety ->
                     Text(
                         text = if (variety.uppercase() == "VIDE") "Empty" else variety,
                         style = AppTypography.HeadlineSmall,
@@ -68,7 +68,7 @@ fun PositionCard(
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
-                entry?.taille?.let { size ->
+                entry?.size?.let { size ->
                     Text(
                         text = "Size: $size",
                         style = AppTypography.BodySmall,

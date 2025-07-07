@@ -64,14 +64,14 @@ class FieldSelectionViewModel(
                 val fieldSpecificEntries = fieldEntries.filter { it.champ == champ }
                 val parcelles =
                     fieldSpecificEntries
-                        .mapNotNull { it.parcelle }
+                        .mapNotNull { it.parcel }
                         .distinct()
                         .sorted()
 
                 // Calculate entry counts per parcel for this field
                 val parcelEntryCounts =
                     fieldSpecificEntries
-                        .groupBy { it.parcelle }
+                        .groupBy { it.parcel }
                         .mapValues { it.value.size }
                         .filterKeys { it != null }
                         .mapKeys { it.key!! }
@@ -122,7 +122,7 @@ class FieldSelectionViewModel(
                 val parcelles =
                     fieldEntries
                         .filter { it.champ == champ }
-                        .mapNotNull { it.parcelle }
+                        .mapNotNull { it.parcel }
                         .distinct()
                         .sorted()
 

@@ -81,7 +81,7 @@ fun DetailsTopBar(
                 )
                 fieldEntry?.let { entry ->
                     Text(
-                        text = "Field ${entry.champ} • Parcel ${entry.parcelle} • Row ${entry.rang}",
+                        text = "Field ${entry.champ} • Parcel ${entry.parcel} • Row ${entry.rang}",
                         style = AppTypography.BodySmall,
                         color = AppColors.OnSurfaceVariant,
                     )

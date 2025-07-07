@@ -15,18 +15,18 @@ class SearchPeonyLocationsUseCase(
         val matches = mutableListOf<Pair<PeonyLocation, Double>>()
 
         for (entry in allFieldEntries) {
-            val variete = entry.variete
+            val variete = entry.variety
             if (variete != null) {
                 val similarity = calculateSimilarity(peonyName, variete)
                 if (similarity >= 0.6) { // Use 0.6 threshold for fuzzy matching
                     val location =
                         PeonyLocation.fromFieldEntry(
                             champ = entry.champ ?: "",
-                            parcelle = entry.parcelle ?: "",
+                            parcelle = entry.parcel ?: "",
                             rang = entry.rang ?: "",
                             trou = entry.trou ?: "",
-                            variete = entry.variete,
-                            taille = entry.taille,
+                            variete = entry.variety,
+                            taille = entry.size,
                         )
                     matches.add(location to similarity)
                 }
@@ -41,7 +41,7 @@ class SearchPeonyLocationsUseCase(
     suspend fun getAllUniqueVarieties(): List<String> {
         val allFieldEntries = fieldRepository.getAllFieldEntries()
         return allFieldEntries
-            .mapNotNull { it.variete }
+            .mapNotNull { it.variety }
             .filter { it.isNotBlank() }
             .distinct()
             .sorted()
