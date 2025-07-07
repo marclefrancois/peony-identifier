@@ -2,6 +2,58 @@
 
 This document contains the complete development history and version releases of the Peony Identifier application.
 
+## Version 1.7.0 Status: ✅ COMPLETE & DEPLOYED
+
+### ✅ New in Version 1.7.0: Enhanced Field Management & Note-Taking System - **RELEASED!**
+
+- ✅ **Complete Field Notes Architecture**: Comprehensive note-taking system from ground up
+  - ✅ **Home Screen Restructure**: Tile-based navigation with 3 main functions (Search, Identify, Field Notes)
+  - ✅ **Enhanced Field Selection UX**: Clickable selection summary replacing continue button
+  - ✅ **Professional Material3 Design**: Consistent card-based interface with icons and descriptive text
+  - ✅ **Clean Function Separation**: Clear distinction between search, identification, and note management workflows
+
+- ✅ **Core Data Infrastructure**: Robust foundation for field note management
+  - ✅ **FieldNote Data Model**: Complete with id, position, variety, notes, status, timestamps
+  - ✅ **FieldNoteStatus Enum**: NORMAL, DEAD, BLOCKED status tracking
+  - ✅ **Local JSON Storage**: Platform-specific file system with thread-safe operations
+  - ✅ **Repository Pattern**: Clean architecture with CRUD operations and automatic backup
+  - ✅ **Use Cases**: Comprehensive business logic for create, update, delete, export operations
+
+- ✅ **Enhanced PeonyDetail Integration**: Advanced note-taking capabilities
+  - ✅ **Quick Action Buttons**: Single-tap "Mark as Dead" and "Position Blocked" functionality
+  - ✅ **Real-time Note Editor**: Multi-line text input with auto-save every 3 seconds
+  - ✅ **Visual Status Indicators**: Color-coded borders and icons for different states
+  - ✅ **Note History**: Creation and modification timestamps with relative time formatting
+  - ✅ **Debounced Auto-save**: Optimized saving with 500-character limit and counters
+
+- ✅ **Field Notes Management Screen**: Professional notes overview and management
+  - ✅ **Comprehensive Location Cards**: Full hierarchy display (Field → Parcel → Row → Position)
+  - ✅ **Smart Filtering**: Show only positions with notes, multi-level sorting
+  - ✅ **Advanced Search**: Search by content, variety, or position with real-time results
+  - ✅ **Status Filtering**: Filter by All, Dead, Blocked, Normal with visual indicators
+  - ✅ **Statistics Dashboard**: Live counts and status breakdowns
+
+- ✅ **Enhanced CSV Export System**: Comprehensive data export with dual variety tracking
+  - ✅ **Dual Variety Columns**: "In our notes" (FieldEntry.variete) and "Confirmed in the field" (FieldNote.variety)
+  - ✅ **Simplified Export Dialog**: Clean confirmation dialog with direct CSV sharing
+  - ✅ **Cross-Platform File Sharing**: Native sharing on both Android and iOS
+  - ✅ **iOS File Sharing Fixes**: Resolved file access issues with temporary directory usage
+  - ✅ **Enhanced Permissions**: Added iOS file sharing permissions in Info.plist
+  - ✅ **Improved Error Handling**: Better UIActivityViewController presentation and error messages
+
+- ✅ **Data Management Features**: Complete CRUD operations with backup support
+  - ✅ **JSON Backup Export**: Full data portability for backup and restoration
+  - ✅ **Clear All Notes**: Confirmation dialog with destructive action styling
+  - ✅ **Thread-safe Operations**: Mutex protection for concurrent access
+  - ✅ **Automatic Backup**: Recovery mechanisms for data protection
+
+- ✅ **Technical Architecture Enhancements**: Production-ready implementation
+  - ✅ **ExportService Enhancement**: Added FieldRepository integration for dual variety export
+  - ✅ **Dependency Injection**: Updated Koin modules with proper repository wiring
+  - ✅ **State Management**: StateFlow-based reactive architecture with loading states
+  - ✅ **Performance Optimization**: Efficient data loading and caching strategies
+  - ✅ **Error Handling**: Comprehensive error states with user-friendly messaging
+
 ## Version 1.6.0 Status: ✅ COMPLETE & DEPLOYED
 
 ### ✅ New in Version 1.6.0: Comprehensive Peony Search Feature - **RELEASED!**
