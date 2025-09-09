@@ -2,9 +2,9 @@
 
 ## Project Status: ✅ COMPLETE v1.7.0 
 
-A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility. Now powered by Kotlin 2.2.0 with enhanced performance, latest framework features, and improved user experience.
+A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility. Features comprehensive field notes management system with CSV export functionality.
 
-## Version 1.7.0 Status: ✅ COMPLETE & DEPLOYED
+## Version 1.7.0 Status: ✅ COMPLETE (Ready for version bump to 1.7.0)
 
 ### 🎯 Version 1.7.0: Enhanced Field Management & Note-Taking - **COMPLETED!**
 

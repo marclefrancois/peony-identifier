@@ -1,6 +1,6 @@
 # Peony Identifier
 
-> **Version 1.6.0** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with professional NavHost navigation, type-safe routing, and comprehensive search functionality. Now powered by Kotlin 2.2.0 with enhanced K2 compiler performance and improved user experience.
+> **Version 1.7.0** - A Kotlin Multiplatform Compose application for identifying peonies across agricultural fields with comprehensive field notes management, CSV export functionality, and professional tile-based navigation. Features enhanced note-taking capabilities and dual variety tracking system.
 
 ## 🌿 Project Overview
 
@@ -8,34 +8,39 @@ The Peony Identifier is a production-ready cross-platform application that enabl
 
 ## 🚀 Key Features
 
+- **Tile-Based Navigation**: Professional home screen with three main functions (Search, Identify, Field Notes)
 - **Hierarchical Field Selection**: Cascading dropdowns (Field → Parcel → Row → Position) with intelligent auto-selection
 - **Universal Peony Search**: Real-time search across all field locations with autocomplete and fuzzy matching
+- **Comprehensive Field Notes**: Note-taking system with status tracking (Normal, Dead, Blocked) and timestamp management
+- **Enhanced CSV Export**: Dual variety tracking with "In our notes" and "Confirmed in the field" columns
+- **Quick Action Buttons**: One-tap marking for dead plants and blocked positions directly from peony details
+- **Auto-Save Notes**: Real-time note editing with debounced auto-save functionality
+- **Cross-Platform File Sharing**: Native sharing for CSV exports (Android Share Intent, iOS Activity Controller)
 - **Fuzzy String Matching**: Intelligent peony variety identification with exact/approximate matches
 - **Professional Navigation**: Type-safe NavHost with state preservation and cross-platform gesture support
-- **Enhanced Design System v1.6.0**: Botanical theming with modern Kotlin 2.2.0 architecture and iOS polish
+- **Enhanced Design System v1.7.0**: Botanical theming with Material3 cards and consistent spacing
 - **Cross-Platform Images**: Async loading with Coil (Android) and Kamel (iOS)
-- **Offline-First**: JSON-based data loading with background threading and caching
-- **Accessibility**: WCAG AA compliant design with proper contrast ratios
-- **State Persistence**: Selected positions and search terms remain preserved across navigation
-- **iOS Safe Area**: Perfect safe area handling with dynamic padding for modern iOS devices
+- **Offline-First**: JSON-based data loading with local field notes persistence
+- **State Persistence**: All selections and notes remain preserved across navigation
 
 ## 🏗️ Architecture
 
 ### Clean Architecture Pattern
 ```
-├── presentation/          # UI Layer (Compose, ViewModels, Themes)
-├── domain/               # Business Logic (Use Cases, Interfaces)
-├── data/                # Data Layer (Repositories, Models, JSON)
-└── platform/            # Platform-specific implementations
+├── presentation/          # UI Layer (Compose, ViewModels, Themes, Navigation)
+├── domain/               # Business Logic (Use Cases, Interfaces, Field Notes)
+├── data/                # Data Layer (Repositories, Models, JSON, Local Storage)
+└── platform/            # Platform-specific implementations (File Sharing, Time)
 ```
 
 ### Key Architectural Decisions
 - **Repository/UseCase/ViewModel** pattern for clean separation of concerns
-- **Navigation Compose** with type-safe serializable routes
-- **Koin** for dependency injection (avoid `object:` singletons for testability)
-- **StateFlow** for reactive state management with NavHost state preservation
-- **expect/actual** declarations for platform-specific implementations
-- **Material3** with custom botanical design system
+- **Navigation Compose** with type-safe serializable routes and tile-based home screen
+- **Koin** for dependency injection (avoid `object:` singletons for testability)  
+- **StateFlow** for reactive state management with field notes auto-save
+- **Local JSON Storage** for field notes with thread-safe Mutex protection
+- **expect/actual** declarations for platform-specific file sharing implementations
+- **Material3** with custom botanical design system and card-based UI
 
 ## 🛠️ Development Setup
 
@@ -73,24 +78,25 @@ The Peony Identifier is a production-ready cross-platform application that enabl
 composeApp/
 ├── commonMain/
 │   ├── kotlin/com/pivoinescapano/identifier/
-│   │   ├── data/                    # JSON models, repositories
-│   │   ├── domain/                  # Use cases, business logic
+│   │   ├── data/                    # JSON models, repositories, field notes storage
+│   │   ├── domain/                  # Use cases, business logic, field notes management
 │   │   ├── presentation/
-│   │   │   ├── screen/             # Main UI screens
+│   │   │   ├── screen/             # Main UI screens (Home, FieldNotes, etc.)
 │   │   │   ├── component/          # Reusable UI components
-│   │   │   ├── theme/              # Design system (v1.2)
-│   │   │   ├── viewmodel/          # State management
-│   │   │   └── state/              # UI state definitions
-│   │   └── platform/               # Cross-platform abstractions
+│   │   │   ├── theme/              # Design system (v1.7.0)
+│   │   │   ├── viewmodel/          # State management with field notes
+│   │   │   ├── state/              # UI state definitions
+│   │   │   └── navigation/         # Type-safe routing
+│   │   └── platform/               # Cross-platform abstractions (File sharing, Time)
 │   └── composeResources/
-│       └── files/data/             # JSON datasets
-├── androidMain/                    # Android-specific code
-├── iosMain/                       # iOS-specific code
+│       └── files/data/             # JSON datasets (3 field files + peony database)
+├── androidMain/                    # Android-specific code (Coil, file sharing)
+├── iosMain/                       # iOS-specific code (Kamel, UIKit integration)
 └── commonTest/                    # Shared test code
-iosApp/                            # iOS app entry point
+iosApp/                            # iOS app entry point with SwiftUI wrapper
 ```
 
-## 🎨 Design System v1.2
+## 🎨 Design System v1.7.0
 
 ### Botanical Color Palette
 ```kotlin
@@ -172,21 +178,30 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 - **Image Optimization**: Platform-specific caching strategies
 - **Memory Management**: Proper Compose state handling
 
-## 🔄 Navigation Flow
+## 🔄 Navigation Flow (v1.7.0)
 
-### Traditional Field Selection
-1. **Field Selection**: Auto-selected first field/parcel or user manual selection via FieldSelectionScreen
-2. **Position Selection**: Navigate to PeonyIdentifierScreen for row → position selection with visual selection indicators
-3. **Detail Navigation**: Navigate to PeonyDetailScreen for peony information
-4. **State Preservation**: All selections (field/parcel/position) remembered across navigation
-5. **Gesture Support**: iOS swipe and Android back button with proper animations and safe area handling
+### Home Screen Navigation
+1. **Launch**: App opens to tile-based home screen with three main functions
+2. **Function Selection**: Choose Search, Identify, or Field Notes via Material3 cards
+3. **Context Preservation**: Each tile maintains its own navigation stack and state
 
-### Search Flow (v1.6.0)
-1. **Search Access**: Tap floating search button from field selection screen
-2. **Real-time Search**: Type variety name with autocomplete suggestions and fuzzy matching
-3. **Location Results**: View all field locations containing the searched variety
-4. **Direct Navigation**: Tap location to navigate directly to peony detail with preserved search context
-5. **Search Persistence**: Return to search results with preserved query and state
+### Field Identification Flow  
+1. **Home → Identify**: Tap "Identify" tile → navigate to field selection
+2. **Field Selection**: Select field/parcel → position selection with visual indicators
+3. **Detail & Notes**: View peony info with enhanced note-taking and quick action buttons
+4. **Auto-Save**: Notes automatically saved with timestamp and status tracking
+
+### Universal Search Flow
+1. **Home → Search**: Tap "Search" tile → navigate to search interface  
+2. **Real-time Search**: Type variety name with autocomplete and fuzzy matching
+3. **Location Results**: View all field locations containing searched variety
+4. **Direct Navigation**: Tap location → navigate to peony detail with preserved context
+
+### Field Notes Management Flow
+1. **Home → Field Notes**: Tap "Field Notes" tile → navigate to notes list
+2. **Notes Overview**: View all positions with notes, sorted by field/parcel/row/position
+3. **Export & Management**: Enhanced CSV export with dual variety columns
+4. **Detail Editing**: Tap note → edit with auto-save and status management
 
 ## 🔄 Data Flow
 
@@ -249,4 +264,4 @@ val L = 16.dp, XL = 24.dp, XXL = 32.dp, XXXL = 48.dp
 
 ---
 
-**Current Status**: ✅ Production Ready v1.6.0 with Comprehensive Search Feature, Enhanced UX, and Cross-Navigation State Preservation
+**Current Status**: ✅ Production Ready v1.7.0 with Comprehensive Field Notes Management, Enhanced CSV Export, and Tile-Based Navigation
