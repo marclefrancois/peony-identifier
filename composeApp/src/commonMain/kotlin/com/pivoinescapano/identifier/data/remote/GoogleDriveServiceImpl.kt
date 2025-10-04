@@ -45,7 +45,12 @@ class GoogleDriveServiceImpl(
             when (val csvResult = fetchSpreadsheetCsv(config.spreadsheetId, config.sheetGid)) {
                 is NetworkResult.Success -> {
                     try {
-                        val entries = csvParser.parseFieldEntries(csvResult.data, config.columnMapping)
+                        val entries =
+                            csvParser.parseFieldEntries(
+                                csvResult.data,
+                                config.columnMapping,
+                                config.headerRowIndex,
+                            )
                         NetworkResult.Success(entries)
                     } catch (e: Exception) {
                         NetworkResult.Error(

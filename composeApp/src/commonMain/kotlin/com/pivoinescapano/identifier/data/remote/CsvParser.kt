@@ -6,15 +6,16 @@ class CsvParser {
     fun parseFieldEntries(
         csvContent: String,
         columnMapping: Map<String, String>,
+        headerRowIndex: Int = 0,
     ): List<FieldEntry> {
         val lines = csvContent.lines().filter { it.isNotBlank() }
-        if (lines.isEmpty()) return emptyList()
+        if (lines.size <= headerRowIndex) return emptyList()
 
-        val headers = parseCsvLine(lines[0])
+        val headers = parseCsvLine(lines[headerRowIndex])
         val columnIndices = buildColumnIndices(headers, columnMapping)
 
         return lines
-            .drop(1)
+            .drop(headerRowIndex + 1)
             .mapNotNull { line ->
                 parseFieldEntryRow(line, columnIndices)
             }

@@ -9,4 +9,5 @@ data class FieldConfig(
     val spreadsheetId: String,
     val sheetGid: String,
     val columnMapping: Map<String, String>,
+    val headerRowIndex: Int = 0,
 )
