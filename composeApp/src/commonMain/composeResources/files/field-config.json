@@ -1,68 +1,68 @@
 [
-  {
-    "fieldId": "1",
-    "parcelId": "PP",
-    "spreadsheetId": "1AzAWoqNiQR2bIaA93DXGrztZ8dq1V8QktqJR_YQlbYc",
-    "sheetGid": "886671777",
-    "headerRowIndex": 1,
-    "columnMapping": {
-      "# Champ": "champ",
-      "# Parcelle": "parcel",
-      "# Rang": "rang",
-      "Trou": "trou",
-      "Variété": "variety",
-      "Année plantation": "yearPlanted",
-      "Taille": "size",
-      "Vente": "forSale"
+    {
+        "fieldId": "1",
+        "parcelId": "PP",
+        "spreadsheetId": "1AzAWoqNiQR2bIaA93DXGrztZ8dq1V8QktqJR_YQlbYc",
+        "sheetGid": "886671777",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted",
+            "Taille": "size",
+            "Vente": "forSale"
+        }
+    },
+    {
+        "fieldId": "1",
+        "parcelId": "GP",
+        "spreadsheetId": "1AzAWoqNiQR2bIaA93DXGrztZ8dq1V8QktqJR_YQlbYc",
+        "sheetGid": "1675517178",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted",
+            "Taille": "size",
+            "Vente": "forSale"
+        }
+    },
+    {
+        "fieldId": "2",
+        "parcelId": "PP",
+        "spreadsheetId": "1sipVd08l2LyjY5bYhMB21ynQss4-K8xjXzeiAu1CHts",
+        "sheetGid": "1679499058",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted",
+            "Taille": "size",
+            "Vente": "forSale"
+        }
+    },
+    {
+        "fieldId": "4",
+        "parcelId": "Haut",
+        "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
+        "sheetGid": "342654710",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
     }
-  },
-  {
-    "fieldId": "1",
-    "parcelId": "GP",
-    "spreadsheetId": "1AzAWoqNiQR2bIaA93DXGrztZ8dq1V8QktqJR_YQlbYc",
-    "sheetGid": "1675517178",
-    "headerRowIndex": 1,
-    "columnMapping": {
-      "# Champ": "champ",
-      "# Parcelle": "parcel",
-      "# Rang": "rang",
-      "Trou": "trou",
-      "Variété": "variety",
-      "Année plantation": "yearPlanted",
-      "Taille": "size",
-      "Vente": "forSale"
-    }
-  },
-  {
-      "fieldId": "2",
-      "parcelId": "PP",
-      "spreadsheetId": "1sipVd08l2LyjY5bYhMB21ynQss4-K8xjXzeiAu1CHts",
-      "sheetGid": "1679499058",
-      "columnMapping": {
-          "champ": "champ",
-          "parcelle": "parcel",
-          "rang": "rang",
-          "trou": "trou",
-          "variete": "variety",
-          "annee_plantation": "yearPlanted",
-          "taille": "size",
-          "etiquette": "etiquette",
-          "vente": "forSale"
-      }
-  },
-  {
-      "fieldId": "4",
-      "parcelId": "Haut",
-      "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
-      "sheetGid": "342654710",
-      "headerRowIndex": 1,
-      "columnMapping": {
-          "# Champ": "champ",
-          "# Parcelle": "parcel",
-          "# Rang": "rang",
-          "Trou": "trou",
-          "Variété": "variety",
-          "Année plantation": "yearPlanted"
-      }
-  }
 ]
