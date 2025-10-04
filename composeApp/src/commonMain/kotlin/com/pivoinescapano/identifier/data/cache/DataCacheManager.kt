@@ -36,6 +36,7 @@ class DataCacheManager(
     companion object {
         private const val FIELD_CACHE_FILE = "field-data-cache.json"
         private const val FIELD_METADATA_FILE = "field-data-metadata.json"
+        private const val ENABLE_REMOTE_CACHE = false
     }
 
     /**
@@ -65,6 +66,26 @@ class DataCacheManager(
     }
 
     private suspend fun loadFieldEntriesWithRemote(): List<FieldEntry> {
+        if (!ENABLE_REMOTE_CACHE) {
+            println("Remote cache disabled, fetching from remote directly")
+            return when (val remoteResult = remoteDataSource.fetchAllFieldData()) {
+                is NetworkResult.Success -> {
+                    println("Fetched field data from remote (${remoteResult.data.size} entries)")
+                    remoteResult.data
+                }
+
+                is NetworkResult.NetworkUnavailable,
+                is NetworkResult.Error,
+                -> {
+                    if (remoteResult is NetworkResult.Error) {
+                        println("Remote fetch failed: ${remoteResult.message}")
+                    }
+                    println("Falling back to bundled JSON")
+                    loadFieldEntriesFromBundledJson()
+                }
+            }
+        }
+
         val cachedData = loadFieldEntriesFromCache()
         if (cachedData != null && !cachedData.metadata.isExpired()) {
             println("Using cached field data (not expired)")
