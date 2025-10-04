@@ -49,7 +49,7 @@ val appModule =
         // Network Infrastructure
         single { HttpClientFactory().create() }
         single { CsvParser() }
-        single<GoogleDriveService> { GoogleDriveServiceImpl(get(), get()) }
+        single<GoogleDriveService> { GoogleDriveServiceImpl(get(), get(), get()) }
         single<RemoteDataSource> { GoogleDriveDataSource(get(), get()) }
 
         // Cache Manager with remote support

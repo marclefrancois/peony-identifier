@@ -4,32 +4,11 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
-	<key>CFBundleShortVersionString</key>
-	<string>1.6.0</string>
-	<key>CFBundleVersion</key>
-	<string>17</string>
-	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIColorName</key>
-		<string>LaunchScreenBackground</string>
-		<key>UIImageName</key>
-		<string>SplashLogo</string>
-		<key>UIImageRespectsSafeAreaInsets</key>
-		<true/>
-	</dict>
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>UISupportsDocumentBrowser</key>
-	<true/>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
 		<string>fr</string>
 	</array>
-	<key>GIDClientID</key>
-	<string>818858644321-np6aurrg466eqr0utd9dq2tltlo22uvd.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -41,5 +20,18 @@
 			</array>
 		</dict>
 	</array>
+	<key>GIDClientID</key>
+	<string>818858644321-np6aurrg466eqr0utd9dq2tltlo22uvd.apps.googleusercontent.com</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchScreenBackground</string>
+		<key>UIImageName</key>
+		<string>SplashLogo</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

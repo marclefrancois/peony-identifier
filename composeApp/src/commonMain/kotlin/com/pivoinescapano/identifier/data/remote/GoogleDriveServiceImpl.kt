@@ -1,9 +1,11 @@
 package com.pivoinescapano.identifier.data.remote
 
+import com.pivoinescapano.identifier.data.auth.AuthRepository
 import com.pivoinescapano.identifier.data.config.FieldConfig
 import com.pivoinescapano.identifier.data.model.FieldEntry
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +15,7 @@ import kotlinx.coroutines.withContext
 class GoogleDriveServiceImpl(
     private val httpClient: HttpClient,
     private val csvParser: CsvParser,
+    private val authRepository: AuthRepository,
 ) : GoogleDriveService {
     override suspend fun fetchSpreadsheetCsv(
         spreadsheetId: String,
@@ -20,8 +23,16 @@ class GoogleDriveServiceImpl(
     ): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
+                val accessToken = authRepository.getAccessToken()
+                if (accessToken == null) {
+                    return@withContext NetworkResult.Error("No access token available. Please sign in.")
+                }
+
                 val url = "https://docs.google.com/spreadsheets/d/$spreadsheetId/export?format=csv&gid=$gid"
-                val response = httpClient.get(url)
+                val response =
+                    httpClient.get(url) {
+                        header("Authorization", "Bearer $accessToken")
+                    }
 
                 if (response.status.isSuccess()) {
                     val csvContent = response.bodyAsText()

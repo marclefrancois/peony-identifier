@@ -3,6 +3,7 @@ package com.pivoinescapano.identifier.presentation.component.navigation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,6 +23,7 @@ fun ListTopBar(
     selectedParcelle: String? = null,
     onNavigateBack: (() -> Unit)? = null,
     onRefreshClick: (() -> Unit)? = null,
+    onLogoutClick: (() -> Unit)? = null,
 ) {
     TopAppBar(
         title = {
@@ -64,6 +66,15 @@ fun ListTopBar(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh data",
                         tint = AppColors.PrimaryGreen,
+                    )
+                }
+            }
+            if (onLogoutClick != null) {
+                IconButton(onClick = onLogoutClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = "Logout",
+                        tint = AppColors.OnSurfaceVariant,
                     )
                 }
             }

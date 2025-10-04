@@ -32,24 +32,34 @@ class AuthViewModel(
         }
     }
 
-    suspend fun signInWithProvider(googleAuthUiProvider: GoogleAuthUiProvider) {
+    suspend fun signInWithProvider(
+        googleAuthUiProvider: GoogleAuthUiProvider,
+        scopes: List<String>,
+    ) {
         _authState.value = _authState.value.copy(isLoading = true)
 
         try {
-            val result = googleAuthUiProvider.signIn()
+            val result =
+                googleAuthUiProvider.signIn(
+                    filterByAuthorizedAccounts = false,
+                    isAutoSelectEnabled = true,
+                    scopes = scopes,
+                )
             if (result != null) {
-                val user = GoogleUser(
-                    id = result.idToken,
-                    email = result.email ?: "",
-                    name = result.displayName,
-                    accessToken = result.accessToken ?: "",
-                )
+                val user =
+                    GoogleUser(
+                        id = result.idToken,
+                        email = result.email ?: "",
+                        name = result.displayName,
+                        accessToken = result.accessToken ?: "",
+                    )
                 authRepository.saveUser(user)
-                _authState.value = AuthState(
-                    user = user,
-                    isAuthenticated = true,
-                    isLoading = false,
-                )
+                _authState.value =
+                    AuthState(
+                        user = user,
+                        isAuthenticated = true,
+                        isLoading = false,
+                    )
             } else {
                 _authState.value = _authState.value.copy(isLoading = false)
             }

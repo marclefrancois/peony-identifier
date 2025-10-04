@@ -34,6 +34,7 @@ import com.pivoinescapano.identifier.presentation.theme.AppColors
 import com.pivoinescapano.identifier.presentation.theme.AppSpacing
 import com.pivoinescapano.identifier.presentation.theme.AppTypography
 import com.pivoinescapano.identifier.presentation.theme.OverlayCard
+import com.pivoinescapano.identifier.presentation.viewmodel.AuthViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewModel
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
@@ -51,6 +52,7 @@ fun PeonyIdentifierScreen(
     onUpdateBackStackState: (champ: String, parcelle: String) -> Unit,
     onUpdateSelectionState: (rang: String?, trou: String?) -> Unit = { _, _ -> },
     viewModel: PeonyIdentifierViewModel = koinInject { parametersOf(selectedChamp, selectedParcelle) },
+    authViewModel: AuthViewModel = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val positionListState = rememberLazyListState()
@@ -98,6 +100,9 @@ fun PeonyIdentifierScreen(
                 selectedParcelle = selectedParcelle,
                 onNavigateBack = onNavigateBack,
                 onRefreshClick = viewModel::refresh,
+                onLogoutClick = {
+                    authViewModel.signOut()
+                },
             )
         },
         bottomBar = {

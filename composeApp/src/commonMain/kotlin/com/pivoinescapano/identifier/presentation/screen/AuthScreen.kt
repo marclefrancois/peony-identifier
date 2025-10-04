@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import com.pivoinescapano.identifier.presentation.theme.AppColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,6 +45,12 @@ fun AuthScreen(
         ),
     )
     val googleAuthUiProvider = googleAuthProvider.getUiProvider()
+    val scopes = listOf(
+        "email",
+        "profile",
+        "https://www.googleapis.com/auth/drive.readonly",
+        "https://www.googleapis.com/auth/spreadsheets.readonly",
+    )
 
     if (authState.isAuthenticated) {
         onAuthenticationSuccess()
@@ -62,7 +70,7 @@ fun AuthScreen(
                 imageVector = Icons.Default.AccountCircle,
                 contentDescription = null,
                 modifier = Modifier.size(96.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = AppColors.PrimaryGreen,
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -85,14 +93,21 @@ fun AuthScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             if (authState.isLoading) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = AppColors.PrimaryGreen,
+                )
             } else {
                 Button(
                     onClick = {
                         scope.launch {
-                            viewModel.signInWithProvider(googleAuthUiProvider)
+                            viewModel.signInWithProvider(googleAuthUiProvider, scopes)
                         }
                     },
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = AppColors.PrimaryGreen,
+                            contentColor = AppColors.OnPrimary,
+                        ),
                 ) {
                     Text("Sign in with Google")
                 }
