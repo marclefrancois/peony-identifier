@@ -51,6 +51,40 @@
         }
     },
     {
+        "fieldId": "2",
+        "parcelId": "Mil",
+        "spreadsheetId": "1sipVd08l2LyjY5bYhMB21ynQss4-K8xjXzeiAu1CHts",
+        "sheetGid": "1675517178",
+        "headerRowIndex": 0,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted",
+            "Taille": "size",
+            "Vente": "forSale"
+        }
+    },
+    {
+        "fieldId": "2",
+        "parcelId": "Par",
+        "spreadsheetId": "1sipVd08l2LyjY5bYhMB21ynQss4-K8xjXzeiAu1CHts",
+        "sheetGid": "0",
+        "headerRowIndex": 0,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted",
+            "Taille": "size",
+            "Vente": "forSale"
+        }
+    },
+    {
         "fieldId": "4",
         "parcelId": "Haut",
         "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
