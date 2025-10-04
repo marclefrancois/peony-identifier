@@ -141,4 +141,22 @@ class PeonyIdentifierViewModel(
             onRangSelected(previousRang)
         }
     }
+
+    fun refresh() {
+        viewModelScope.launch {
+            try {
+                dataCacheManager.clearCache()
+                val currentRang = _uiState.value.selectedRang
+                loadInitialData()
+                if (currentRang != null) {
+                    onRangSelected(currentRang)
+                }
+            } catch (e: Exception) {
+                _uiState.value =
+                    _uiState.value.copy(
+                        error = "Failed to refresh data: ${e.message}",
+                    )
+            }
+        }
+    }
 }

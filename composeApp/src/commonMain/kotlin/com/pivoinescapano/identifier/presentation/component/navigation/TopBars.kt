@@ -3,6 +3,7 @@ package com.pivoinescapano.identifier.presentation.component.navigation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,6 +21,7 @@ fun ListTopBar(
     selectedChamp: String? = null,
     selectedParcelle: String? = null,
     onNavigateBack: (() -> Unit)? = null,
+    onRefreshClick: (() -> Unit)? = null,
 ) {
     TopAppBar(
         title = {
@@ -55,7 +57,17 @@ fun ListTopBar(
                 }
             }
         },
-        actions = {},
+        actions = {
+            if (onRefreshClick != null) {
+                IconButton(onClick = onRefreshClick) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh data",
+                        tint = AppColors.PrimaryGreen,
+                    )
+                }
+            }
+        },
         colors =
             TopAppBarDefaults.topAppBarColors(
                 containerColor = AppColors.BarColor,

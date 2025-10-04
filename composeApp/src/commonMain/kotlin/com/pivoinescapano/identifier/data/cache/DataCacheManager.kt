@@ -170,14 +170,16 @@ class DataCacheManager(
         return allFieldEntries
     }
 
-    /**
-     * Preload all data in the background for improved app startup performance
-     */
-    suspend fun preloadAllData() {
-        // Load both datasets concurrently in background
-        coroutineScope {
-            launch(Dispatchers.IO) { loadPeonies() }
-            launch(Dispatchers.IO) { loadFieldEntries() }
+    suspend fun preloadAllData(): Boolean {
+        return try {
+            coroutineScope {
+                launch(Dispatchers.IO) { loadPeonies() }
+                launch(Dispatchers.IO) { loadFieldEntries() }
+            }
+            true
+        } catch (e: Exception) {
+            println("Failed to preload data: ${e.message}")
+            false
         }
     }
 

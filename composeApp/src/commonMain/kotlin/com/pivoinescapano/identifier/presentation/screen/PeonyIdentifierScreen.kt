@@ -97,6 +97,7 @@ fun PeonyIdentifierScreen(
                 selectedChamp = selectedChamp,
                 selectedParcelle = selectedParcelle,
                 onNavigateBack = onNavigateBack,
+                onRefreshClick = viewModel::refresh,
             )
         },
         bottomBar = {

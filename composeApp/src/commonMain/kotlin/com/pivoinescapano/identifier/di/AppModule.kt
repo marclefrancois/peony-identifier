@@ -29,6 +29,7 @@ import com.pivoinescapano.identifier.domain.usecase.UpdateFieldNoteUseCase
 import com.pivoinescapano.identifier.platform.provideFileSharing
 import com.pivoinescapano.identifier.presentation.viewmodel.FieldNotesViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.FieldSelectionViewModel
+import com.pivoinescapano.identifier.presentation.viewmodel.LoadingViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonyDetailViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonyIdentifierViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.PeonySearchViewModel
@@ -73,6 +74,7 @@ val appModule =
         single { ClearAllNotesUseCase(get()) }
 
         // ViewModels
+        factory { LoadingViewModel(get()) }
         factory { FieldSelectionViewModel(get()) }
         factory { (champ: String, parcelle: String) ->
             PeonyIdentifierViewModel(champ, parcelle, get(), get(), get())
