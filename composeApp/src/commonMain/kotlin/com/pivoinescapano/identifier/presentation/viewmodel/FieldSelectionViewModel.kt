@@ -117,22 +117,28 @@ class FieldSelectionViewModel(
     ) {
         viewModelScope.launch {
             try {
-                // First restore the field selection and load parcelles
                 val fieldEntries = getFieldEntriesUseCase()
+                val fieldSpecificEntries = fieldEntries.filter { it.champ == champ }
                 val parcelles =
-                    fieldEntries
-                        .filter { it.champ == champ }
+                    fieldSpecificEntries
                         .mapNotNull { it.parcel }
                         .distinct()
                         .sorted()
 
-                // Restore both field and parcel selections
+                val parcelEntryCounts =
+                    fieldSpecificEntries
+                        .groupBy { it.parcel }
+                        .mapValues { it.value.size }
+                        .filterKeys { it != null }
+                        .mapKeys { it.key!! }
+
                 _uiState.value =
                     _uiState.value.copy(
                         selectedChamp = champ,
                         availableParcelles = parcelles,
                         selectedParcelle = parcelle,
                         canContinue = true,
+                        parcelEntryCounts = parcelEntryCounts,
                     )
             } catch (e: Exception) {
                 _uiState.value =

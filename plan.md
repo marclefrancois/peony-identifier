@@ -2,30 +2,31 @@
 
 ## Project Status: 🔄 IN DEVELOPMENT v1.7.5
 
-A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility. Features comprehensive field notes management system with CSV export functionality. Now with cloud-based data loading from Google Drive spreadsheets.
+A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility. Features comprehensive field notes management system with CSV export functionality. Now with cloud-based data loading from Google Drive spreadsheets (16 field/parcel configurations across 5 fields).
 
 ## Version 1.7.5 Status: 🔄 IN DEVELOPMENT
 
-### 🎯 Version 1.7.5: Google Drive Data Integration - **PHASES 1-2.5 COMPLETE**
+### 🎯 Version 1.7.5: Google Drive Data Integration - **PHASES 1-2.5 COMPLETE & TESTED**
 
 #### Overview
 Migrate from bundled JSON files to cloud-based data loading via Google Drive spreadsheets, enabling real-time data updates without app redeployment.
 
 #### Current Implementation Status
-**✅ FUNCTIONAL:** App now loads all field data from Google Drive spreadsheets
-- **8 field/parcel configurations** across 3 spreadsheets
-- **10,300+ peony entries** fetched from cloud
+**✅ FUNCTIONAL & TESTED:** App successfully loads all field data from Google Drive spreadsheets
+- **16 field/parcel configurations** across 5 fields (3 Google Drive spreadsheets)
+- **All peony entries** fetched from cloud in real-time
 - **Parallel fetching** for optimal performance
 - **Automatic fallback** to bundled JSON on network failure
 - **Configurable header rows** and column mappings per field
 - **Standardized naming**: Field names from config, not CSV data
+- **✅ VERIFIED:** Tested in production app on both Android and iOS
 
 **Data Flow (Cache Disabled for Testing):**
-1. App launch → FieldConfigLoader loads 8 configs from field-config.json
-2. GoogleDriveDataSource fetches all 8 spreadsheet tabs in parallel
+1. App launch → FieldConfigLoader loads 16 configs from field-config.json
+2. GoogleDriveDataSource fetches all 16 spreadsheet tabs in parallel
 3. CsvParser parses each with custom headerRowIndex and column mapping
-4. Field/parcel names injected from config (e.g., "1-PP", "3-Maison", "4-Haut")
-5. All entries merged into single list (10,300+ entries)
+4. Field/parcel names injected from config (e.g., "1-PP", "3-Maison", "4-Itoh", "5-Blanches")
+5. All entries merged into single list
 6. If fetch fails → falls back to bundled JSON files
 7. Data served to FieldRepository → ViewModels → UI (no changes required)
 
@@ -52,14 +53,15 @@ Migrate from bundled JSON files to cloud-based data loading via Google Drive spr
 - ✅ **Header Row Support**: Configurable headerRowIndex per field (supports description rows)
 - ✅ **Field/Parcel Name Standardization**: Names from config, format "{fieldId}-{parcelId}"
 - ✅ **Cache Control Flag**: ENABLE_REMOTE_CACHE (default: false for testing)
-- ✅ **8 Fields Configured**:
-  - Field 1-PP: 908 entries | Field 1-GP: 4,467 entries
-  - Field 2-PP: 995 entries | Field 2-Mil: TBD | Field 2-Par: TBD
-  - Field 3-Maison: 1,330 entries | Field 3-Mil: 901 entries | Field 3-Par: 1,330 entries
-  - Field 4-Haut: 369 entries
-- ✅ **Total: 10,300+ peony entries** from Google Drive
+- ✅ **16 Field/Parcel Configurations**:
+  - **Field 1** (2 parcels): PP, GP
+  - **Field 2** (3 parcels): PP, Mil, Par
+  - **Field 3** (3 parcels): Maison, Mil, Par
+  - **Field 4** (4 parcels): Haut, Bas, Itoh, Herbacées
+  - **Field 5** (4 parcels): Hâtives, Blanches, Blush, Variées
 - ✅ All spreadsheets publicly accessible and validated
 - ✅ Cross-platform compilation successful (Android & iOS)
+- ✅ **Production Testing Complete**: App successfully loads and displays all cloud data
 
 #### Pending: Phases 3, 4, and 5
 
@@ -133,14 +135,15 @@ data/
 ### Current Build Status (v1.7.5)
 - ✅ **Android**: Compilation successful, all features working
 - ✅ **iOS**: Compilation successful, all features working
-- ✅ **Google Drive Integration**: 8 fields configured, 10,300+ entries loading from cloud
+- ✅ **Google Drive Integration**: 16 field/parcel configurations across 5 fields loading from cloud
 - ✅ **Network Stack**: Ktor HTTP client working on both platforms
 - ✅ **Fallback Strategy**: Graceful degradation to bundled JSON verified
+- ✅ **Production Testing**: App tested with real Google Drive data loading - working perfectly
 - 🔄 **Cache System**: Disabled for testing (ENABLE_REMOTE_CACHE = false)
 
 ### Next Steps
-1. Test app with real Google Drive data loading
-2. Enable cache system (set ENABLE_REMOTE_CACHE = true)
+1. ~~Test app with real Google Drive data loading~~ ✅ **COMPLETE**
+2. Enable cache system (set ENABLE_REMOTE_CACHE = true) and verify cache persistence
 3. Implement Phase 3 (optional): Sync UI and loading states
 4. Complete v1.7.5 and prepare for production deployment
 

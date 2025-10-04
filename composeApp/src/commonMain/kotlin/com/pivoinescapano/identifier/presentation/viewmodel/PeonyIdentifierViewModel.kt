@@ -57,8 +57,8 @@ class PeonyIdentifierViewModel(
                         isLoading = false,
                     )
 
-                if (rangs.contains("1")) {
-                    onRangSelected("1")
+                if (rangs.isNotEmpty()) {
+                    onRangSelected(rangs.first())
                 }
             } catch (e: Exception) {
                 _uiState.value =

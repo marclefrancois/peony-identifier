@@ -158,5 +158,95 @@
             "Variété": "variety",
             "Année plantation": "yearPlanted"
         }
+    },
+    {
+        "fieldId": "4",
+        "parcelId": "Itoh",
+        "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
+        "sheetGid": "808975673",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
+    },
+    {
+        "fieldId": "4",
+        "parcelId": "Herbacées",
+        "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
+        "sheetGid": "1072653397",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
+    },
+    {
+        "fieldId": "5",
+        "parcelId": "Hâtives",
+        "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
+        "sheetGid": "1470888426",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
+    },
+    {
+        "fieldId": "5",
+        "parcelId": "Blanches",
+        "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
+        "sheetGid": "908638924",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
+    },
+    {
+        "fieldId": "5",
+        "parcelId": "Blush",
+        "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
+        "sheetGid": "708729942",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
+    },
+    {
+        "fieldId": "5",
+        "parcelId": "Variées",
+        "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
+        "sheetGid": "1694854429",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
     }
 ]
