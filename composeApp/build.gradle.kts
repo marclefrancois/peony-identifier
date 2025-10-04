@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.coil.compose)
             implementation(libs.androidx.splashscreen)
+            implementation(libs.androidx.security.crypto)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kmpauth.google)
             implementation(libs.kmpauth.uihelper)

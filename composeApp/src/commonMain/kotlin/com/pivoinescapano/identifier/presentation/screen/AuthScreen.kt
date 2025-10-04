@@ -16,7 +16,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import com.pivoinescapano.identifier.presentation.theme.AppColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,35 +26,33 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
+import com.pivoinescapano.identifier.presentation.theme.AppColors
 import com.pivoinescapano.identifier.presentation.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
 fun AuthScreen(
-    onAuthenticationSuccess: () -> Unit,
     viewModel: AuthViewModel = koinInject(),
 ) {
     val authState by viewModel.authState.collectAsState()
     val scope = rememberCoroutineScope()
 
-    val googleAuthProvider = GoogleAuthProvider.create(
-        credentials = GoogleAuthCredentials(
-            serverId = "818858644321-np6aurrg466eqr0utd9dq2tltlo22uvd.apps.googleusercontent.com",
-        ),
-    )
+    val googleAuthProvider =
+        GoogleAuthProvider.create(
+            credentials =
+                GoogleAuthCredentials(
+                    serverId = "818858644321-np6aurrg466eqr0utd9dq2tltlo22uvd.apps.googleusercontent.com",
+                ),
+        )
     val googleAuthUiProvider = googleAuthProvider.getUiProvider()
-    val scopes = listOf(
-        "email",
-        "profile",
-        "https://www.googleapis.com/auth/drive.readonly",
-        "https://www.googleapis.com/auth/spreadsheets.readonly",
-    )
-
-    if (authState.isAuthenticated) {
-        onAuthenticationSuccess()
-        return
-    }
+    val scopes =
+        listOf(
+            "email",
+            "profile",
+            "https://www.googleapis.com/auth/drive.readonly",
+            "https://www.googleapis.com/auth/spreadsheets.readonly",
+        )
 
     Box(
         modifier = Modifier.fillMaxSize(),

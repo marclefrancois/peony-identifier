@@ -1,5 +1,8 @@
 package com.pivoinescapano.identifier.data.auth
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class GoogleUser(
     val id: String,
     val email: String,

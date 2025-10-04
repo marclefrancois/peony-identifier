@@ -17,8 +17,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.pivoinescapano.identifier.data.model.LoadingState
-import com.pivoinescapano.identifier.di.appModule
-import com.pivoinescapano.identifier.di.platformModule
 import com.pivoinescapano.identifier.presentation.navigation.FieldNotesRoute
 import com.pivoinescapano.identifier.presentation.navigation.FieldSelectionRoute
 import com.pivoinescapano.identifier.presentation.navigation.HomeRoute
@@ -36,7 +34,6 @@ import com.pivoinescapano.identifier.presentation.screen.PeonySearchScreen
 import com.pivoinescapano.identifier.presentation.viewmodel.AuthViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.LoadingViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -50,34 +47,28 @@ fun App() {
         ) {
             val authViewModel: AuthViewModel = koinInject()
             val authState by authViewModel.authState.collectAsState()
-
-            var showMainApp by remember { mutableStateOf(false) }
+            val dataLoadingState by authViewModel.dataLoadingState.collectAsState()
 
             if (!authState.isAuthenticated) {
-                AuthScreen(
-                    onAuthenticationSuccess = {
-                        showMainApp = true
-                    },
-                )
-            } else if (!showMainApp) {
-                val loadingViewModel: LoadingViewModel = koinInject()
-                val loadingState by loadingViewModel.loadingState.collectAsState()
-
-                when (loadingState) {
+                AuthScreen(viewModel = authViewModel)
+            } else {
+                when (dataLoadingState) {
                     is LoadingState.Loading -> {
-                        LoadingSplashScreen(loadingState = loadingState)
+                        LoadingSplashScreen(
+                            loadingState = dataLoadingState,
+                            onRetry = { authViewModel.retryDataLoading() },
+                        )
                     }
                     is LoadingState.Error -> {
-                        LoadingSplashScreen(loadingState = loadingState)
+                        LoadingSplashScreen(
+                            loadingState = dataLoadingState,
+                            onRetry = { authViewModel.retryDataLoading() },
+                        )
                     }
                     is LoadingState.Success -> {
-                        showMainApp = true
+                        MainNavigationHost()
                     }
                 }
-            }
-
-            if (showMainApp) {
-                MainNavigationHost()
             }
         }
     }

@@ -79,7 +79,7 @@ val appModule =
         single { ClearAllNotesUseCase(get()) }
 
         // ViewModels
-        factory { AuthViewModel(get()) }
+        single { AuthViewModel(get(), get()) }
         factory { LoadingViewModel(get()) }
         factory { FieldSelectionViewModel(get()) }
         factory { (champ: String, parcelle: String) ->
