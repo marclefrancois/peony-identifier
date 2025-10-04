@@ -1,10 +1,220 @@
 # Peony Identifier App Plan
 
-## Project Status: ✅ COMPLETE v1.7.0 
+## Project Status: 🔄 IN DEVELOPMENT v1.7.5
 
-A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility. Features comprehensive field notes management system with CSV export functionality.
+A Kotlin Multiplatform Compose app for identifying peonies across multiple fields, with enhanced branding, improved navigation flow, and larger typography for better accessibility. Features comprehensive field notes management system with CSV export functionality. Now with cloud-based data loading from Google Drive spreadsheets.
 
-## Version 1.7.0 Status: ✅ COMPLETE (Ready for version bump to 1.7.0)
+## Version 1.7.5 Status: 🔄 IN DEVELOPMENT
+
+### 🎯 Version 1.7.5: Google Drive Data Integration - **IN PROGRESS**
+
+#### Overview
+Migrate from bundled JSON files to cloud-based data loading via Google Drive spreadsheets, enabling real-time data updates without app redeployment.
+
+#### Phase 1: Network Infrastructure & Configuration System - DETAILED PLAN
+
+##### 1.1 Field Configuration System
+- [ ] **FieldConfig Data Model**:
+  - [ ] Create `FieldConfig` data class with: `fieldId`, `parcelId`, `spreadsheetId`, `sheetGid`, `columnMapping`
+  - [ ] Support flexible column mapping: CSV column name → FieldEntry property
+  - [ ] Each field/parcel combo has own Google Spreadsheet with custom column layout
+  - [ ] Serializable with kotlinx.serialization for JSON storage
+
+- [ ] **Configuration Storage**:
+  - [ ] Create `field-config.json` in `composeResources/files/` with all field configurations
+  - [ ] Add `FieldConfigLoader` class to load and parse configurations
+  - [ ] Store default spreadsheet URLs in config file
+  - [ ] Support for configuration updates without code changes
+
+##### 1.2 Network Infrastructure
+- [ ] **Add Ktor Dependencies** (build.gradle.kts):
+  - [ ] `ktor-client-core:2.3.12` in commonMain
+  - [ ] `ktor-client-okhttp:2.3.12` in androidMain
+  - [ ] `ktor-client-darwin:2.3.12` in iosMain
+  - [ ] `ktor-client-content-negotiation:2.3.12` for JSON support
+  - [ ] `ktor-client-logging:2.3.12` for debugging
+
+- [ ] **HTTP Client Configuration**:
+  - [ ] Create platform-specific HttpClient factory (expect/actual)
+  - [ ] Setup connection timeout (30 seconds)
+  - [ ] Setup request timeout (60 seconds for large CSV)
+  - [ ] Add retry policy with exponential backoff (3 retries)
+  - [ ] Configure logging for debugging
+
+##### 1.3 Google Drive Integration
+- [ ] **GoogleDriveService Interface**:
+  - [ ] `suspend fun fetchSpreadsheetCsv(spreadsheetId: String, gid: String): NetworkResult<String>`
+  - [ ] `suspend fun fetchFieldData(config: FieldConfig): NetworkResult<List<FieldEntry>>`
+  - [ ] Use public Google Sheets CSV export URL pattern: `https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid={GID}`
+  - [ ] No authentication required for public sheets
+
+- [ ] **GoogleDriveServiceImpl**:
+  - [ ] Implement using Ktor HttpClient
+  - [ ] Handle HTTP errors (404, 500, timeout)
+  - [ ] Parse response body as CSV string
+  - [ ] Return `NetworkResult` sealed class for error handling
+
+- [ ] **NetworkResult Sealed Class**:
+  - [ ] `Success<T>(data: T)`: Successful fetch with data
+  - [ ] `Error(message: String, cause: Exception?)`: Network/parsing error
+  - [ ] `NetworkUnavailable`: No internet connection
+
+##### 1.4 CSV Parser with Column Mapping
+- [ ] **CsvParser Class**:
+  - [ ] Parse CSV header row to extract column names
+  - [ ] Build column index map using `FieldConfig.columnMapping`
+  - [ ] Parse data rows and map to `FieldEntry` properties
+  - [ ] Handle missing columns gracefully (null values)
+  - [ ] Handle quoted CSV values and escaped commas
+  - [ ] Skip empty rows and trim whitespace
+
+- [ ] **Column Mapping Logic**:
+  - [ ] Case-insensitive column name matching
+  - [ ] Support for column name aliases (e.g., "Variété" or "Variety")
+  - [ ] Validation: warn if expected columns are missing
+  - [ ] Default values for missing optional fields
+
+- [ ] **Data Validation**:
+  - [ ] Validate required fields: champ, parcel, rang, trou
+  - [ ] Skip rows with missing required fields
+  - [ ] Log warnings for malformed data
+  - [ ] Preserve variety as-is (including "?" prefix)
+
+##### 1.5 Project Structure
+Create new package structure:
+```
+data/
+├── config/
+│   ├── FieldConfig.kt                      # Configuration model
+│   └── FieldConfigLoader.kt                # Load configs from JSON
+├── remote/
+│   ├── GoogleDriveService.kt               # Interface
+│   ├── GoogleDriveServiceImpl.kt           # Ktor implementation
+│   ├── CsvParser.kt                        # CSV parser with mapping
+│   ├── NetworkResult.kt                    # Result sealed class
+│   └── HttpClientFactory.kt                # Platform-specific client (expect/actual)
+└── cache/
+    └── DataCacheManager.kt                 # Enhanced in Phase 2
+```
+
+##### 1.6 Integration Points
+- [ ] Keep existing `JsonDataLoader` for fallback
+- [ ] Keep existing `DataCacheManager` structure (modify in Phase 2)
+- [ ] No changes to `FieldRepository` interface
+- [ ] No changes to ViewModels or UI
+
+##### 1.7 Testing Strategy
+- [ ] Unit test `CsvParser` with various column layouts
+- [ ] Unit test `FieldConfig` serialization/deserialization
+- [ ] Mock network calls for `GoogleDriveService` tests
+- [ ] Test error handling: network failures, malformed CSV
+- [ ] Test column mapping edge cases: missing columns, extra columns
+
+#### Phase 2: Data Loading Architecture Refactor
+- [ ] **Repository Pattern Updates**:
+  - [ ] Create RemoteDataSource interface for cloud data fetching
+  - [ ] Implement GoogleDriveDataSource with CSV parsing
+  - [ ] Update FieldDataRepository to support both local (fallback) and remote sources
+  - [ ] Add PeonyDatabaseRepository with remote data support
+  - [ ] Implement data caching layer for offline support
+
+- [ ] **CSV to Model Parsing**:
+  - [ ] Create CSV parser for field data (champ, parcelle, rang, trou, variete, etc.)
+  - [ ] Create CSV parser for peony database (cultivar, originator, date, group, etc.)
+  - [ ] Handle null values and malformed data gracefully
+  - [ ] Validate data integrity after parsing
+
+- [ ] **Caching Strategy**:
+  - [ ] Implement local cache storage (SQLite or file-based JSON)
+  - [ ] Cache expiration policy (e.g., 24 hours)
+  - [ ] Cache invalidation mechanism
+  - [ ] Offline-first approach: check cache → fetch remote → update cache
+
+#### Phase 3: Data Synchronization & Loading States
+- [ ] **Sync Mechanism**:
+  - [ ] Create SyncManager to orchestrate data fetching
+  - [ ] Implement background sync on app launch
+  - [ ] Add manual refresh capability in settings/home screen
+  - [ ] Handle network connectivity changes
+  - [ ] Progress indicators for large dataset downloads
+
+- [ ] **Loading States UI**:
+  - [ ] Add splash screen with data loading progress
+  - [ ] Show sync status in home screen (last updated timestamp)
+  - [ ] Error handling UI for network failures
+  - [ ] Retry mechanism with exponential backoff
+  - [ ] Offline mode indicator when using cached data
+
+#### Phase 4: Configuration & Settings
+- [ ] **Google Drive URLs Configuration**:
+  - [ ] Add Settings screen for spreadsheet URL management
+  - [ ] Default URLs hardcoded in app for initial load
+  - [ ] Support for multiple field data sources (Champ1PP, Champ1GP, Champ2PP)
+  - [ ] Support for peony database spreadsheet URL
+  - [ ] URL validation and testing functionality
+
+- [ ] **Data Management Settings**:
+  - [ ] "Refresh Data Now" button with progress indicator
+  - [ ] "Clear Cache" option for troubleshooting
+  - [ ] Display last sync timestamp and data version
+  - [ ] Toggle for offline mode (use cached data only)
+  - [ ] Data usage statistics (cache size, sync frequency)
+
+#### Phase 5: Migration & Testing
+- [ ] **Data Migration**:
+  - [ ] Keep bundled JSON files as fallback for first launch
+  - [ ] Automatic migration from local to remote data on first sync
+  - [ ] Preserve existing field notes during migration
+  - [ ] Version checking to prevent data downgrades
+
+- [ ] **Testing & Validation**:
+  - [ ] Test with poor network conditions (slow 3G, packet loss)
+  - [ ] Test offline mode with expired cache
+  - [ ] Test data integrity after sync
+  - [ ] Test with large datasets (10k+ entries)
+  - [ ] Cross-platform testing (Android & iOS networking differences)
+
+#### Technical Implementation Details
+- **Spreadsheet Access Pattern**:
+  - Use public Google Sheets CSV export URL format: `https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid={GID}`
+  - No authentication required for public sheets
+  - Fallback to bundled data if network unavailable
+
+- **Data Flow**:
+  1. App launch → Check cache validity
+  2. If expired/missing → Fetch from Google Drive
+  3. Parse CSV → Validate data → Update cache
+  4. Load data into app state
+  5. Continue normal app flow
+
+- **Dependencies to Add**:
+  ```kotlin
+  // Ktor for networking
+  implementation("io.ktor:ktor-client-core:2.3.x")
+  implementation("io.ktor:ktor-client-okhttp:2.3.x") // Android
+  implementation("io.ktor:ktor-client-darwin:2.3.x") // iOS
+  implementation("io.ktor:ktor-client-content-negotiation:2.3.x")
+  implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.x")
+
+  // Optional: SQLDelight for structured caching
+  // Or use simple file-based JSON caching
+  ```
+
+#### Backward Compatibility
+- [ ] Maintain existing JSON file structure in cache
+- [ ] Ensure existing FieldDataRepository interface compatibility
+- [ ] No breaking changes to ViewModels or UI layer
+- [ ] Gradual rollout: local data → hybrid → full remote
+
+#### Success Criteria
+- ✅ App loads data from Google Drive spreadsheets
+- ✅ Offline mode works seamlessly with cached data
+- ✅ Data updates reflected in app without redeployment
+- ✅ No regressions in existing features (search, notes, identification)
+- ✅ Graceful degradation on network failures
+- ✅ Cross-platform networking works on Android and iOS
+
+## Version 1.7.0 Status: ✅ COMPLETE
 
 ### 🎯 Version 1.7.0: Enhanced Field Management & Note-Taking - **COMPLETED!**
 
@@ -324,8 +534,9 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
 ## Deployment Status
 - ✅ **Version 1.6.0**: Production ready with comprehensive search feature
 - ✅ **Version 1.7.0**: Production ready with enhanced field management & note-taking
+- 🔄 **Version 1.7.5**: In development - Google Drive data integration
 
-### Current Production Status (v1.7.0)
+### Current Production Status (v1.7.5 - IN DEVELOPMENT)
 - ✅ **Android**: APK builds successfully, portrait locked, image loading functional, gesture navigation working
 - ✅ **iOS**: Framework builds cleanly, async image loading functional, native swipe gestures implemented, file sharing fixed
 - ✅ **Cross-Platform**: All shared business logic and UI working across both platforms
@@ -347,7 +558,15 @@ A Kotlin Multiplatform Compose app for identifying peonies across multiple field
   - ✅ **Phase 2**: Enhanced Peony Details integration (quick actions, note editor)
   - ✅ **Phase 3**: Field Notes Management Screen (listing, filtering, search)
   - ✅ **Phase 4**: Export & management features (enhanced CSV with dual varieties, iOS fixes, backup)
-  - [ ] **Phase 5**: Advanced features (speech-to-text, cloud sync) - *Planned for v1.8.0*
+  - [ ] **Phase 5**: Advanced features (speech-to-text, cloud sync) - *Deferred to v1.8.0*
+
+### In Progress for v1.7.5 🔄
+- [ ] **Google Drive Data Integration**: Migrate from bundled JSON to cloud-based spreadsheets
+  - [ ] **Phase 1**: Network infrastructure setup (Ktor, Google Drive API)
+  - [ ] **Phase 2**: Data loading architecture refactor (repositories, CSV parsing, caching)
+  - [ ] **Phase 3**: Data synchronization & loading states (sync manager, UI feedback)
+  - [ ] **Phase 4**: Configuration & settings (URL management, manual refresh)
+  - [ ] **Phase 5**: Migration & testing (fallback strategy, cross-platform validation)
 
 ---
 

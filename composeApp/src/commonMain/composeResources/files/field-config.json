@@ -1,0 +1,53 @@
+[
+  {
+    "fieldId": "1",
+    "parcelId": "PP",
+    "spreadsheetId": "PLACEHOLDER_SHEET_ID_1PP",
+    "sheetGid": "0",
+    "columnMapping": {
+      "champ": "champ",
+      "parcelle": "parcel",
+      "rang": "rang",
+      "trou": "trou",
+      "variete": "variety",
+      "annee_plantation": "yearPlanted",
+      "taille": "size",
+      "etiquette": "etiquette",
+      "vente": "forSale"
+    }
+  },
+  {
+    "fieldId": "1",
+    "parcelId": "GP",
+    "spreadsheetId": "PLACEHOLDER_SHEET_ID_1GP",
+    "sheetGid": "0",
+    "columnMapping": {
+      "champ": "champ",
+      "parcelle": "parcel",
+      "rang": "rang",
+      "trou": "trou",
+      "variete": "variety",
+      "annee_plantation": "yearPlanted",
+      "taille": "size",
+      "etiquette": "etiquette",
+      "vente": "forSale"
+    }
+  },
+  {
+    "fieldId": "2",
+    "parcelId": "PP",
+    "spreadsheetId": "PLACEHOLDER_SHEET_ID_2PP",
+    "sheetGid": "0",
+    "columnMapping": {
+      "champ": "champ",
+      "parcelle": "parcel",
+      "rang": "rang",
+      "trou": "trou",
+      "variete": "variety",
+      "annee_plantation": "yearPlanted",
+      "taille": "size",
+      "etiquette": "etiquette",
+      "vente": "forSale"
+    }
+  }
+]

@@ -1,7 +1,12 @@
 package com.pivoinescapano.identifier.di
 
 import com.pivoinescapano.identifier.data.cache.DataCacheManager
+import com.pivoinescapano.identifier.data.config.FieldConfigLoader
 import com.pivoinescapano.identifier.data.loader.JsonDataLoader
+import com.pivoinescapano.identifier.data.remote.CsvParser
+import com.pivoinescapano.identifier.data.remote.GoogleDriveService
+import com.pivoinescapano.identifier.data.remote.GoogleDriveServiceImpl
+import com.pivoinescapano.identifier.data.remote.HttpClientFactory
 import com.pivoinescapano.identifier.data.repository.FieldNotesRepositoryImpl
 import com.pivoinescapano.identifier.data.repository.FieldRepository
 import com.pivoinescapano.identifier.data.repository.PeonyRepository
@@ -32,6 +37,12 @@ val appModule =
         // Data Loading Infrastructure
         single { JsonDataLoader() }
         single { DataCacheManager(get()) }
+        single { FieldConfigLoader(get()) }
+
+        // Network Infrastructure
+        single { HttpClientFactory().create() }
+        single { CsvParser() }
+        single<GoogleDriveService> { GoogleDriveServiceImpl(get(), get()) }
 
         // Platform Services
         single { provideFileSharing() }
