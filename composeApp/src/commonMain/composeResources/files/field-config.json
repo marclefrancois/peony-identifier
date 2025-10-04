@@ -49,5 +49,22 @@
       "etiquette": "etiquette",
       "vente": "forSale"
     }
+  },
+  {
+    "fieldId": "4",
+    "parcelId": "PP",
+    "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
+    "sheetGid": "342654710",
+    "columnMapping": {
+      "champ": "champ",
+      "parcelle": "parcel",
+      "rang": "rang",
+      "trou": "trou",
+      "variete": "variety",
+      "annee_plantation": "yearPlanted",
+      "taille": "size",
+      "etiquette": "etiquette",
+      "vente": "forSale"
+    }
   }
 ]

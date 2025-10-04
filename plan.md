@@ -148,6 +148,163 @@ data/
   - ✅ iOS compilation successful
   - ✅ Graceful degradation verified
 
+#### Phase 2.5: OAuth 2.0 Authentication for Private Spreadsheets - 🔄 IN PROGRESS
+
+##### Overview
+Implement Google OAuth 2.0 user authentication to access private Google Sheets without making them public. Users sign in with their Google account and grant permission to read their spreadsheets.
+
+##### 2.5.1 Prerequisites & Setup
+- [ ] **Google Cloud Console Configuration**:
+  - [ ] Create/configure Google Cloud Project
+  - [ ] Enable Google Sheets API
+  - [ ] Enable Google Drive API (for file access)
+  - [ ] Create OAuth 2.0 Client IDs:
+    - [ ] Android Client ID (package name + SHA-1 fingerprint)
+    - [ ] iOS Client ID (bundle ID)
+  - [ ] Configure OAuth Consent Screen (app name, logo, test users)
+  - [ ] Add required scopes: `spreadsheets.readonly` or `drive.readonly`
+
+##### 2.5.2 Dependencies & Build Configuration
+- [ ] **Add OAuth Dependencies** (build.gradle.kts):
+  - [ ] Android: `androidx.credentials:credentials:1.3.0`
+  - [ ] Android: `androidx.credentials:credentials-play-services-auth:1.3.0`
+  - [ ] Android: `com.google.android.gms:play-services-auth:21.2.0`
+  - [ ] Common: Consider AppAuth or manual OAuth implementation
+
+##### 2.5.3 Core Authentication Models
+- [ ] **AuthState Sealed Class**:
+  - [ ] `SignedOut`: No active session
+  - [ ] `SignedIn(user: UserInfo, token: AuthToken)`: Active session
+  - [ ] `SigningIn`: OAuth flow in progress
+  - [ ] `Error(message: String)`: Authentication failure
+
+- [ ] **AuthToken Data Class**:
+  - [ ] `accessToken: String`: API access token
+  - [ ] `refreshToken: String?`: Token for renewal
+  - [ ] `expiresAt: Long`: Expiration timestamp
+  - [ ] `tokenType: String`: Usually "Bearer"
+  - [ ] `scope: String`: Granted permissions
+
+- [ ] **UserInfo Data Class**:
+  - [ ] `email: String`: User's email
+  - [ ] `name: String?`: Display name
+  - [ ] `photoUrl: String?`: Avatar URL
+  - [ ] `id: String`: Unique user ID
+
+##### 2.5.4 Token Storage & Security
+- [ ] **TokenStorage Interface**:
+  - [ ] `suspend fun saveToken(token: AuthToken): Result<Unit>`
+  - [ ] `suspend fun getToken(): AuthToken?`
+  - [ ] `suspend fun deleteToken(): Result<Unit>`
+  - [ ] Platform-specific secure storage (Keystore/Keychain)
+
+- [ ] **Platform Implementations**:
+  - [ ] Android: EncryptedSharedPreferences with Keystore
+  - [ ] iOS: Keychain Services wrapper
+
+##### 2.5.5 Authentication Manager
+- [ ] **AuthManager Interface (expect/actual)**:
+  - [ ] `suspend fun signIn(): NetworkResult<UserInfo>`
+  - [ ] `suspend fun signOut(): Result<Unit>`
+  - [ ] `suspend fun getCurrentUser(): UserInfo?`
+  - [ ] `suspend fun refreshAccessToken(): NetworkResult<AuthToken>`
+  - [ ] `fun observeAuthState(): Flow<AuthState>`
+
+- [ ] **Android Implementation**:
+  - [ ] Use Credential Manager API (modern approach)
+  - [ ] Or GoogleSignInClient (legacy)
+  - [ ] Handle authorization code exchange
+  - [ ] Extract tokens from response
+
+- [ ] **iOS Implementation**:
+  - [ ] Use ASWebAuthenticationSession
+  - [ ] Or Google Sign-In iOS SDK
+  - [ ] Handle callback URL scheme
+  - [ ] Parse OAuth response
+
+##### 2.5.6 Google Sheets API Integration
+- [ ] **Switch from CSV Export to Sheets API v4**:
+  - [ ] New endpoint: `https://sheets.googleapis.com/v4/spreadsheets/{id}/values/{range}`
+  - [ ] Add `Authorization: Bearer {token}` header
+  - [ ] Handle 401 Unauthorized (trigger token refresh)
+  - [ ] Parse JSON response instead of CSV
+
+- [ ] **Update GoogleDriveService**:
+  - [ ] Add `authToken: String?` parameter to methods
+  - [ ] Implement token injection in requests
+  - [ ] Add automatic token refresh on 401
+  - [ ] Fallback to CSV export for public sheets (backward compatibility)
+
+- [ ] **Create SheetsApiClient**:
+  - [ ] Separate class for Sheets API v4 calls
+  - [ ] JSON response parsing to FieldEntry
+  - [ ] Handle API rate limits and quotas
+  - [ ] Error handling for API responses
+
+##### 2.5.7 Authentication UI
+- [ ] **SignInScreen**:
+  - [ ] "Sign in with Google" button with Google branding
+  - [ ] Loading indicator during OAuth flow
+  - [ ] Error messages for failed authentication
+  - [ ] Privacy policy and terms links
+
+- [ ] **AuthViewModel**:
+  - [ ] `uiState: StateFlow<AuthState>`
+  - [ ] `fun signIn()`
+  - [ ] `fun signOut()`
+  - [ ] Handle OAuth callbacks
+  - [ ] Token refresh in background
+
+- [ ] **Navigation Integration**:
+  - [ ] Add SignInRoute to navigation graph
+  - [ ] Show SignInScreen if not authenticated
+  - [ ] Protect data screens behind auth check
+  - [ ] Handle deep links after OAuth redirect
+
+##### 2.5.8 Token Lifecycle Management
+- [ ] **Token Refresh Logic**:
+  - [ ] Check token expiration before API calls
+  - [ ] Proactive refresh (5 min before expiry)
+  - [ ] Retry failed requests after refresh
+  - [ ] Queue requests during refresh
+
+- [ ] **Session Management**:
+  - [ ] Auto sign-in on app launch if token valid
+  - [ ] Silent token refresh in background
+  - [ ] Handle token revocation (force sign-out)
+  - [ ] Persist auth state across app restarts
+
+##### 2.5.9 User Experience Enhancements
+- [ ] **Settings Integration**:
+  - [ ] Display signed-in user info
+  - [ ] "Sign out" button
+  - [ ] Account management options
+  - [ ] Token expiry status
+
+- [ ] **Data Loading Behavior**:
+  - [ ] Show sign-in prompt if accessing private sheets
+  - [ ] Graceful fallback to bundled data if not signed in
+  - [ ] Indicate which sheets require authentication
+  - [ ] Allow mixing public and private sheets
+
+##### 2.5.10 Testing & Validation
+- [ ] **OAuth Flow Testing**:
+  - [ ] Android: Test with debug and release signing
+  - [ ] iOS: Test with development and production
+  - [ ] Test token refresh mechanism
+  - [ ] Test sign-out and re-authentication
+
+- [ ] **Error Scenarios**:
+  - [ ] User cancels OAuth flow
+  - [ ] Network failure during authentication
+  - [ ] Token expired/revoked
+  - [ ] Invalid credentials in Cloud Console
+
+- [ ] **Cross-Platform Validation**:
+  - [ ] Same user account works on both platforms
+  - [ ] Tokens managed independently per device
+  - [ ] Sign-out on one device doesn't affect others
+
 #### Phase 3: Data Synchronization & Loading States
 - [ ] **Sync Mechanism**:
   - [ ] Create SyncManager to orchestrate data fetching
