@@ -63,27 +63,30 @@ Migrate from bundled JSON files to cloud-based data loading via Google Drive spr
 - ✅ Cross-platform compilation successful (Android & iOS)
 - ✅ **Production Testing Complete**: App successfully loads and displays all cloud data
 
-#### Pending: Phases 3, 4, and 5
+#### Completed: Loading & Refresh Implementation ✅
+- ✅ Loading splash screen with Material Design (dark green theme)
+- ✅ Blocking UI until data loads from Google Drive
+- ✅ Manual refresh button in PeonyIdentifierScreen
+- ✅ Cache system implemented (disabled for testing, will enable in v2.0)
 
-##### Phase 3: Data Synchronization & Loading States (Optional)
-- [ ] SyncManager for orchestrating data fetching
-- [ ] Background sync on app launch with progress indicators
-- [ ] Manual refresh capability in settings/home screen
-- [ ] Loading states UI with sync status display
-- [ ] Error handling UI for network failures
+#### Pending: Phase 3 - Google Login Implementation
+##### Phase 3: Google Authentication & Authorization
+- [ ] Implement Google Sign-In for Android (Google Identity Services)
+- [ ] Implement Google Sign-In for iOS (Google Sign-In SDK)
+- [ ] Store user authentication state
+- [ ] Add Google Drive OAuth2 scopes for private spreadsheet access
+- [ ] Update GoogleDriveService to use authenticated requests
+- [ ] Handle token refresh and expiration
+- [ ] Add sign-in/sign-out UI in settings or home screen
+- [ ] Test with private Google Drive spreadsheets
+- [ ] Cross-platform authentication validation
 
-##### Phase 4: Configuration & Settings (Optional)
-- [ ] Settings screen for spreadsheet URL management
-- [ ] "Refresh Data Now" button with progress indicator
-- [ ] "Clear Cache" option for troubleshooting
-- [ ] Display last sync timestamp and data version
-- [ ] Toggle for offline mode
-
-##### Phase 5: Migration & Testing (Optional)
+##### Phase 4: Future Enhancements (v2.0+)
+- [ ] Enable cache system (ENABLE_REMOTE_CACHE = true)
+- [ ] Test cache persistence and 24-hour expiration
 - [ ] Test with poor network conditions (slow 3G, packet loss)
-- [ ] Test offline mode with expired cache
-- [ ] Test data integrity after sync
-- [ ] Cross-platform networking validation
+- [ ] Settings screen for spreadsheet URL management
+- [ ] Display last sync timestamp and data version
 
 ## Technical Stack (v1.7.5 Additions)
 
@@ -139,13 +142,16 @@ data/
 - ✅ **Network Stack**: Ktor HTTP client working on both platforms
 - ✅ **Fallback Strategy**: Graceful degradation to bundled JSON verified
 - ✅ **Production Testing**: App tested with real Google Drive data loading - working perfectly
-- 🔄 **Cache System**: Disabled for testing (ENABLE_REMOTE_CACHE = false)
+- ✅ **Loading Splash Screen**: Material Design loading screen with dark green theme
+- ✅ **Refresh Functionality**: Manual refresh button in position selection screen
+- 🔄 **Cache System**: Disabled for testing (ENABLE_REMOTE_CACHE = false, will enable in v2.0)
+- 🔄 **Google Authentication**: Not yet implemented (Phase 3)
 
 ### Next Steps
 1. ~~Test app with real Google Drive data loading~~ ✅ **COMPLETE**
-2. Enable cache system (set ENABLE_REMOTE_CACHE = true) and verify cache persistence
-3. Implement Phase 3 (optional): Sync UI and loading states
-4. Complete v1.7.5 and prepare for production deployment
+2. ~~Implement loading splash screen and refresh functionality~~ ✅ **COMPLETE**
+3. Implement Phase 3: Google Authentication & Authorization for private spreadsheet access
+4. Complete v1.7.5 and prepare for v2.0 (cache system and production deployment)
 
 ---
 
