@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.pivoinescapano.identifier" />
+                  <option name="mobileSdkAppId" value="1:123456789:android:abcdef123456789" />
+                  <option name="projectId" value="peony-identifier-demo" />
+                  <option name="projectNumber" value="123456789" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

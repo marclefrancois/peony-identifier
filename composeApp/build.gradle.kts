@@ -40,9 +40,13 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.androidx.splashscreen)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.kmpauth.google)
+            implementation(libs.kmpauth.uihelper)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.kmpauth.google)
+            implementation(libs.kmpauth.uihelper)
         }
         commonMain.dependencies {
             implementation(compose.runtime)

@@ -7,6 +7,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.navigation.compose.NavHost
@@ -22,6 +25,7 @@ import com.pivoinescapano.identifier.presentation.navigation.HomeRoute
 import com.pivoinescapano.identifier.presentation.navigation.PeonyDetailRoute
 import com.pivoinescapano.identifier.presentation.navigation.PeonyIdentifierRoute
 import com.pivoinescapano.identifier.presentation.navigation.PeonySearchRoute
+import com.pivoinescapano.identifier.presentation.screen.AuthScreen
 import com.pivoinescapano.identifier.presentation.screen.FieldNotesScreen
 import com.pivoinescapano.identifier.presentation.screen.FieldSelectionScreen
 import com.pivoinescapano.identifier.presentation.screen.HomeScreen
@@ -29,6 +33,7 @@ import com.pivoinescapano.identifier.presentation.screen.LoadingSplashScreen
 import com.pivoinescapano.identifier.presentation.screen.PeonyDetailScreen
 import com.pivoinescapano.identifier.presentation.screen.PeonyIdentifierScreen
 import com.pivoinescapano.identifier.presentation.screen.PeonySearchScreen
+import com.pivoinescapano.identifier.presentation.viewmodel.AuthViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.LoadingViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
@@ -38,14 +43,23 @@ import org.koin.compose.koinInject
 @Composable
 @Preview
 fun App() {
-    KoinApplication(application = {
-        modules(appModule, platformModule)
-    }) {
-        MaterialTheme {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background,
-            ) {
+    MaterialTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background,
+        ) {
+            val authViewModel: AuthViewModel = koinInject()
+            val authState by authViewModel.authState.collectAsState()
+
+            var showMainApp by remember { mutableStateOf(false) }
+
+            if (!authState.isAuthenticated) {
+                AuthScreen(
+                    onAuthenticationSuccess = {
+                        showMainApp = true
+                    },
+                )
+            } else if (!showMainApp) {
                 val loadingViewModel: LoadingViewModel = koinInject()
                 val loadingState by loadingViewModel.loadingState.collectAsState()
 
@@ -57,9 +71,13 @@ fun App() {
                         LoadingSplashScreen(loadingState = loadingState)
                     }
                     is LoadingState.Success -> {
-                        MainNavigationHost()
+                        showMainApp = true
                     }
                 }
+            }
+
+            if (showMainApp) {
+                MainNavigationHost()
             }
         }
     }

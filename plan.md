@@ -69,17 +69,19 @@ Migrate from bundled JSON files to cloud-based data loading via Google Drive spr
 - ✅ Manual refresh button in PeonyIdentifierScreen
 - ✅ Cache system implemented (disabled for testing, will enable in v2.0)
 
-#### Pending: Phase 3 - Google Login Implementation
+#### Completed: Phase 3 - Google Authentication Implementation ✅
 ##### Phase 3: Google Authentication & Authorization
-- [ ] Implement Google Sign-In for Android (Google Identity Services)
-- [ ] Implement Google Sign-In for iOS (Google Sign-In SDK)
-- [ ] Store user authentication state
-- [ ] Add Google Drive OAuth2 scopes for private spreadsheet access
-- [ ] Update GoogleDriveService to use authenticated requests
-- [ ] Handle token refresh and expiration
-- [ ] Add sign-in/sign-out UI in settings or home screen
-- [ ] Test with private Google Drive spreadsheets
-- [ ] Cross-platform authentication validation
+- ✅ Implement Google Sign-In for Android (Google Identity Services)
+- ✅ Implement Google Sign-In for iOS (Google Sign-In SDK)
+- ✅ Store user authentication state (AuthRepository & AuthViewModel)
+- ✅ Add Google Drive OAuth2 scopes for private spreadsheet access
+- ✅ Add sign-in/sign-out UI before loading screen
+- ✅ Cross-platform authentication validation
+- ✅ CocoaPods integration with GoogleSignIn 7.1.0
+- ✅ iOS URL scheme configuration for OAuth callbacks
+- 🔄 Update GoogleDriveService to use authenticated requests (Phase 4)
+- 🔄 Handle token refresh and expiration (Phase 4)
+- 🔄 Test with private Google Drive spreadsheets (Phase 4)
 
 ##### Phase 4: Future Enhancements (v2.0+)
 - [ ] Enable cache system (ENABLE_REMOTE_CACHE = true)

@@ -1,5 +1,6 @@
 package com.pivoinescapano.identifier.di
 
+import com.pivoinescapano.identifier.data.auth.AuthRepository
 import com.pivoinescapano.identifier.data.cache.DataCacheManager
 import com.pivoinescapano.identifier.data.config.FieldConfigLoader
 import com.pivoinescapano.identifier.data.loader.JsonDataLoader
@@ -27,6 +28,7 @@ import com.pivoinescapano.identifier.domain.usecase.GetFieldSelectionUseCase
 import com.pivoinescapano.identifier.domain.usecase.SearchPeonyLocationsUseCase
 import com.pivoinescapano.identifier.domain.usecase.UpdateFieldNoteUseCase
 import com.pivoinescapano.identifier.platform.provideFileSharing
+import com.pivoinescapano.identifier.presentation.viewmodel.AuthViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.FieldNotesViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.FieldSelectionViewModel
 import com.pivoinescapano.identifier.presentation.viewmodel.LoadingViewModel
@@ -37,6 +39,9 @@ import org.koin.dsl.module
 
 val appModule =
     module {
+        // Authentication
+        single { AuthRepository(get()) }
+
         // Data Loading Infrastructure
         single { JsonDataLoader() }
         single { FieldConfigLoader(get()) }
@@ -74,6 +79,7 @@ val appModule =
         single { ClearAllNotesUseCase(get()) }
 
         // ViewModels
+        factory { AuthViewModel(get()) }
         factory { LoadingViewModel(get()) }
         factory { FieldSelectionViewModel(get()) }
         factory { (champ: String, parcelle: String) ->
