@@ -143,5 +143,20 @@
             "Variété": "variety",
             "Année plantation": "yearPlanted"
         }
+    },
+    {
+        "fieldId": "4",
+        "parcelId": "Bas",
+        "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",
+        "sheetGid": "1573675594",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
     }
 ]
