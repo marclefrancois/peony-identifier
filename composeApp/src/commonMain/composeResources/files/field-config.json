@@ -85,6 +85,51 @@
         }
     },
     {
+        "fieldId": "3",
+        "parcelId": "Maison",
+        "spreadsheetId": "1aIr_xCPGxLSiiT0xnLrVMnqZdagQA7LWTEGimeAUNYM",
+        "sheetGid": "1530191009",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
+    },
+    {
+        "fieldId": "3",
+        "parcelId": "Mil",
+        "spreadsheetId": "1aIr_xCPGxLSiiT0xnLrVMnqZdagQA7LWTEGimeAUNYM",
+        "sheetGid": "342654710",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
+    },
+    {
+        "fieldId": "3",
+        "parcelId": "Par",
+        "spreadsheetId": "1aIr_xCPGxLSiiT0xnLrVMnqZdagQA7LWTEGimeAUNYM",
+        "sheetGid": "315620695",
+        "headerRowIndex": 1,
+        "columnMapping": {
+            "# Champ": "champ",
+            "# Parcelle": "parcel",
+            "# Rang": "rang",
+            "Trou": "trou",
+            "Variété": "variety",
+            "Année plantation": "yearPlanted"
+        }
+    },
+    {
         "fieldId": "4",
         "parcelId": "Haut",
         "spreadsheetId": "1j8FT5Y7u0YVqgwIQCVftZiSKkzaGDFsWWEsVyjAiCzk",

@@ -7,6 +7,8 @@ class CsvParser {
         csvContent: String,
         columnMapping: Map<String, String>,
         headerRowIndex: Int = 0,
+        fieldId: String? = null,
+        parcelId: String? = null,
     ): List<FieldEntry> {
         val lines = csvContent.lines().filter { it.isNotBlank() }
         if (lines.size <= headerRowIndex) return emptyList()
@@ -17,7 +19,7 @@ class CsvParser {
         return lines
             .drop(headerRowIndex + 1)
             .mapNotNull { line ->
-                parseFieldEntryRow(line, columnIndices)
+                parseFieldEntryRow(line, columnIndices, fieldId, parcelId)
             }
     }
 
@@ -39,21 +41,26 @@ class CsvParser {
     private fun parseFieldEntryRow(
         line: String,
         columnIndices: Map<String, Int>,
+        fieldId: String? = null,
+        parcelId: String? = null,
     ): FieldEntry? {
         val values = parseCsvLine(line)
 
-        val champ = columnIndices["champ"]?.let { values.getOrNull(it)?.trim() }
-        val parcel = columnIndices["parcel"]?.let { values.getOrNull(it)?.trim() }
+        val csvChamp = columnIndices["champ"]?.let { values.getOrNull(it)?.trim() }
+        val csvParcel = columnIndices["parcel"]?.let { values.getOrNull(it)?.trim() }
         val rang = columnIndices["rang"]?.let { values.getOrNull(it)?.trim() }
         val trou = columnIndices["trou"]?.let { values.getOrNull(it)?.trim() }
 
-        if (champ.isNullOrBlank() || parcel.isNullOrBlank() || rang.isNullOrBlank() || trou.isNullOrBlank()) {
+        val finalChamp = fieldId ?: csvChamp
+        val finalParcel = if (fieldId != null && parcelId != null) "$fieldId-$parcelId" else csvParcel
+
+        if (finalChamp.isNullOrBlank() || finalParcel.isNullOrBlank() || rang.isNullOrBlank() || trou.isNullOrBlank()) {
             return null
         }
 
         return FieldEntry(
-            champ = champ,
-            parcel = parcel,
+            champ = finalChamp,
+            parcel = finalParcel,
             rang = rang,
             trou = trou,
             variety = columnIndices["variety"]?.let { values.getOrNull(it)?.trim() },

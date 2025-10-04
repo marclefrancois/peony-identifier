@@ -47,9 +47,11 @@ class GoogleDriveServiceImpl(
                     try {
                         val entries =
                             csvParser.parseFieldEntries(
-                                csvResult.data,
-                                config.columnMapping,
-                                config.headerRowIndex,
+                                csvContent = csvResult.data,
+                                columnMapping = config.columnMapping,
+                                headerRowIndex = config.headerRowIndex,
+                                fieldId = config.fieldId,
+                                parcelId = config.parcelId,
                             )
                         NetworkResult.Success(entries)
                     } catch (e: Exception) {
